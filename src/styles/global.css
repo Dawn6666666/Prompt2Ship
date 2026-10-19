@@ -688,6 +688,88 @@ a {
   min-width: 0;
   border-right: 1px solid var(--line);
 }
+.studio .conversation {
+  height: 620px;
+}
+.studio .messages {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.studio .conversation-label,
+.studio .composer-area {
+  flex-shrink: 0;
+}
+.studio .composer-area {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.composer > label > span {
+  float: right;
+  font-size: 9px;
+  letter-spacing: 0;
+}
+.session-start {
+  display: grid;
+  gap: 5px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 10px;
+  padding-bottom: 22px;
+}
+.session-start > span {
+  font-size: 9px;
+}
+.history-round {
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px dashed var(--line);
+}
+.message-author small {
+  margin-left: auto;
+  font-family: var(--font-mono);
+}
+.tool-call,
+.tool-result {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 9px 10px;
+  margin-top: 14px;
+  font-size: 11px;
+  width: 100%;
+  background: var(--code);
+  text-align: left;
+}
+.tool-call > span:last-child,
+.tool-result > small {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 10px;
+}
+.tool-call:hover {
+  border-color: var(--orange);
+}
+.next-round-marker {
+  display: flex;
+  gap: 9px;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 5px 0 20px;
+}
+@media (max-width: 760px) {
+  .studio .conversation {
+    height: 560px;
+  }
+  .composer > label > span {
+    float: none;
+    display: block;
+    margin-top: 5px;
+  }
+}
 .messages {
   padding: 23px;
   flex: 1;

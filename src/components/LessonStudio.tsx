@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   ArrowLeft,
@@ -77,14 +77,15 @@ export function LessonStudio({
 }) {
   const [index, setIndex] = useState(0);
   const [replay, setReplay] = useState(0);
+  const [rounds, setRounds] = useState<Record<number, "sent" | "done">>({});
   return (
     <section className="studio" aria-label={name}>
       <div className="studio-toolbar">
         <span>
           <span className="live-dot" />
-          {name}
+          <FolderTree size={14} /> {name}
         </span>
-        <span className="simulation-label">教学回放 · 非真实 AI</span>
+        <span className="simulation-label">Agent 工作区 · 教学模拟</span>
       </div>
       <nav className="scene-nav" aria-label="选择开发阶段">
         {steps.map((step, i) => (
@@ -110,7 +111,23 @@ export function LessonStudio({
         step={steps[index]}
         index={index}
         total={steps.length}
-        onReplay={() => setReplay(replay + 1)}
+        steps={steps}
+        rounds={rounds}
+        onSend={() => setRounds((value) => ({ ...value, [index]: "sent" }))}
+        onFinish={() => setRounds((value) => ({ ...value, [index]: "done" }))}
+        onLocate={setIndex}
+        onContinue={() => {
+          setRounds((value) => ({ ...value, [index + 1]: "sent" }));
+          setIndex(index + 1);
+        }}
+        onReplay={() => {
+          setRounds((value) => {
+            const updated = { ...value };
+            delete updated[index];
+            return updated;
+          });
+          setReplay(replay + 1);
+        }}
         onPrevious={() => setIndex(index - 1)}
         onNext={() => setIndex(index + 1)}
         next={next}
@@ -129,6 +146,12 @@ function Scene({
   onNext,
   next,
   renderTodo,
+  steps,
+  rounds,
+  onSend,
+  onFinish,
+  onLocate,
+  onContinue,
 }: {
   step: LessonStep;
   index: number;
@@ -138,30 +161,69 @@ function Scene({
   onNext: () => void;
   next: { href: string; label: string };
   renderTodo?: () => ReactNode;
+  steps: LessonStep[];
+  rounds: Record<number, "sent" | "done">;
+  onSend: () => void;
+  onFinish: () => void;
+  onLocate: (index: number) => void;
+  onContinue: () => void;
 }) {
   const [phase, setPhase] = useState<
     "idle" | "thinking" | "reply" | "artifact" | "done"
-  >("idle");
-  const [tab, setTab] = useState("code");
+  >(
+    rounds[index] === "done"
+      ? "done"
+      : rounds[index] === "sent"
+        ? "thinking"
+        : "idle",
+  );
+  const [tab, setTab] = useState(
+    rounds[index] === "done" && step.html ? "preview" : "code",
+  );
+  const messagesRef = useRef<HTMLDivElement>(null);
   const [mobileSeen, setMobileSeen] = useState(false);
   const reduce = useReducedMotion();
   const Icon = icons[step.kind];
   const busy = phase !== "idle" && phase !== "done";
   const visible = phase === "artifact" || phase === "done";
+  const promptStep =
+    phase === "done" && index < total - 1 ? steps[index + 1] : step;
   const isCode =
     step.kind === "code" || step.kind === "diff" || step.kind === "terminal";
+  useEffect(() => {
+    const container = messagesRef.current;
+    if (!container) return;
+    const scroll = () => {
+      container.scrollTop = container.scrollHeight;
+    };
+    scroll();
+    const observer = new MutationObserver(scroll);
+    observer.observe(container, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+    return () => observer.disconnect();
+  }, [index]);
   useEffect(() => {
     if (phase === "thinking") {
       const timer = setTimeout(() => setPhase("reply"), reduce ? 0 : 700);
       return () => clearTimeout(timer);
     }
     if (phase === "artifact" && !isCode) {
-      const timer = setTimeout(() => setPhase("done"), reduce ? 0 : 700);
+      const timer = setTimeout(
+        () => {
+          setPhase("done");
+          onFinish();
+        },
+        reduce ? 0 : 700,
+      );
       return () => clearTimeout(timer);
     }
-  }, [phase, isCode, reduce]);
+  }, [phase, isCode, reduce, onFinish]);
   function finish() {
     setPhase("done");
+    onFinish();
     if (step.html && step.kind !== "preview") setTab("preview");
   }
   const codePanel = (
@@ -206,10 +268,44 @@ function Scene({
       <div className="scene-grid">
         <div className="conversation">
           <div className="conversation-label">
-            <Sparkles size={14} /> 与 AI 协作 <span>预设对话</span>
+            <Sparkles size={14} /> Agent{" "}
+            <span>同一会话 · {Object.keys(rounds).length} 轮对话</span>
           </div>
-          <div className="messages">
-            {phase === "idle" ? (
+          <div className="messages" ref={messagesRef} aria-label="多轮对话记录">
+            <div className="session-start">
+              <span>新会话</span>以小步修改，完成一个真实任务
+            </div>
+            {steps.map((previous, round) =>
+              round < index && rounds[round] ? (
+                <div className="history-round" key={round}>
+                  <div className="sent-message">
+                    <span className="message-author">
+                      你 <small>#{String(round + 1).padStart(2, "0")}</small>
+                    </span>
+                    <p>{previous.prompt}</p>
+                  </div>
+                  <div className="ai-message">
+                    <span className="message-author">
+                      <Sparkles size={13} /> Agent
+                    </span>
+                    <p>{previous.reply}</p>
+                    <button
+                      type="button"
+                      className="tool-call"
+                      onClick={() => onLocate(round)}
+                    >
+                      <FileCode2 size={14} />
+                      <span>{previous.filename || previous.label}</span>
+                      <Check size={13} />
+                      <span>查看结果</span>
+                    </button>
+                  </div>
+                </div>
+              ) : null,
+            )}
+            {phase === "idle" &&
+            index === 0 &&
+            Object.keys(rounds).length === 0 ? (
               <div className="conversation-welcome">
                 <span className="agent-mark">
                   <Sparkles size={21} />
@@ -217,7 +313,7 @@ function Scene({
                 <h3>{step.hint}</h3>
                 <p>从下面这条提示词开始。</p>
               </div>
-            ) : (
+            ) : phase !== "idle" ? (
               <motion.div
                 initial={reduce ? false : { opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -226,6 +322,11 @@ function Scene({
                 <span className="message-author">你</span>
                 <p>{step.prompt}</p>
               </motion.div>
+            ) : (
+              <div className="next-round-marker">
+                <span>#{String(index + 1).padStart(2, "0")}</span>
+                {step.hint}
+              </div>
             )}
             <AnimatePresence mode="wait">
               {phase === "thinking" && (
@@ -249,7 +350,7 @@ function Scene({
                   className="ai-message"
                 >
                   <span className="message-author">
-                    <Sparkles size={13} /> AI
+                    <Sparkles size={13} /> Agent
                   </span>
                   <p>
                     {phase === "reply" ? (
@@ -268,33 +369,43 @@ function Scene({
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="one-takeaway"
+                className="tool-result"
               >
-                <span>这一刻，记住</span>
-                <p>{step.lesson}</p>
+                <Check size={14} />
+                <span>{step.filename || step.label}</span>
+                <small>已完成 · 结果在右侧</small>
               </motion.div>
             )}
           </div>
           <div className="composer-area">
-            {phase === "idle" ? (
+            {phase === "idle" || (phase === "done" && index < total - 1) ? (
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
+                  if (phase === "done") {
+                    onContinue();
+                    return;
+                  }
+                  onSend();
                   setPhase("thinking");
                 }}
                 className="composer"
               >
-                <label htmlFor="lesson-prompt">本步示例提示词</label>
+                <label htmlFor="lesson-prompt">
+                  继续对话 <span>预设教学提示词 · 不调用模型</span>
+                </label>
                 <Textarea
                   id="lesson-prompt"
-                  value={step.prompt}
+                  value={promptStep.prompt}
                   readOnly
-                  rows={4}
+                  rows={3}
                 />
                 <div>
-                  <CopyButton text={step.prompt} label="复制" />
+                  <CopyButton text={promptStep.prompt} label="复制" />
                   <button className="send-button" type="submit">
-                    {step.action || "发送提示词"}
+                    {phase === "done"
+                      ? "发送下一轮"
+                      : step.action || "发送提示词"}
                     <ArrowUp size={16} />
                   </button>
                 </div>
