@@ -1,0 +1,163 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { SetupGuide } from "../components/SetupGuide";
+import { highlight } from "../lib/highlight";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Code2,
+  GitBranch,
+  Globe2,
+  Info,
+  TerminalSquare,
+} from "lucide-react";
+const environment = await highlight(
+  "node --version\nnpm --version\ngit --version\npython3 --version",
+  "bash",
+);
+const git = await highlight(
+  'git status\ngit switch -c feat/my-first-site\n# 修改后先看差异\ngit diff\ngit add index.html\ngit commit -m "feat: add personal website"',
+  "bash",
+);
+---
+
+<Layout title="搭建你的工作台">
+  <div class="breadcrumb">
+    <a href="/">学习路径</a>
+    <span>/</span>准备篇
+  </div>
+  <section class="page-heading">
+    <span class="eyebrow">CHAPTER 00 · YOUR WORKSPACE</span>
+    <h1>
+      先搭好工作台，再出发<span class="orange-period">。</span>
+    </h1>
+    <p>
+      一个编辑器，一个 Agent，一个能运行项目的环境。
+      <br />
+      工具不必全部装上，先选一套能走通的组合。
+    </p>
+    <div class="page-tags">
+      <span>新手友好</span>
+      <span>任选一种 Agent</span>
+      <span>本地工作流</span>
+    </div>
+  </section>
+  <section class="content-section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">01 / THE BASICS</span>
+        <h2>先准备这三样。</h2>
+      </div>
+    </div>
+    <div class="basics-grid">
+      <a
+        href="https://code.visualstudio.com/download"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <Code2 size={23} />
+        <h3>
+          VS Code <ArrowUpRight size={14} />
+        </h3>
+        <p>
+          打开整个项目文件夹，而不是单独一个文件。用集成终端运行命令，在源代码管理面板查看差异。
+        </p>
+        <span>编辑、终端、Git 同屏协作</span>
+      </a>
+      <a href="https://nodejs.org/en/download" target="_blank" rel="noreferrer">
+        <TerminalSquare size={23} />
+        <h3>
+          本地运行环境 <ArrowUpRight size={14} />
+        </h3>
+        <p>
+          按项目要求安装 Node.js。本教程站点使用 Node 24；Pi 需要 22.19+。纯
+          HTML 案例只需浏览器，Python 服务器可选。
+        </p>
+        <span>版本要求跟着项目走</span>
+      </a>
+      <a href="https://git-scm.com/downloads" target="_blank" rel="noreferrer">
+        <GitBranch size={23} />
+        <h3>
+          Git <ArrowUpRight size={14} />
+        </h3>
+        <p>
+          为改动留下可回溯的记录。提交前看清 diff，不把密钥、node_modules
+          和本地数据库放进仓库。
+        </p>
+        <span>先检查，再提交</span>
+      </a>
+    </div>
+    <div class="article-code" set:html={environment} />
+    <p class="caption">
+      在终端检查版本；缺少哪个工具，就从对应官网安装。命令出现版本号才算环境就绪，不要只看安装器提示。
+    </p>
+  </section>
+  <section class="content-section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">02 / PICK YOUR AGENT</span>
+        <h2>选一个顺手的搭档。</h2>
+      </div>
+    </div>
+    <p class="section-description">
+      这些工具承担类似角色，不需要同时安装。本站的提示词和方法可以迁移使用。官方入口与命令核对于
+      2026-10-19。
+    </p>
+    <SetupGuide client:load />
+  </section>
+  <section class="content-section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">03 / THE EVERYDAY LOOP</span>
+        <h2>让编辑器、Agent 和浏览器形成闭环。</h2>
+      </div>
+    </div>
+    <div class="workflow-row">
+      <span>打开项目</span>
+      <ArrowRight size={16} />
+      <span>描述需求</span>
+      <ArrowRight size={16} />
+      <span>确认计划</span>
+      <ArrowRight size={16} />
+      <span>运行预览</span>
+      <ArrowRight size={16} />
+      <span>检查与提交</span>
+    </div>
+    <div class="verification-grid">
+      <div>
+        <h3>先确认工作目录和分支</h3>
+        <p>
+          在已有 Git 仓库内运行右侧命令。新项目先 git
+          init。分支是轻量的隔离方式；遇到他人未提交的修改，先询问，不要让 AI
+          覆盖它们。
+        </p>
+        <p>
+          若 git commit 提示身份缺失，按 Git
+          官方指导设置自己的姓名与邮箱，不要复制别人的身份。
+        </p>
+        <p>
+          撤销已经提交的改动时，先确认工作区干净，用 git log --oneline 找到目标，
+          再用 git revert &lt;提交ID&gt; 生成反向提交。未提交的内容先备份或暂存，
+          不要直接用 reset --hard 清空现场。
+        </p>
+      </div>
+      <div class="article-code" set:html={git} />
+    </div>
+    <div class="info-note">
+      <Info size={16} />
+      <p>
+        不要把 API Key
+        粘贴进源码或提示词示例。按工具官方登录流程或环境变量配置；不要为了省一次确认，关闭所有文件和命令权限。
+      </p>
+    </div>
+  </section>
+  <div class="next-chapter">
+    <div>
+      <span class="eyebrow">YOU'RE READY</span>
+      <h3>准备好把第一个想法做出来了吗？</h3>
+    </div>
+    <a class="primary-button" href="/case/from-scratch">
+      开始案例一 <ArrowRight size={16} />
+    </a>
+  </div>
+</Layout>

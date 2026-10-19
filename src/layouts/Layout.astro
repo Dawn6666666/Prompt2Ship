@@ -1,0 +1,109 @@
+---
+import { Header } from "../components/Header";
+import { navigation } from "../data/course";
+import {
+  BookOpen,
+  ArrowUpRight,
+  Blocks,
+  Compass,
+  Layers2,
+  TerminalSquare,
+  Sparkles,
+} from "lucide-react";
+import "@fontsource-variable/inter";
+import "../styles/global.css";
+const {
+  title = "让想法，真正上线。",
+  description = "用两个交互式案例，看见 AI Coding 从需求到交付的全过程。",
+} = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const icons = [Compass, TerminalSquare, Blocks, Layers2, BookOpen];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f8f9f6" />
+    <title>{title} — Prompt2Ship</title>
+    <link rel="icon" href="/favicon.svg" />
+    <script is:inline>
+      const theme = localStorage.getItem("theme");
+      document.documentElement.classList.toggle(
+        "dark",
+        theme === "dark" ||
+          (!theme && matchMedia("(prefers-color-scheme: dark)").matches),
+      );
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      跳到正文
+    </a>
+    <Header path={path} client:load />
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-topline">
+          <span class="mono">THE FIELD GUIDE</span>
+          <span class="version">v1.0</span>
+        </div>
+        <p class="sidebar-label">从 Prompt 到 Ship</p>
+        <nav aria-label="学习章节">
+          {navigation.map((item, i) => {
+            const Icon = icons[i];
+            return (
+              <a
+                class:list={["sidebar-item", { selected: path === item.href }]}
+                href={item.href}
+                aria-current={path === item.href ? "page" : undefined}
+              >
+                <span class="sidebar-icon">
+                  <Icon size={17} />
+                </span>
+                <span>
+                  {item.meta && <small>{item.meta}</small>}
+                  <strong>{item.label}</strong>
+                </span>
+                {path === item.href && <span class="selected-mark" />}
+              </a>
+            );
+          })}
+        </nav>
+        <div class="sidebar-note">
+          <span class="note-icon">
+            <Sparkles size={16} />
+          </span>
+          <strong>
+            不止会提问，
+            <br />
+            更要会交付。
+          </strong>
+          <p>
+            少一点魔法叙事，
+            <br />
+            多一点真实开发。
+          </p>
+          <a href="/review">
+            看看我们的方法 <ArrowUpRight size={12} />
+          </a>
+        </div>
+        <div class="sidebar-bottom">
+          <span class="live-dot" /> 开源 · 免费 · 持续打磨
+        </div>
+      </aside>
+      <main id="main" class="main-content">
+        <slot />
+        <footer class="site-footer">
+          <span>
+            Prompt2Ship <span class="muted">/ 让好想法落地。</span>
+          </span>
+          <span>
+            Built to learn. Made to ship. <span class="footer-spark">✳</span>
+          </span>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>

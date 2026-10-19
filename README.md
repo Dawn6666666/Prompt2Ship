@@ -8,6 +8,49 @@ Prompt2Ship 是一个面向开发者和编程初学者的 AI Coding 交互式教
 
 ---
 
+## 本地运行
+
+已实现：学习首页、环境搭建、七阶段网站案例、Todo 备注全栈教学、工程复盘。使用 Astro + React Islands；教程数据静态生成，无需 API Key 或后端服务。
+
+```bash
+# Node.js 24（与 Vercel 构建环境一致）
+npm ci
+npm run dev
+```
+
+打开终端显示的本地地址（默认 `http://localhost:4321`，端口占用时自动递增）。
+
+```bash
+npx tsc --noEmit  # TypeScript 检查
+npm run build    # 构建静态站点到 dist/
+npm run preview  # 本地检查生产构建
+```
+
+部署时将 `dist/` 发布到任意静态托管平台即可。
+
+### Vercel 自动部署
+
+在 [Vercel 新建项目](https://vercel.com/new)中导入 `Dawn6666666/Prompt2Ship`，根目录保持仓库根目录，生产分支选择 `main`，然后部署。若已关联该仓库，本次推送会触发自动构建。
+
+仓库中的 `vercel.json` 已配置 Astro、`npm ci`、`npm run build` 和输出目录 `dist`；`package.json` 固定使用 Node.js 24。无需环境变量、Vercel adapter 或 GitHub Actions。
+
+关联后，推送 `main` 自动更新生产站点，其他分支及 PR 使用 Vercel 默认的预览部署。实际部署地址和构建状态见 Vercel 控制台及 GitHub 提交检查。
+
+### 内容与组件入口
+
+- `src/data/course.ts`：案例一的七阶段提示词、代码片段、模拟终端，以及预览/下载共用的完整 HTML。
+- `src/data/todo.ts`：Todo 备注的数据库迁移、接口、表单和展示修改。
+- `src/components/CaseWorkbench.tsx`：阶段切换与联动工作台。
+- `src/components/SetupGuide.tsx`：各 Agent 的安装与入门说明。
+- `src/styles/global.css`：响应式布局与明暗主题。
+- `THIRD_PARTY_NOTICES.md`：复用组件来源与许可。
+
+**演示边界**：站点不调用真实 AI；终端日志为标注的教学模拟。案例一的浏览器预览运行实际 HTML，最后可以下载独立的 `index.html`；其中的联系邮箱是待替换占位内容。案例二的交互小样只使用 localStorage，不能代替对真实 Express + SQLite 项目的验证。Todo 上游未声明许可证，因此未随本站分发其完整源码。
+
+安装命令与官方链接核对日期：2026-10-19。工具升级后以对应官方文档为准。保留以下原始产品规划，供后续开发参考。
+
+---
+
 ## 🤖 AI 开发 Agent 必读准则 (Agent Guide)
 
 本项目的所有成熟参考模板、UI 原子组件、特色动效与案例代码，**均已预先准备在同级本地目录**：

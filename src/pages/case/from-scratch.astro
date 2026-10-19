@@ -1,0 +1,52 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { CaseWorkbench } from "../../components/CaseWorkbench";
+import { stages } from "../../data/course";
+import { highlightPair } from "../../lib/highlight";
+import { ArrowRight, Download, Info } from "lucide-react";
+const highlighted = await Promise.all(
+  stages.map((s) => highlightPair(s.before, s.after, s.lang)),
+);
+---
+
+<Layout title="案例一：从一句话到一个网站">
+  <div class="breadcrumb">
+    <a href="/">学习路径</a>
+    <span>/</span>案例 01
+  </div>
+  <section class="page-heading">
+    <span class="eyebrow">CASE STUDY 01 · FROM SCRATCH</span>
+    <h1>
+      从一句话，到一个网站<span class="orange-period">。</span>
+    </h1>
+    <p>
+      和 AI 一起，为独立设计师「林间」做一个个人网站。
+      <br />
+      经历一次真实的反馈迭代，比看十次一键生成更有价值。
+    </p>
+    <div class="page-tags">
+      <span>HTML + CSS</span>
+      <span>7 个开发阶段</span>
+      <span>无需安装依赖</span>
+    </div>
+  </section>
+  <div class="info-note">
+    <Info size={16} />
+    <p>
+      这是可复现的教学案例，不是实时 AI
+      会话。提示词与终端为教学示例；预览来自可下载的实际
+      HTML，代码区展示关键变更片段。
+    </p>
+  </div>
+  <CaseWorkbench highlighted={highlighted} client:load />
+  <div class="next-chapter">
+    <div>
+      <span class="eyebrow">NEXT CHAPTER</span>
+      <h3>已有代码，应该从哪里改起？</h3>
+      <p>下一站，进入一个前后端齐全的 Todo 项目。</p>
+    </div>
+    <a class="primary-button" href="/case/todo-app">
+      进入案例二 <ArrowRight size={16} />
+    </a>
+  </div>
+</Layout>
