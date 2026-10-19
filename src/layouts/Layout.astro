@@ -5,6 +5,7 @@ import "../styles/global.css";
 const {
   title = "让想法，真正上线。",
   description = "用两个交互式案例，看见 AI Coding 从需求到交付的全过程。",
+  workspace = false,
 } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
@@ -27,21 +28,23 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
       );
     </script>
   </head>
-  <body>
+  <body class:list={{ "workspace-page": workspace }}>
     <a class="skip-link" href="#main">
       跳到正文
     </a>
     <Header path={path} client:load />
     <main id="main" class="main-content">
       <slot />
-      <footer class="site-footer">
-        <span>
-          Prompt2Ship <span class="muted">/ 让好想法落地。</span>
-        </span>
-        <span>
-          <a href="/setup">准备工具</a> · <a href="/review">带走方法</a>
-        </span>
-      </footer>
+      {!workspace && (
+        <footer class="site-footer">
+          <span>
+            Prompt2Ship <span class="muted">/ 让好想法落地。</span>
+          </span>
+          <span>
+            <a href="/setup">准备工具</a> · <a href="/review">带走方法</a>
+          </span>
+        </footer>
+      )}
     </main>
   </body>
 </html>

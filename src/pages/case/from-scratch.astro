@@ -8,17 +8,6 @@ const highlighted = await Promise.all(
 );
 ---
 
-<Layout title="案例一：从一句话到一个网站">
-  <div class="lesson-page-heading">
-    <div>
-      <a href="/">学习实验室</a>
-      <span>/</span>
-      <span>案例 01</span>
-    </div>
-    <p>
-      从一句话，到一个网站。<span>发送、观察、反馈，亲手走一遍。</span>
-    </p>
-    <a href="/case/todo-app">案例 02 ↗</a>
-  </div>
+<Layout title="案例一：从一句话到一个网站" workspace>
   <CaseWorkbench highlighted={highlighted} client:load />
 </Layout>

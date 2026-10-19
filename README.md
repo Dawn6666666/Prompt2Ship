@@ -40,8 +40,11 @@ npm run preview  # 本地检查生产构建
 
 - `src/data/course.ts`：案例一的七阶段提示词、代码片段、模拟终端，以及预览/下载共用的完整 HTML。
 - `src/data/todo.ts`：Todo 备注的数据库迁移、接口、表单和展示修改。
-- `src/components/LessonStudio.tsx`：共用场景播放器，发送提示词 → 思考 → 流式响应 / 代码 → 结果；支持跳过、重播和自由切换。
+- `src/components/LessonStudio.tsx`：多轮聊天工作区，发送提示词 → 工具调用 → 流式响应 / 代码 → 结果；保留历史对话，支持跳过、重播和自由切换。
+- `src/data/tool-calls.ts` 与 `src/components/ui/tool-trace.tsx`：预设工具参数、逐次调用与流式返回，完成后可展开查看；不实际执行命令或访问用户文件。
 - `src/components/CaseWorkbench.tsx`、`TodoLesson.tsx`：两个案例的场景与结果配置。
+- `src/components/RequirementWorkshop.tsx`：案例一的需求分析，围绕“给谁看、看完做什么、先放什么、先不做什么、怎样算做好”逐项选择或输入，形成可编辑任务并传入下一轮；可自由返回，不打分、不锁步骤。回答在本次页面会话内保留，刷新后重置。后续代码仍为统一样例，不会按回答实时生成。
+- 案例页采用铺满可用视口的工作区；需求分析在桌面用 shadcn Resizable 拖动分栏，手机用 Radix Tabs 切换对话和草稿。其余阶段在手机切换对话与成果，避免上下堆叠。
 - `src/components/PromptDemo.tsx`：首页可操作的提示词到预览演示。
 - `src/components/SetupGuide.tsx`：三步工具准备向导。
 - `src/components/ReviewPlayground.tsx`：通过改写提示词进行方法复盘。

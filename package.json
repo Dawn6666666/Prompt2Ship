@@ -3,32 +3,35 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "engines": { "node": "24.x" },
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "astro dev --host 0.0.0.0",
     "build": "astro build",
     "preview": "astro preview --host 0.0.0.0"
   },
   "dependencies": {
-    "astro": "^7.4.0",
     "@astrojs/react": "^7.1.0",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1",
-    "tailwindcss": "^4.3.3",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@shikijs/transformers": "^3.0.0",
     "@tailwindcss/vite": "^4.3.3",
-    "motion": "^12.23.0",
-    "lucide-react": "^1.58.0",
-    "radix-ui": "^1.4.0",
+    "astro": "^7.4.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "tailwind-merge": "^3.3.0",
+    "lucide-react": "^1.58.0",
+    "motion": "^12.23.0",
+    "radix-ui": "^1.4.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-resizable-panels": "^4.14.6",
     "shiki": "^3.0.0",
-    "@shikijs/transformers": "^3.0.0",
-    "@fontsource-variable/inter": "^5.3.0"
+    "tailwind-merge": "^3.3.0",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "typescript": "^6.0.0",
     "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0"
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^6.0.0"
   }
 }

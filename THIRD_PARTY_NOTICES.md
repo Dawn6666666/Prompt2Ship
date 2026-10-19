@@ -14,6 +14,8 @@
 
 ## MIT notices
 
+本轮另外适配了 shadcn/ui 的 `ui/resizable.tsx` 和 `ui/toggle-group.tsx`，分别用于 `src/components/ui/resizable.tsx`（基于 react-resizable-panels 的可拖动分栏）与 `choice-group.tsx`（基于 Radix Toggle Group 的回答选项）。保留下方 shadcn MIT 声明。Awwwards / Obys FORMAT、Grids 仅作为布局和视觉节奏参考，没有复制其代码或素材；未引入 React Bits 或 Origin UI 源码。
+
 以上三个来源均使用 MIT License，分别保留其版权声明：
 
 ```text

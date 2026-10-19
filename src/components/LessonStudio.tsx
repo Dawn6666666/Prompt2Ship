@@ -25,6 +25,8 @@ import { Browser } from "./ui/browser";
 import { CodeComparison } from "./ui/code-comparison";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
 import { CopyButton } from "./CopyButton";
+import { ToolTrace } from "./ui/tool-trace";
+import { toolCallsFor } from "@/data/tool-calls";
 
 export type HighlightedStage = { before: string; after: string };
 export type LessonStep = {
@@ -69,11 +71,13 @@ export function LessonStudio({
   name,
   next,
   renderTodo,
+  renderBrief,
 }: {
   steps: LessonStep[];
   name: string;
   next: { href: string; label: string };
   renderTodo?: () => ReactNode;
+  renderBrief?: (proceed: () => void) => ReactNode;
 }) {
   const [index, setIndex] = useState(0);
   const [replay, setReplay] = useState(0);
@@ -106,33 +110,40 @@ export function LessonStudio({
           </button>
         ))}
       </nav>
-      <Scene
-        key={`${index}-${replay}`}
-        step={steps[index]}
-        index={index}
-        total={steps.length}
-        steps={steps}
-        rounds={rounds}
-        onSend={() => setRounds((value) => ({ ...value, [index]: "sent" }))}
-        onFinish={() => setRounds((value) => ({ ...value, [index]: "done" }))}
-        onLocate={setIndex}
-        onContinue={() => {
-          setRounds((value) => ({ ...value, [index + 1]: "sent" }));
-          setIndex(index + 1);
-        }}
-        onReplay={() => {
-          setRounds((value) => {
-            const updated = { ...value };
-            delete updated[index];
-            return updated;
-          });
-          setReplay(replay + 1);
-        }}
-        onPrevious={() => setIndex(index - 1)}
-        onNext={() => setIndex(index + 1)}
-        next={next}
-        renderTodo={renderTodo}
-      />
+      {index === 0 && renderBrief ? (
+        renderBrief(() => {
+          setRounds((value) => ({ ...value, 0: "done" }));
+          setIndex(1);
+        })
+      ) : (
+        <Scene
+          key={`${index}-${replay}`}
+          step={steps[index]}
+          index={index}
+          total={steps.length}
+          steps={steps}
+          rounds={rounds}
+          onSend={() => setRounds((value) => ({ ...value, [index]: "sent" }))}
+          onFinish={() => setRounds((value) => ({ ...value, [index]: "done" }))}
+          onLocate={setIndex}
+          onContinue={() => {
+            setRounds((value) => ({ ...value, [index + 1]: "sent" }));
+            setIndex(index + 1);
+          }}
+          onReplay={() => {
+            setRounds((value) => {
+              const updated = { ...value };
+              delete updated[index];
+              return updated;
+            });
+            setReplay(replay + 1);
+          }}
+          onPrevious={() => setIndex(index - 1)}
+          onNext={() => setIndex(index + 1)}
+          next={next}
+          renderTodo={renderTodo}
+        />
+      )}
     </section>
   );
 }
@@ -169,7 +180,7 @@ function Scene({
   onContinue: () => void;
 }) {
   const [phase, setPhase] = useState<
-    "idle" | "thinking" | "reply" | "artifact" | "done"
+    "idle" | "thinking" | "reply" | "tools" | "artifact" | "done"
   >(
     rounds[index] === "done"
       ? "done"
@@ -182,6 +193,7 @@ function Scene({
   );
   const messagesRef = useRef<HTMLDivElement>(null);
   const [mobileSeen, setMobileSeen] = useState(false);
+  const [mobileView, setMobileView] = useState("talk");
   const reduce = useReducedMotion();
   const Icon = icons[step.kind];
   const busy = phase !== "idle" && phase !== "done";
@@ -207,7 +219,7 @@ function Scene({
   }, [index]);
   useEffect(() => {
     if (phase === "thinking") {
-      const timer = setTimeout(() => setPhase("reply"), reduce ? 0 : 700);
+      const timer = setTimeout(() => setPhase("tools"), reduce ? 0 : 700);
       return () => clearTimeout(timer);
     }
     if (phase === "artifact" && !isCode) {
@@ -265,7 +277,21 @@ function Scene({
           重播本步
         </button>
       </div>
-      <div className="scene-grid">
+      <div className="scene-mobile-switch" role="group" aria-label="工作区视图">
+        <button
+          aria-pressed={mobileView === "talk"}
+          onClick={() => setMobileView("talk")}
+        >
+          对话与工具
+        </button>
+        <button
+          aria-pressed={mobileView === "result"}
+          onClick={() => setMobileView("result")}
+        >
+          本步成果{visible ? " · 已更新" : ""}
+        </button>
+      </div>
+      <div className="scene-grid" data-mobile-view={mobileView}>
         <div className="conversation">
           <div className="conversation-label">
             <Sparkles size={14} /> Agent{" "}
@@ -288,7 +314,16 @@ function Scene({
                     <span className="message-author">
                       <Sparkles size={13} /> Agent
                     </span>
-                    <p>{previous.reply}</p>
+                    {rounds[round] === "done" ? (
+                      <>
+                        {previous.kind !== "brief" && (
+                          <ToolTrace calls={toolCallsFor(previous)} complete />
+                        )}
+                        <p>{previous.reply}</p>
+                      </>
+                    ) : (
+                      <p>该轮回放已暂停，点击下方返回继续。</p>
+                    )}
                     <button
                       type="button"
                       className="tool-call"
@@ -296,8 +331,14 @@ function Scene({
                     >
                       <FileCode2 size={14} />
                       <span>{previous.filename || previous.label}</span>
-                      <Check size={13} />
-                      <span>查看结果</span>
+                      {rounds[round] === "done" ? (
+                        <Check size={13} />
+                      ) : (
+                        <Play size={13} />
+                      )}
+                      <span>
+                        {rounds[round] === "done" ? "查看结果" : "继续回放"}
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -328,6 +369,31 @@ function Scene({
                 {step.hint}
               </div>
             )}
+            {phase !== "idle" && phase !== "thinking" && (
+              <>
+                <div className="ai-message">
+                  <span className="message-author">
+                    <Sparkles size={13} /> Agent
+                  </span>
+                  <p>
+                    {step.kind === "diff"
+                      ? "先读取相关代码，定位需要修改的位置，再应用最小补丁。"
+                      : step.kind === "preview"
+                        ? "先启动预览，再分别检查桌面和手机视口。"
+                        : step.kind === "terminal"
+                          ? "先检查 Git 差异，再列出需要你确认的验收项，不直接提交。"
+                          : step.kind === "code"
+                            ? "按确认的计划创建页面，然后把生成的文件展示给你。"
+                            : "先整理这一步需要的信息，再给出结果。"}
+                  </p>
+                </div>
+                <ToolTrace
+                  calls={toolCallsFor(step)}
+                  complete={phase !== "tools"}
+                  onComplete={() => setPhase("reply")}
+                />
+              </>
+            )}
             <AnimatePresence mode="wait">
               {phase === "thinking" && (
                 <motion.div
@@ -342,28 +408,30 @@ function Scene({
                   <span className="thinking-dots">···</span>正在分析这一步
                 </motion.div>
               )}
-              {phase !== "idle" && phase !== "thinking" && (
-                <motion.div
-                  key="reply"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="ai-message"
-                >
-                  <span className="message-author">
-                    <Sparkles size={13} /> Agent
-                  </span>
-                  <p>
-                    {phase === "reply" ? (
-                      <TypingAnimation
-                        text={step.reply}
-                        onComplete={() => setPhase("artifact")}
-                      />
-                    ) : (
-                      step.reply
-                    )}
-                  </p>
-                </motion.div>
-              )}
+              {phase !== "idle" &&
+                phase !== "thinking" &&
+                phase !== "tools" && (
+                  <motion.div
+                    key="reply"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="ai-message"
+                  >
+                    <span className="message-author">
+                      <Sparkles size={13} /> Agent
+                    </span>
+                    <p>
+                      {phase === "reply" ? (
+                        <TypingAnimation
+                          text={step.reply}
+                          onComplete={() => setPhase("artifact")}
+                        />
+                      ) : (
+                        step.reply
+                      )}
+                    </p>
+                  </motion.div>
+                )}
             </AnimatePresence>
             {phase === "done" && (
               <motion.div
@@ -420,7 +488,11 @@ function Scene({
                   ) : (
                     <>
                       <span className="live-dot" />
-                      {phase === "artifact" ? "正在生成结果…" : "AI 正在响应…"}
+                      {phase === "tools"
+                        ? "正在调用工具…"
+                        : phase === "artifact"
+                          ? "正在生成结果…"
+                          : "AI 正在响应…"}
                     </>
                   )}
                 </span>

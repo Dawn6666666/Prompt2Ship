@@ -9,7 +9,7 @@ export function TypingAnimation({
   code = false,
 }: {
   text: string;
-  onComplete: () => void;
+  onComplete?: () => void;
   code?: boolean;
 }) {
   const [count, setCount] = useState(0);
@@ -35,7 +35,7 @@ export function TypingAnimation({
         setCount(position);
         if (position >= letters.length) {
           clearInterval(timer);
-          callback.current();
+          callback.current?.();
         }
       },
       reduce ? 0 : code ? 24 : 32,
@@ -51,9 +51,11 @@ export function TypingAnimation({
   return (
     <span ref={element}>
       {Array.from(text).slice(0, count).join("")}
-      <span className="typing-cursor" aria-hidden="true">
-        ▍
-      </span>
+      {count < Array.from(text).length && (
+        <span className="typing-cursor" aria-hidden="true">
+          ▍
+        </span>
+      )}
     </span>
   );
 }
