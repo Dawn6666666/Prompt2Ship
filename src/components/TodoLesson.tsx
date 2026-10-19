@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, Check, RotateCcw, Save } from "lucide-react";
+import { Check, Play, RotateCcw } from "lucide-react";
 import { todoChanges, todoPrompt } from "@/data/todo";
 import {
   LessonStudio,
   type LessonStep,
   type HighlightedStage,
 } from "./LessonStudio";
-import { Textarea } from "./ui/textarea";
 
 export function TodoLesson({
   highlighted,
@@ -59,13 +58,13 @@ export function TodoLesson({
       detail: <p>这里是并入原文件对应位置的关键片段，不是完整替换文件。</p>,
     })),
     {
-      label: "亲手验证",
-      title: "写一条备注，保存，再读回来。",
-      hint: "让数据走完一次往返。",
+      label: "流程演示",
+      title: "一条备注，怎样保存和显示？",
+      hint: "看数据走完一次往返。",
       prompt:
         "演示备注的输入、保存、重新读取和清空，并告诉我如何在真实项目验证。不要把本地浏览器演示说成后端已经通过测试。",
       reply:
-        "现在试着编辑备注并保存，观察下方的数据流。此处使用浏览器 localStorage，不连接 Express 或 SQLite；真实项目还要检查旧数据库、刷新、完成状态与筛选拖拽。",
+        "右侧用一条固定备注回放输入、接口传递、写入和展示的过程。这是流程示意，不实际保存数据，也不连接 Express 或 SQLite。",
       kind: "todo",
       lesson: "创建、编辑、清空、刷新都要验证；同时检查已有功能是否受影响。",
     },
@@ -81,30 +80,15 @@ export function TodoLesson({
 }
 
 function TodoPlayground() {
-  const [value, setValue] = useState("补充移动端截图，并确认联系入口。");
-  const [saved, setSaved] = useState("");
+  const note = "补充移动端截图，并确认联系入口。";
   const [journey, setJourney] = useState(-1);
-  const [notice, setNotice] = useState("");
-  useEffect(() => {
-    const note = localStorage.getItem("p2s-todo-note");
-    setValue(note ?? "补充移动端截图，并确认联系入口。");
-    setSaved(note ?? "");
-  }, []);
   useEffect(() => {
     if (journey < 0 || journey >= 4) return;
     const timer = setTimeout(() => {
-      if (journey === 2) {
-        localStorage.setItem("p2s-todo-note", value);
-        setSaved(value);
-      }
-      if (journey === 3)
-        setNotice(
-          "已保存到当前浏览器，刷新后仍能读取。也可以清空输入后再次保存。",
-        );
       setJourney(journey + 1);
     }, 450);
     return () => clearTimeout(timer);
-  }, [journey, value]);
+  }, [journey]);
   const saving = journey >= 0 && journey < 4;
   return (
     <div className="todo-demo-card">
@@ -112,56 +96,35 @@ function TodoPlayground() {
         <span>
           <Check size={13} />
         </span>
-        <strong>交付我的第一个网站</strong>
+        <strong>示例任务：交付作品网站</strong>
         <span className="task-tag">进行中</span>
       </div>
-      {saved && <p className="saved-note">{saved}</p>}
-      <label htmlFor="demo-notes">任务备注</label>
-      <Textarea
-        id="demo-notes"
-        value={value}
-        disabled={saving}
-        onChange={(e) => setValue(e.target.value)}
-        rows={3}
-      />
+      <p className="tool-note">示例备注</p>
+      <pre className="template-pre">{note}</pre>
       <div className="todo-demo-actions">
-        <button
-          className="quiet-button"
-          type="button"
-          disabled={saving}
-          onClick={() => {
-            const note = localStorage.getItem("p2s-todo-note") ?? "";
-            setValue(note);
-            setSaved(note);
-            setNotice("已从本机存储重新读取。输入框里的未保存内容不会写入。");
-          }}
-        >
-          <RotateCcw size={13} />
-          重新读取
-        </button>
         <button
           type="button"
           className="primary-button"
           disabled={saving}
-          onClick={() => {
-            setJourney(0);
-            setNotice("");
-          }}
+          onClick={() => setJourney(0)}
         >
-          <Save size={13} />
-          {saving ? "保存中…" : "保存备注"}
+          {journey === 4 ? <RotateCcw size={13} /> : <Play size={13} />}
+          {saving ? "正在回放…" : journey === 4 ? "重播流程" : "播放保存过程"}
         </button>
       </div>
-      <div className="data-journey" aria-label="浏览器本地存储演示">
-        {["输入", "序列化", "本机存储", "返回展示"].map((label, i) => (
+      <div className="data-journey" aria-label="备注数据流示意">
+        {["表单输入", "接口参数", "数据库写入", "返回展示"].map((label, i) => (
           <span key={label} className={journey >= i ? "active" : ""}>
             {label}
           </span>
         ))}
       </div>
       <p className="save-notice" role="status">
-        {notice || "浏览器本地演示 · 不连接 Express / SQLite。"}
+        {journey === 4
+          ? "流程回放结束：备注回到任务列表中。这是预设示意，没有实际读写数据库。"
+          : "流程示意 · 不实际保存数据，不连接 Express / SQLite。"}
       </p>
+      {journey === 4 && <p className="saved-note">{note}</p>}
     </div>
   );
 }

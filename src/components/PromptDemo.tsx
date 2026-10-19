@@ -44,7 +44,7 @@ export function PromptDemo() {
             接下来会发生什么？
           </h2>
           {phase === "idle" ? (
-            <p>点击发送，看代码如何变成一个页面。</p>
+            <p>播放这段示例，看代码如何变成一个页面。</p>
           ) : (
             <motion.p
               initial={reduce ? false : { opacity: 0 }}
@@ -63,14 +63,14 @@ export function PromptDemo() {
               type="button"
               onClick={() => setPhase("code")}
               disabled={phase !== "idle"}
-              aria-label="发送示例提示词"
+              aria-label="播放示例对话"
             >
               <ArrowUp size={19} />
             </button>
           </div>
           {phase === "preview" && (
             <a className="demo-continue" href="/case/from-scratch">
-              进入完整案例，继续迭代
+              观看完整案例
               <ArrowRight size={14} />
             </a>
           )}
@@ -93,7 +93,7 @@ export function PromptDemo() {
                 <i />
                 <i />
               </section>
-              <small>这里，等待你的第一条提示词。</small>
+              <small>播放示例，看一句想法怎样变成页面。</small>
             </div>
             <span className="demo-floating-tag">
               <Code2 size={13} />

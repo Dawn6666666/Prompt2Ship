@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, ArrowRight, Check, Pencil, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import { ChoiceGroup } from "./ui/choice-group";
 import {
   ResizablePanelGroup,
@@ -8,24 +8,23 @@ import {
   ResizableHandle,
 } from "./ui/resizable";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
-import { Textarea } from "./ui/textarea";
 import { TypingAnimation } from "./ui/typing-animation";
 import { CopyButton } from "./CopyButton";
 
 const questions = [
   {
     label: "给谁看",
-    title: "这个网站，你想给谁看？",
-    hint: "同样是个人网站，给面试官看，和给朋友看，重点会不一样。",
-    options: ["找实习时，发给面试官", "发给同学和朋友，分享作品"],
+    title: "这个网站，是给谁看的？",
+    hint: "案例里的林间是一位设计师。同样是个人网站，给客户和给朋友看，重点会不一样。",
+    options: ["给可能合作的客户看", "给同学和朋友看，分享作品"],
     replies: [
-      "那就让对方很快找到：你做过什么、会什么、怎么联系你。",
-      "那可以多一点个人风格，但作品和介绍还是要容易找到。",
+      "给客户看，就要让对方很快找到：林间做过什么、擅长什么、怎么联系。",
+      "给朋友看，可以多一点个人风格，但作品和介绍还是要容易找到。",
     ],
   },
   {
     label: "看完做什么",
-    title: "对方看完，你希望发生什么？",
+    title: "对方看完，希望发生什么？",
     hint: "想象一下：对方打开网站，花了一分钟，然后呢？",
     options: [
       "先看两个项目，再通过邮箱联系我",
@@ -38,15 +37,15 @@ const questions = [
   },
   {
     label: "先放什么",
-    title: "第一版，你手里有什么内容？",
-    hint: "不需要等到有很厉害的作品。一个认真做过的课程项目，也可以讲。",
+    title: "第一版，准备放什么内容？",
+    hint: "林间已经有一段介绍和两个项目。这些内容就能组成一个简单的作品网站。",
     options: [
-      "一段介绍、两个课程项目、一个邮箱",
+      "一段介绍、两个精选项目、一个邮箱",
       "内容还没整理好，先用示例占个位置",
     ],
     replies: [
       "已经够开始了。每个项目再补一句：做了什么、你负责什么。",
-      "可以先搭样子。把示例标出来，发给别人前再换成自己的内容。",
+      "内容还没整理时，也能先用示例搭样子。示例需要明确标出，正式发布前再替换。",
     ],
   },
   {
@@ -64,38 +63,28 @@ const questions = [
   },
   {
     label: "怎样算做好",
-    title: "做好之后，你准备怎么检查？",
-    hint: "“好看一点”不太好检查。换成几件你能亲手试的事。",
+    title: "做好之后，怎样知道它能用？",
+    hint: "“好看一点”不太好检查。换成能观察到的结果，后面才知道该改哪里。",
     options: [
       "手机不横着溢出，两个项目完整，邮箱能点开",
       "手机和电脑都能读，示例内容和邮箱已替换",
     ],
     replies: [
       "这几项都能直接试。后面让 AI 改完，我们就按这些看。",
-      "这样检查很具体。页面能用，内容也确实是你的，才适合发出去。",
+      "这把页面显示和内容检查分开了。页面能用、示例已替换，才适合正式发布。",
     ],
   },
 ];
-export type RequirementDraft = { answers: string[]; task: string | null };
-export const emptyRequirements: RequirementDraft = {
-  answers: Array(5).fill(""),
-  task: null,
-};
-function taskFrom(answers: string[]) {
-  return `我想做一个中文个人作品网站。\n\n给谁看：${answers[0] || "[补充：给谁看]"}。\n希望对方：${answers[1] || "[补充：看完做什么]"}。\n第一版内容：${answers[2] || "[补充：准备放什么]"}。\n这次先不做：${answers[3] || "[补充：这次不做什么]"}。\n做好后检查：${answers[4] || "[补充：怎样检查]"}。\n\n先帮我看看哪里还没说清楚，再给一个简单的制作计划。先别写代码。`;
-}
+const exampleAnswers = questions.map((question) => question.options[0]);
+const exampleTask = `为独立设计师“林间”做一个中文个人作品网站，给可能合作的客户看。\n\n包含一段个人介绍、两个精选项目和邮件联系入口。希望对方看完项目后，可以通过邮箱联系林间。\n\n这次不做登录、评论、数据库和后台。页面在 375px 手机和 1280px 电脑上都能完整阅读，项目内容齐全，邮箱入口可以点开。示例邮箱在正式发布前替换。\n\n先看看哪里还没说清楚，再给一个简单的制作计划，先别写代码。`;
 
 export function RequirementWorkshop({
-  value,
-  onChange,
   onContinue,
 }: {
-  value: RequirementDraft;
-  onChange: (value: RequirementDraft) => void;
-  onContinue: (task: string) => void;
+  onContinue: () => void;
 }) {
   const [step, setStep] = useState(0);
-  const [draft, setDraft] = useState("");
+  const [variant, setVariant] = useState(0);
   const [view, setView] = useState("talk");
   const [mobile, setMobile] = useState(false);
   useEffect(() => {
@@ -106,18 +95,9 @@ export function RequirementWorkshop({
     return () => media.removeEventListener("change", sync);
   }, []);
   const current = questions[step];
-  const task = value.task ?? taskFrom(value.answers);
-  const answered = value.answers.filter(Boolean).length;
-  function answer(text: string) {
-    onChange({
-      answers: value.answers.map((old, i) => (i === step ? text : old)),
-      task: null,
-    });
-    setDraft("");
-  }
   function go(index: number) {
     setStep(index);
-    setDraft("");
+    setVariant(0);
     setView("talk");
   }
   const conversation = (
@@ -125,85 +105,42 @@ export function RequirementWorkshop({
       className={`requirements-conversation ${step === 5 ? "is-final" : ""}`}
     >
       <div className="requirements-kicker">
-        <Sparkles size={15} /> 一起把想法说清楚 <span>01 / 需求分析</span>
+        <Sparkles size={15} /> 一个想法怎样变清楚 <span>01 / 需求分析示例</span>
       </div>
       <div className="requirements-question" key={step}>
         <span className="eyebrow">
-          {step < 5 ? `小问题 0${step + 1} / 05` : "把刚才的想法连起来"}
+          {step < 5 ? `看看第 0${step + 1} 件事 / 05` : "把这些信息连起来"}
         </span>
-        <h2>{current?.title || "现在，这就是你要交给 AI 的任务。"}</h2>
+        <h2>{current?.title || "一句模糊的想法，变成了一份清楚的任务。"}</h2>
         <p>
           {current?.hint ||
-            "读一遍，改成自己的说法。还有空白的地方，可以返回补充，也可以直接在这里写。"}
+            "给谁看、放什么、先不做什么、怎样检查，都在这段示例里了。接下来看 AI 怎样安排制作步骤。"}
         </p>
       </div>
       {current ? (
         <>
+          <span className="tool-note">两种情况对比 · 本案例采用第一种</span>
           <ChoiceGroup
             options={current.options}
-            value={value.answers[step]}
-            onChange={answer}
+            value={current.options[variant]}
+            onChange={(text) => setVariant(current.options.indexOf(text))}
           />
-          {value.answers[step] && (
-            <div className="requirements-response" aria-live="polite">
-              <Sparkles size={16} />
-              <p>
-                <TypingAnimation
-                  key={`${step}-${value.answers[step]}`}
-                  text={
-                    current.replies[
-                      current.options.indexOf(value.answers[step])
-                    ] ||
-                    "记下来了。右边会保留你的原话；也想一想，后面能不能按这句话检查做出来的页面。"
-                  }
-                />
-              </p>
-            </div>
-          )}
-          <form
-            className="requirements-own-answer"
-            onSubmit={(event) => {
-              event.preventDefault();
-              if (draft.trim()) answer(draft.trim());
-            }}
-          >
-            <label htmlFor="own-requirement">
-              <Pencil size={13} /> 也可以用自己的话说
-            </label>
-            <Textarea
-              id="own-requirement"
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder="比如：我想把课程作业整理好，找暑期实习时发出去。"
-              rows={2}
-            />
-            <button
-              type="submit"
-              className="quiet-button"
-              disabled={!draft.trim()}
-            >
-              记下这句话 <ArrowRight size={14} />
-            </button>
-          </form>
+          <div className="requirements-response" aria-live="polite">
+            <Sparkles size={16} />
+            <p>
+              <TypingAnimation
+                key={`${step}-${variant}`}
+                text={current.replies[variant]}
+              />
+            </p>
+          </div>
         </>
       ) : (
         <div className="requirements-final">
-          {answered < 5 && (
-            <p className="requirements-missing">
-              还有 {5 - answered}{" "}
-              处没填，已用方括号标出。你可以先继续，不会锁住步骤。
-            </p>
-          )}
-          <label htmlFor="requirements-task">可以直接修改这段任务说明</label>
-          <Textarea
-            id="requirements-task"
-            value={task}
-            onChange={(e) => onChange({ ...value, task: e.target.value })}
-            rows={8}
-          />
-          <CopyButton text={task} label="复制我的任务" />
+          <pre className="template-pre">{exampleTask}</pre>
+          <CopyButton text={exampleTask} label="复制示例" />
           <p className="requirements-simulation">
-            你的回答会带进下一轮计划提示词。后面的代码和工具仍按统一的“林间作品集”样例回放，不会按回答实时生成网站。
+            这里只展示林间作品集的需求分析过程，不收集回答，也不实时生成网站。
           </p>
         </div>
       )}
@@ -217,9 +154,9 @@ export function RequirementWorkshop({
         </button>
         <button
           className="primary-button"
-          onClick={() => (step < 5 ? go(step + 1) : onContinue(task))}
+          onClick={() => (step < 5 ? go(step + 1) : onContinue())}
         >
-          {step < 5 ? "接着想一件事" : "带着这份任务，看制作计划"}
+          {step < 5 ? "看下一项" : "观看制作计划"}
           <ArrowRight size={15} />
         </button>
       </div>
@@ -228,40 +165,30 @@ export function RequirementWorkshop({
   const record = (
     <div className="requirements-record">
       <div className="requirements-record-heading">
-        <span className="eyebrow">不是标准答案，是你的选择</span>
-        <span>{answered} / 5 已记下</span>
+        <span className="eyebrow">案例里的需求</span>
+        <span>林间 / 个人作品网站</span>
       </div>
       <h2>
-        想法正在变具体<span>一份慢慢补完整的任务草稿。</span>
+        从想法到清楚的任务<span>五件小事，让需求有了轮廓。</span>
       </h2>
       <ol>
         {questions.map((question, i) => (
-          <li key={question.label} data-filled={!!value.answers[i]}>
+          <li key={question.label} data-filled={step === i}>
             <button onClick={() => go(i)}>
-              <span>
-                {value.answers[i] ? <Check size={13} /> : `0${i + 1}`}
-              </span>
+              <span>{`0${i + 1}`}</span>
               <div>
                 <small>{question.label}</small>
-                <p>{value.answers[i] || "还没想好也没关系，点这里回来补。"}</p>
+                <p>{exampleAnswers[i]}</p>
               </div>
-              <Pencil size={13} />
+              <ArrowRight size={13} />
             </button>
           </li>
         ))}
       </ol>
       <div className="requirements-example">
-        <p>想先看完整过程？可以填入一组示例，再随时改掉。</p>
-        <button
-          className="quiet-button"
-          onClick={() =>
-            onChange({
-              answers: questions.map((q) => q.options[0]),
-              task: null,
-            })
-          }
-        >
-          填入示例回答 <ArrowRight size={13} />
+        <p>这些信息怎样合在一起？</p>
+        <button className="quiet-button" onClick={() => go(5)}>
+          查看完整任务示例 <ArrowRight size={13} />
         </button>
       </div>
     </div>
@@ -303,8 +230,8 @@ export function RequirementWorkshop({
           onValueChange={setView}
         >
           <TabsList aria-label="需求分析视图">
-            <TabsTrigger value="talk">一起想</TabsTrigger>
-            <TabsTrigger value="record">我的草稿 · {answered}/5</TabsTrigger>
+            <TabsTrigger value="talk">过程讲解</TabsTrigger>
+            <TabsTrigger value="record">案例需求</TabsTrigger>
           </TabsList>
           <TabsContent value="talk">{conversation}</TabsContent>
           <TabsContent value="record">{record}</TabsContent>

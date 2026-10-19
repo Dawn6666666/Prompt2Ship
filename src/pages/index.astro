@@ -2,17 +2,44 @@
 import Layout from "../layouts/Layout.astro";
 import { PromptDemo } from "../components/PromptDemo";
 import { ArrowRight, Blocks, Layers2 } from "lucide-react";
+import { onboardingStages } from "../data/onboarding";
 ---
 
-<Layout title="别只读 AI Coding，亲手让它发生">
+<Layout title="看见 AI Coding，从想法到作品">
   <section class="home-intro">
     <span class="eyebrow">
-      <span class="live-dot" /> THE AI CODING PLAYGROUND
+      <span class="live-dot" /> THE AI CODING SHOWCASE
     </span>
     <h1>
-      别只读 AI Coding。<span>亲手让它发生。</span>
+      看见 AI Coding。<span>从想法，到作品。</span>
     </h1>
-    <p>发出提示词，看代码生长；发现问题，再把作品往前推一步。</p>
+    <p>刚接触 Vibe Coding？从装好工具、建好项目开始，再看需求怎样变成一个作品。</p>
+  </section>
+  <section class="onboarding-roadmap" aria-labelledby="roadmap-title">
+    <div class="roadmap-heading">
+      <div>
+        <span class="eyebrow">START HERE / 从零上手</span>
+        <h2 id="roadmap-title">第一次接触，按这条路线看。</h2>
+      </div>
+      <a href="/setup">观看入门流程 <ArrowRight size={14} /></a>
+    </div>
+    <ol>
+      {
+        onboardingStages.map((stage, i) => (
+          <li>
+            <a href={`/setup#${stage.id}`}>
+              <span class="roadmap-number">0{i + 1}</span>
+              <div>
+                <h3>{stage.label}</h3>
+                <p>{stage.short}</p>
+              </div>
+              <ArrowRight size={14} />
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="roadmap-note">不是安装任务，也不需要跟着敲命令。先看懂过程，再看完整案例。</p>
   </section>
   <PromptDemo client:load />
   <div class="case-choices">
@@ -23,7 +50,7 @@ import { ArrowRight, Blocks, Layers2 } from "lucide-react";
       <div>
         <small>CASE 01 · 从零开始</small>
         <h2>从一句话，到一个网站。</h2>
-        <p>提示词 → 代码 → 预览 → 反馈 → 交付</p>
+        <p>五步需求分析 → 制作计划 → 代码 → 预览 → 交付</p>
       </div>
       <ArrowRight size={19} />
     </a>
@@ -40,9 +67,9 @@ import { ArrowRight, Blocks, Layers2 } from "lucide-react";
     </a>
   </div>
   <p class="home-footnote">
-    无需账号或 API Key，直接体验。
+    所有内容均为预设演示，无需安装工具或连接 AI。
     <a href="/setup">
-      想在本地跟做？先准备工具 <ArrowRight size={12} />
+      从安装工具开始了解 <ArrowRight size={12} />
     </a>
   </p>
 </Layout>

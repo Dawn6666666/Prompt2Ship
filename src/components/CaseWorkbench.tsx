@@ -1,10 +1,5 @@
 import { stages, portfolioHtml } from "@/data/course";
-import { useState } from "react";
-import {
-  RequirementWorkshop,
-  emptyRequirements,
-  type RequirementDraft,
-} from "./RequirementWorkshop";
+import { RequirementWorkshop } from "./RequirementWorkshop";
 import {
   LessonStudio,
   type LessonStep,
@@ -17,9 +12,6 @@ export function CaseWorkbench({
 }: {
   highlighted: HighlightedStage[];
 }) {
-  const [requirements, setRequirements] =
-    useState<RequirementDraft>(emptyRequirements);
-  const [confirmedTask, setConfirmedTask] = useState("");
   const kinds: LessonStep["kind"][] = [
     "brief",
     "plan",
@@ -42,15 +34,11 @@ export function CaseWorkbench({
     label: stage.name,
     title: stage.title,
     hint: hints[i],
-    prompt: confirmedTask && i < 2 ? confirmedTask : stage.prompt,
+    prompt: stage.prompt,
     reply:
-      confirmedTask && i < 2
-        ? i === 0
-          ? "你已经把想法整理成了任务说明，可以返回修改。后续用统一的林间作品集样例，观察从计划到代码的过程。"
-          : "你的任务已经留在对话里。接下来用统一的林间作品集样例演示制作过程：先搭介绍、两个项目和邮箱入口，再检查手机显示。它是预设回放，不是按你的回答实时生成的计划。"
-        : i === 3
-          ? "本地预览已在右侧展示。先看桌面，再点手机图标切换到 375px。观察标题和项目卡片，是否还能完整显示？"
-          : stage.reply,
+      i === 3
+        ? "右侧展示第一版页面。切换到 375px 手机视图，可以看到标题和项目卡片超出了屏幕。"
+        : stage.reply,
     kind: kinds[i],
     filename:
       i === 2 ? "index.html" : i === 5 ? "终端 · 教学命令回放" : stage.filename,
@@ -85,17 +73,8 @@ export function CaseWorkbench({
     <LessonStudio
       steps={steps}
       name="林间的个人网站"
-      renderBrief={(proceed) => (
-        <RequirementWorkshop
-          value={requirements}
-          onChange={setRequirements}
-          onContinue={(task) => {
-            setConfirmedTask(task);
-            proceed();
-          }}
-        />
-      )}
-      next={{ href: "/case/todo-app", label: "试试已有项目" }}
+      renderBrief={(proceed) => <RequirementWorkshop onContinue={proceed} />}
+      next={{ href: "/case/todo-app", label: "观看已有项目案例" }}
     />
   );
 }

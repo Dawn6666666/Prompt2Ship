@@ -171,7 +171,7 @@ export function toolCallsFor(step: LessonStep): ToolCall[] {
           target: "交付清单",
           input: "核对 index.html 的依赖与占位内容",
           output:
-            "单文件 HTML + CSS，无外部运行依赖。\n姓名、作品和 hello@example.com 为演示内容。\n下载文件后替换，再部署。",
+            "单文件 HTML + CSS，无外部运行依赖。\n姓名、作品和 hello@example.com 为演示内容。\n右侧可查看最终示例文件。",
           note: "右侧下载链接会返回真实 HTML 文件。",
         },
       ];
@@ -182,7 +182,7 @@ export function toolCallsFor(step: LessonStep): ToolCall[] {
           target: "划清验证边界",
           input: "区分浏览器演示与后端验收",
           output:
-            "右侧可实际操作 localStorage 保存、读取与清空。\n这里没有连接 Express / SQLite。\n真实项目需另测旧数据库、刷新与已有任务操作。",
+            "右侧回放固定示例的输入、接口传递、写入和展示过程。\n这是预设示意，不实际存储数据，也没有连接 Express / SQLite。\n真实项目需另测旧数据库、刷新与已有任务操作。",
         },
       ];
   }

@@ -89,7 +89,12 @@ export function LessonStudio({
           <span className="live-dot" />
           <FolderTree size={14} /> {name}
         </span>
-        <span className="simulation-label">Agent 工作区 · 教学模拟</span>
+        <div className="workspace-toolbar-end">
+          <a className="workspace-backlink" href="/setup">
+            <ArrowLeft size={12} /> 入门流程
+          </a>
+          <span className="simulation-label">Agent 工作区 · 教学模拟</span>
+        </div>
       </div>
       <nav className="scene-nav" aria-label="选择开发阶段">
         {steps.map((step, i) => (
@@ -460,7 +465,7 @@ function Scene({
                 className="composer"
               >
                 <label htmlFor="lesson-prompt">
-                  继续对话 <span>预设教学提示词 · 不调用模型</span>
+                  示例对话 <span>预设提示词 · 不调用模型</span>
                 </label>
                 <Textarea
                   id="lesson-prompt"
@@ -472,8 +477,8 @@ function Scene({
                   <CopyButton text={promptStep.prompt} label="复制" />
                   <button className="send-button" type="submit">
                     {phase === "done"
-                      ? "发送下一轮"
-                      : step.action || "发送提示词"}
+                      ? "播放下一轮"
+                      : step.action || "播放本轮对话"}
                     <ArrowUp size={16} />
                   </button>
                 </div>
@@ -521,20 +526,18 @@ function Scene({
                 <Icon size={29} strokeWidth={1.3} />
               </div>
               <span className="eyebrow">
-                {phase === "idle"
-                  ? "WAITING FOR YOUR PROMPT"
-                  : "WORK IN PROGRESS"}
+                {phase === "idle" ? "READY TO PLAY" : "WORK IN PROGRESS"}
               </span>
               <h3>
                 {phase === "idle"
-                  ? "由你的下一步，推动它发生。"
+                  ? "看看下一步，会发生什么。"
                   : phase === "thinking"
-                    ? "先理解，再动手。"
+                    ? "先理解任务，再生成结果。"
                     : "正在把想法变成结果…"}
               </h3>
               <p>
                 {phase === "idle"
-                  ? "发送提示词后，在这里看见变化。"
+                  ? "播放示例对话，在这里看见变化。"
                   : "对话、代码与预览会依次接力。"}
               </p>
               <div className="placeholder-flow">
@@ -643,7 +646,7 @@ function Scene({
                       <strong>
                         {mobileSeen
                           ? "发现：页面超出了手机宽度。"
-                          : "轮到你：点浏览器右上角的手机图标。"}
+                          : "切换手机视图，可以看到第一版的显示问题。"}
                       </strong>
                       <p>
                         {mobileSeen
@@ -683,7 +686,7 @@ function Scene({
                   <span className="delivery-check">
                     <CheckCheck size={30} />
                   </span>
-                  <span className="eyebrow">READY TO MAKE IT YOURS</span>
+                  <span className="eyebrow">THE FINISHED EXAMPLE</span>
                   <h3>从一句话，到一份真实文件。</h3>
                   <p>一个 HTML 文件，包含页面和响应式样式。</p>
                   <a
@@ -699,7 +702,7 @@ function Scene({
                     <Download size={20} />
                   </a>
                   <p className="delivery-note">
-                    发布前，换成你的姓名、作品与真实邮箱。
+                    示例使用虚构人物、作品和占位邮箱，不是已发布的真实个人网站。
                   </p>
                   <a
                     href="/examples/folio.html"
@@ -708,7 +711,7 @@ function Scene({
                     className="quiet-button"
                   >
                     <Globe2 size={14} />
-                    独立打开成品 <ArrowRight size={14} />
+                    独立打开示例 <ArrowRight size={14} />
                   </a>
                 </div>
               )}
@@ -729,7 +732,7 @@ function Scene({
         </button>
         <span>
           {phase === "idle"
-            ? "发送一次，看看会发生什么。"
+            ? "播放这一轮，看看会发生什么。"
             : busy
               ? "可以跳过动画，也可以自由切换阶段。"
               : "看到了结果，再继续下一步。"}
@@ -761,7 +764,7 @@ function Scene({
                   {step.detail}
                   <p className="detail-disclaimer">
                     预设教学回放，不调用
-                    AI、不执行命令。可复制提示词，在自己的工具中实践。
+                    AI、不执行命令。提示词和工具返回均为预设的案例内容。
                   </p>
                 </>
               ),

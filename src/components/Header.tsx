@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowUpRight, Menu, Moon, Sun, X, ArrowRight } from "lucide-react";
+import { ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
 import { navigation } from "@/data/course";
 
 // Theme persistence adapted from the local Astro shadcn template ThemeToggle.
@@ -29,7 +29,10 @@ export function Header({ path }: { path: string }) {
         </a>
         <nav className="header-nav" aria-label="主导航">
           <a className={path === "/" ? "active" : ""} href="/">
-            学习实验室
+            流程总览
+          </a>
+          <a className={path === "/setup" ? "active" : ""} href="/setup">
+            从零上手
           </a>
           <a
             className={path.startsWith("/case") ? "active" : ""}
@@ -39,9 +42,6 @@ export function Header({ path }: { path: string }) {
           </a>
           <a className={path === "/review" ? "active" : ""} href="/review">
             方法复盘
-          </a>
-          <a className={path === "/setup" ? "active" : ""} href="/setup">
-            准备工具
           </a>
         </nav>
         <div className="header-actions">
@@ -63,9 +63,6 @@ export function Header({ path }: { path: string }) {
           >
             {dark ? <Sun size={17} /> : <Moon size={17} />}
           </button>
-          <a className="header-start" href="/case/from-scratch">
-            动手试试 <ArrowRight size={14} />
-          </a>
           <button
             className="icon-button mobile-menu-button"
             onClick={() => setOpen(!open)}

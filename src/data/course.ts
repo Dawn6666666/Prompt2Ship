@@ -1,6 +1,6 @@
 export const navigation = [
-  { label: "学习概览", href: "/", icon: "overview" },
-  { label: "搭建你的工作台", href: "/setup", icon: "setup", meta: "准备篇" },
+  { label: "流程总览", href: "/", icon: "overview" },
+  { label: "从零上手：工具到需求", href: "/setup", icon: "setup", meta: "入门篇" },
   {
     label: "从一句话到一个网站",
     href: "/case/from-scratch",
@@ -165,14 +165,14 @@ export const stages = [
     prompt:
       "整理最终交付说明：如何本地启动、修改个人资料和项目内容、替换示例邮箱。保持静态网站，不增加部署系统。附上后续可选改进，不要继续扩展功能。",
     reply:
-      "最终是一份无外部依赖的 index.html。可直接打开，也可通过静态服务器预览。下载后先替换姓名、作品和邮箱，再发布到任意静态托管服务。",
+      "最终是一份无外部依赖的 index.html，可独立打开查看。这里展示的是完整示例，人物、作品和邮箱均为占位内容，并非已正式发布的个人网站。",
     filename: "交付说明.md",
     lang: "markdown",
     before: "",
     after:
       "# 交付清单\n\n- index.html：完整页面与响应式样式\n- 本地运行：python3 -m http.server 4322\n- 替换：姓名、项目介绍、示例邮箱\n- 发布：上传到任意静态托管服务\n\n下一步可选：独立项目详情页、真实作品图片。",
     command: "python3 -m http.server 4322\n# 打开 http://localhost:4322",
-    output: "交付完成。下载文件后即可自行运行与修改。",
+    output: "示例交付物：可独立打开的 index.html，包含页面和响应式样式。",
     result: "从一句话，到一个可运行的网站",
     lesson: "好的交付不只是一份代码，还包括运行方式、已知限制与后续修改入口。",
   },

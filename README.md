@@ -1,8 +1,8 @@
 # Prompt2Ship — AI Coding 交互式教程网站
 
-> **让读者直观看见 AI Coding 如何从需求分析走向最终交付。**
+> **让刚接触 Vibe Coding 的同学，看懂从工具准备到作品交付的完整流程。**
 
-Prompt2Ship 是一个面向开发者和编程初学者的 AI Coding 交互式教程网站。核心目标是帮助读者搭建 **Vibe Coding** 开发环境，并通过两个真实开发案例，理解 AI 如何参与项目从需求分析到最终交付的全过程。
+Prompt2Ship 是一个面向大一下学期、刚接触 Vibe Coding 的同学的流程展示网站。从安装 IDE、安装并连接编程 Agent、初始化项目开始，再通过两个预设开发案例，理解需求分析、生成代码、检查与迭代的全过程。不提供动手练习或真实 AI 执行环境。
 
 网站不只是展示教程文章，而是通过**提示词卡片、代码变更对比、网页预览沙盒和交互演示**，让读者直观理解 AI Coding 的实际开发流程。
 
@@ -10,7 +10,7 @@ Prompt2Ship 是一个面向开发者和编程初学者的 AI Coding 交互式教
 
 ## 本地运行
 
-已实现：学习首页、环境搭建、七阶段网站案例、Todo 备注全栈教学、工程复盘。使用 Astro + React Islands；教程数据静态生成，无需 API Key 或后端服务。
+已实现：流程首页、从工具到需求的四阶段入门演示、七阶段网站案例、Todo 备注全栈流程回放、方法复盘。使用 Astro + React Islands；展示内容静态生成，无需 API Key 或后端服务。
 
 ```bash
 # Node.js 24（与 Vercel 构建环境一致）
@@ -40,18 +40,18 @@ npm run preview  # 本地检查生产构建
 
 - `src/data/course.ts`：案例一的七阶段提示词、代码片段、模拟终端，以及预览/下载共用的完整 HTML。
 - `src/data/todo.ts`：Todo 备注的数据库迁移、接口、表单和展示修改。
-- `src/components/LessonStudio.tsx`：多轮聊天工作区，发送提示词 → 工具调用 → 流式响应 / 代码 → 结果；保留历史对话，支持跳过、重播和自由切换。
+- `src/components/LessonStudio.tsx`：多轮聊天工作区，预设对话 → 工具调用 → 流式响应 / 代码 → 结果；保留历史对话，支持跳过、重播和自由切换。
 - `src/data/tool-calls.ts` 与 `src/components/ui/tool-trace.tsx`：预设工具参数、逐次调用与流式返回，完成后可展开查看；不实际执行命令或访问用户文件。
 - `src/components/CaseWorkbench.tsx`、`TodoLesson.tsx`：两个案例的场景与结果配置。
-- `src/components/RequirementWorkshop.tsx`：案例一的需求分析，围绕“给谁看、看完做什么、先放什么、先不做什么、怎样算做好”逐项选择或输入，形成可编辑任务并传入下一轮；可自由返回，不打分、不锁步骤。回答在本次页面会话内保留，刷新后重置。后续代码仍为统一样例，不会按回答实时生成。
-- 案例页采用铺满可用视口的工作区；需求分析在桌面用 shadcn Resizable 拖动分栏，手机用 Radix Tabs 切换对话和草稿。其余阶段在手机切换对话与成果，避免上下堆叠。
+- `src/components/RequirementWorkshop.tsx`：案例一的需求分析展示，围绕“给谁看、看完做什么、先放什么、先不做什么、怎样算做好”分步解释固定案例，并比较两种情况。展示完整任务示例，不收集访问者回答，不提供填写练习或个性化任务生成。
+- 案例页采用铺满可用视口的工作区；需求分析在桌面用 shadcn Resizable 拖动分栏，手机用 Radix Tabs 切换过程讲解和案例需求。其余阶段在手机切换对话与成果，避免上下堆叠。
 - `src/components/PromptDemo.tsx`：首页可操作的提示词到预览演示。
-- `src/components/SetupGuide.tsx`：三步工具准备向导。
-- `src/components/ReviewPlayground.tsx`：通过改写提示词进行方法复盘。
+- `src/data/onboarding.ts` 与 `src/components/SetupGuide.tsx`：安装 IDE → 安装编程 Agent → 初始化项目 → 需求分析的全屏演示工作区。每个阶段有三幅可切换画面，支持播放、跳过与重播；保留 Windows / macOS / Linux 安装路线和五种 Agent 的官方资料。首页路线链接可直接定位 `/setup#ide`、`#agent`、`#project`、`#requirements`。命令、安装和连接状态均为示意，不检测本机，不收集账号或密钥。项目沿用案例一的纯 HTML 方案，不要求安装框架。
+- `src/components/ReviewPlayground.tsx`：通过固定提示词对比进行方法复盘。
 - `src/styles/global.css`：响应式布局与明暗主题。
 - `THIRD_PARTY_NOTICES.md`：复用组件来源与许可。
 
-**演示边界**：站点不调用真实 AI；终端日志为标注的教学模拟。案例一的浏览器预览运行实际 HTML，最后可以下载独立的 `index.html`；其中的联系邮箱是待替换占位内容。案例二的交互小样只使用 localStorage，不能代替对真实 Express + SQLite 项目的验证。Todo 上游未声明许可证，因此未随本站分发其完整源码。
+**演示边界**：这是流程展示网站，不提供动手练习或本地跟做任务。站点不调用真实 AI；终端日志为标注的教学模拟。案例一的浏览器预览运行实际 HTML，最后可以查看或下载示例 `index.html`；其中的联系邮箱是占位内容。案例二仅回放固定备注的数据流程，不保存访问者数据，不连接 Express / SQLite，不能代替真实项目验证。Todo 上游未声明许可证，因此未随本站分发其完整源码。
 
 安装命令与官方链接核对日期：2026-10-19。工具升级后以对应官方文档为准。保留以下原始产品规划，供后续开发参考。
 
