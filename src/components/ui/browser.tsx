@@ -2,8 +2,18 @@
 // replaces the source component's image/video area.
 import { Globe2, LockKeyhole, Monitor, Smartphone } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-export function Browser({ html, stage }: { html: string; stage: number }) {
-  const [mobile, setMobile] = useState(false);
+export function Browser({
+  html,
+  stage,
+  initialMobile = false,
+  onViewportChange,
+}: {
+  html: string;
+  stage: number;
+  initialMobile?: boolean;
+  onViewportChange?: (mobile: boolean) => void;
+}) {
+  const [mobile, setMobile] = useState(initialMobile);
   const screen = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(600);
   useEffect(() => {
@@ -30,7 +40,10 @@ export function Browser({ html, stage }: { html: string; stage: number }) {
             type="button"
             aria-label="桌面预览"
             aria-pressed={!mobile}
-            onClick={() => setMobile(false)}
+            onClick={() => {
+              setMobile(false);
+              onViewportChange?.(false);
+            }}
           >
             <Monitor size={14} />
           </button>
@@ -38,7 +51,10 @@ export function Browser({ html, stage }: { html: string; stage: number }) {
             type="button"
             aria-label="手机预览"
             aria-pressed={mobile}
-            onClick={() => setMobile(true)}
+            onClick={() => {
+              setMobile(true);
+              onViewportChange?.(true);
+            }}
           >
             <Smartphone size={14} />
           </button>
@@ -52,7 +68,7 @@ export function Browser({ html, stage }: { html: string; stage: number }) {
                 ? undefined
                 : {
                     width: 1280,
-                    height: Math.max(800, (330 * 1280) / width),
+                    height: Math.max(900, (440 * 1280) / width),
                     transform: `scale(${width / 1280})`,
                     transformOrigin: "top left",
                     position: "absolute",
@@ -76,7 +92,7 @@ export function Browser({ html, stage }: { html: string; stage: number }) {
       <div className="browser-caption">
         <span className="live-dot" />
         {mobile
-          ? "375px 手机视口 · 在预览内观察初稿溢出"
+          ? "375px 手机视口 · 可在预览内滚动"
           : "1280px 桌面视口 · 等比缩放"}
         <span>HTML / CSS</span>
       </div>

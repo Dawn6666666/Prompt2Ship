@@ -40,8 +40,11 @@ npm run preview  # 本地检查生产构建
 
 - `src/data/course.ts`：案例一的七阶段提示词、代码片段、模拟终端，以及预览/下载共用的完整 HTML。
 - `src/data/todo.ts`：Todo 备注的数据库迁移、接口、表单和展示修改。
-- `src/components/CaseWorkbench.tsx`：阶段切换与联动工作台。
-- `src/components/SetupGuide.tsx`：各 Agent 的安装与入门说明。
+- `src/components/LessonStudio.tsx`：共用场景播放器，发送提示词 → 思考 → 流式响应 / 代码 → 结果；支持跳过、重播和自由切换。
+- `src/components/CaseWorkbench.tsx`、`TodoLesson.tsx`：两个案例的场景与结果配置。
+- `src/components/PromptDemo.tsx`：首页可操作的提示词到预览演示。
+- `src/components/SetupGuide.tsx`：三步工具准备向导。
+- `src/components/ReviewPlayground.tsx`：通过改写提示词进行方法复盘。
 - `src/styles/global.css`：响应式布局与明暗主题。
 - `THIRD_PARTY_NOTICES.md`：复用组件来源与许可。
 
@@ -54,10 +57,12 @@ npm run preview  # 本地检查生产构建
 ## 🤖 AI 开发 Agent 必读准则 (Agent Guide)
 
 本项目的所有成熟参考模板、UI 原子组件、特色动效与案例代码，**均已预先准备在同级本地目录**：
+
 - **组件与模板索引**：[`../FrontendFramework/AI_INDEX.md`](../FrontendFramework/AI_INDEX.md)（绝对路径：`/home/yoake/Code/FrontendFramework/AI_INDEX.md`）
 - **通用参考库根目录**：[`../FrontendFramework/`](../FrontendFramework/)（绝对路径：`/home/yoake/Code/FrontendFramework/`）
 
 > ⚠️ **开发原则**：
+>
 > 1. **严禁从零手搓基础组件或复杂动效**！如需导航栏、暗黑模式切换、Safari 浏览器外壳、代码 Diff 对比、终端打字动效、气泡对话、时间轴等，请直接查阅 `../FrontendFramework/AI_INDEX.md`，按索引在本地提取成熟实现。
 > 2. **优先使用成熟依赖包**：如 `motion`, `lucide-react`, `tailwind-merge`, `clsx`, `@shikijs/transformers`。
 > 3. **静态数据驱动交互**：教程网站本身不需要复杂后端或真实 AI API，使用结构化数据（JSON/TS）驱动交互展示。
@@ -67,13 +72,16 @@ npm run preview  # 本地检查生产构建
 ## 一、核心内容规划
 
 ### 1. Vibe Coding 环境搭建
+
 - **代码编辑器**：VS Code 安装、配置、项目管理与集成终端。
 - **AI 编程 Agent**：OpenCode、Claude Code、Codex、ZCode、Pi 通用工作流与必要差异。
 - **本地运行环境**：依赖安装、启动排错与效果预览。
 - **Git 版本控制**：检查 AI 变更、版本提交与代码恢复。
 
 ### 2. 案例一：从零构建一个网站（过程可视化）
+
 通过 7 个开发阶段逐步演进：
+
 1. **自然语言描述需求**
 2. **AI 分析需求并规划方案**
 3. **编写提示词让 AI 生成代码**
@@ -85,10 +93,12 @@ npm run preview  # 本地检查生产构建
 读者可自由切换阶段，联动查看：**提示词 ↔ 代码 Diff ↔ 网页预览 (Safari Mockup) ↔ 终端日志**。
 
 ### 3. 案例二：在已有全栈 Todo 项目中使用 Vibe Coding
+
 - **基础项目**：[`../FrontendFramework/todo-app`](../FrontendFramework/todo-app)（React + Vite 前端，Express + SQLite 后端）。
 - **实战任务**：让 AI 理解已有项目结构并增加**“任务备注”**功能，走通前后端与数据库联动。
 
 ### 4. 工程实践复盘
+
 - 从零开发与修改已有项目的区别。
 - 高效提示词工程与上下文控制。
 - 为什么 AI 生成代码后仍需运行验证与 Git 兜底。

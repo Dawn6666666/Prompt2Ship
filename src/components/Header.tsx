@@ -29,7 +29,7 @@ export function Header({ path }: { path: string }) {
         </a>
         <nav className="header-nav" aria-label="主导航">
           <a className={path === "/" ? "active" : ""} href="/">
-            学习路径
+            学习实验室
           </a>
           <a
             className={path.startsWith("/case") ? "active" : ""}
@@ -38,7 +38,10 @@ export function Header({ path }: { path: string }) {
             交互案例<span className="tiny-tag">02</span>
           </a>
           <a className={path === "/review" ? "active" : ""} href="/review">
-            工程手记
+            方法复盘
+          </a>
+          <a className={path === "/setup" ? "active" : ""} href="/setup">
+            准备工具
           </a>
         </nav>
         <div className="header-actions">
@@ -61,7 +64,7 @@ export function Header({ path }: { path: string }) {
             {dark ? <Sun size={17} /> : <Moon size={17} />}
           </button>
           <a className="header-start" href="/case/from-scratch">
-            开始学习 <ArrowRight size={14} />
+            动手试试 <ArrowRight size={14} />
           </a>
           <button
             className="icon-button mobile-menu-button"

@@ -1,235 +1,48 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Check,
-  GitBranch,
-  MousePointer2,
-  MoveUpRight,
-  Sparkles,
-  TerminalSquare,
-  Layers2,
-  BookOpen,
-  Braces,
-} from "lucide-react";
-import { CaseWorkbench } from "../components/CaseWorkbench";
-import { stages } from "../data/course";
-import { highlightPair } from "../lib/highlight";
-const highlighted = await Promise.all(
-  stages.map((s) => highlightPair(s.before, s.after, s.lang)),
-);
-const lessons = [
-  {
-    num: "00",
-    type: "准备篇",
-    title: "搭好工作台，再出发。",
-    desc: "VS Code、AI Agent、本地环境与 Git。把工具串成一条顺手的工作流。",
-    href: "/setup",
-    icon: TerminalSquare,
-    tags: ["环境搭建", "通用工作流"],
-    className: "setup-card",
-  },
-  {
-    num: "01",
-    type: "从零开始",
-    title: "把一句话，变成一个网站。",
-    desc: "跟着 7 个阶段，看一个个人网站从需求、初稿，到修复问题与最终交付。",
-    href: "/case/from-scratch",
-    icon: Braces,
-    tags: ["7 阶段联动", "可运行源码"],
-    className: "featured-card",
-  },
-  {
-    num: "02",
-    type: "进入真实项目",
-    title: "不推倒重来，也能向前一步。",
-    desc: "给已有 Todo 增加任务备注。读懂代码，让前端、接口与数据库一起协作。",
-    href: "/case/todo-app",
-    icon: Layers2,
-    tags: ["React + Express", "SQLite"],
-    className: "todo-card",
-  },
-];
+import { PromptDemo } from "../components/PromptDemo";
+import { ArrowRight, Blocks, Layers2 } from "lucide-react";
 ---
 
-<Layout>
-  <section class="hero">
-    <div class="hero-copy">
-      <div class="hero-kicker">
-        <span class="live-dot" />
-        一本可以亲手探索的 AI Coding 手册 <span class="kicker-line" />
-      </div>
-      <h1>
-        不止写出 Prompt，
-        <br />
-        更要{" "}
-        <span class="hero-ship">
-          Ship 出作品
-          <svg
-            viewBox="0 0 330 14"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            <path d="M3 10 Q155 -2 326 6" />
-          </svg>
-        </span>
-        <span class="orange-period">。</span>
-      </h1>
-      <p class="hero-description">
-        从搭建环境到交付项目，看见 AI 如何参与真实开发。
-        <br />
-        不靠魔法，不跳步骤。让每一次提示，都有迹可循。
-      </p>
-      <div class="hero-buttons">
-        <a class="primary-button" href="/case/from-scratch">
-          从第一个案例开始 <ArrowRight size={16} />
-        </a>
-        <a class="text-button" href="/setup">
-          先搭建开发环境 <ArrowUpRight size={14} />
-        </a>
-      </div>
-      <div class="hero-trust">
-        <span>
-          <Check size={13} /> 无需 AI API Key
-        </span>
-        <span>
-          <Check size={13} /> 免费开放学习
-        </span>
-        <span>
-          <Check size={13} /> 真实代码与预览
-        </span>
-      </div>
-    </div>
-    <div class="hero-art" aria-hidden="true">
-      <div class="art-grid" />
-      <span class="art-label art-label-top">AN IDEA WORTH BUILDING</span>
-      <div class="art-prompt">
-        <span class="art-prompt-label">
-          <Sparkles size={12} /> YOUR PROMPT
-        </span>
-        <p>
-          “帮我把这个想法
-          <br />
-          变成可以打开的网站。”
-        </p>
-        <span class="art-caret" />
-      </div>
-      <svg class="art-connector" viewBox="0 0 300 100">
-        <path d="M65 5 V35 Q65 48 80 48 H210 Q230 48 230 65 V95" />
-        <path d="m224 88 6 7 6-7" />
-      </svg>
-      <div class="art-window">
-        <div class="art-window-bar">
-          <span>● ● ●</span>
-          <span>your-idea.site ↗</span>
-        </div>
-        <div class="art-window-body">
-          <span class="art-asterisk">✳</span>
-          <span class="art-small">HELLO, WORLD.</span>
-          <strong>
-            从想法，
-            <br />
-            到眼前。
-          </strong>
-          <div class="art-window-line" />
-          <div class="art-mini-cards">
-            <i />
-            <i />
-            <i />
-          </div>
-        </div>
-        <span class="art-shipped">
-          <Check size={12} /> Ready to ship
-        </span>
-      </div>
-      <span class="art-coordinate">PROMPT → BUILD → VERIFY → SHIP</span>
-      <span class="art-plus">+</span>
-    </div>
+<Layout title="别只读 AI Coding，亲手让它发生">
+  <section class="home-intro">
+    <span class="eyebrow">
+      <span class="live-dot" /> THE AI CODING PLAYGROUND
+    </span>
+    <h1>
+      别只读 AI Coding。<span>亲手让它发生。</span>
+    </h1>
+    <p>发出提示词，看代码生长；发现问题，再把作品往前推一步。</p>
   </section>
-  <div class="learning-strip">
-    <div>
-      <span class="strip-number">02</span>
-      <span>真实开发案例</span>
-    </div>
-    <div>
-      <span class="strip-number">07</span>
-      <span>从零到交付的阶段</span>
-    </div>
-    <div>
-      <GitBranch size={19} />
-      <span>代码变化，有迹可循</span>
-    </div>
-    <div>
-      <MousePointer2 size={19} />
-      <span>不是读完，是看懂</span>
-    </div>
+  <PromptDemo client:load />
+  <div class="case-choices">
+    <a class="case-choice" href="/case/from-scratch">
+      <span class="case-choice-icon">
+        <Blocks size={22} />
+      </span>
+      <div>
+        <small>CASE 01 · 从零开始</small>
+        <h2>从一句话，到一个网站。</h2>
+        <p>提示词 → 代码 → 预览 → 反馈 → 交付</p>
+      </div>
+      <ArrowRight size={19} />
+    </a>
+    <a class="case-choice" href="/case/todo-app">
+      <span class="case-choice-icon green">
+        <Layers2 size={22} />
+      </span>
+      <div>
+        <small>CASE 02 · 已有项目</small>
+        <h2>给 Todo 增加一条备注。</h2>
+        <p>读项目 → 分层修改 → 验证数据流</p>
+      </div>
+      <ArrowRight size={19} />
+    </a>
   </div>
-  <section class="path-section">
-    <div class="section-heading">
-      <div>
-        <span class="eyebrow">YOUR LEARNING PATH</span>
-        <h2>
-          一条走得通的学习路径<span class="orange-period">。</span>
-        </h2>
-      </div>
-      <span class="section-aside">
-        从准备到实践，再到自己的方法 <MoveUpRight size={16} />
-      </span>
-    </div>
-    <div class="course-grid">
-      {lessons.map((item) => (
-        <a href={item.href} class:list={["course-card", item.className]}>
-          <div class="course-card-top">
-            <span class="course-num">{item.num}</span>
-            <span class="course-type">{item.type}</span>
-            {item.num === "01" && <span class="recommend-tag">推荐起点</span>}
-          </div>
-          <div class="course-icon">
-            <item.icon size={26} strokeWidth={1.4} />
-          </div>
-          <h3>{item.title}</h3>
-          <p>{item.desc}</p>
-          <div class="course-card-bottom">
-            <div>
-              {item.tags.map((tag) => (
-                <span>{tag}</span>
-              ))}
-            </div>
-            <span class="round-arrow">
-              <ArrowUpRight size={16} />
-            </span>
-          </div>
-        </a>
-      ))}
-    </div>
-  </section>
-  <section class="demo-section">
-    <div class="section-heading">
-      <div>
-        <span class="eyebrow">LESS MAGIC. MORE MAKING.</span>
-        <h2>每一步，都能看见发生了什么。</h2>
-      </div>
-      <span class="demo-hint">
-        <MousePointer2 size={14} /> 试着切换下方阶段
-      </span>
-    </div>
-    <p class="section-description">
-      一句提示、一次修改、一个新版本。把开发过程摊开来看。
-    </p>
-    <CaseWorkbench highlighted={highlighted} compact client:load />
-  </section>
-  <a class="review-banner" href="/review">
-    <span class="review-banner-icon">
-      <BookOpen size={24} />
-    </span>
-    <div>
-      <span class="eyebrow">THE TAKEAWAYS</span>
-      <h3>工具会变，好的开发习惯不会。</h3>
-      <p>关于提示词、上下文、运行验证与 Git 的工程手记。</p>
-    </div>
-    <span class="review-banner-link">
-      把经验变成方法 <ArrowRight size={16} />
-    </span>
-  </a>
+  <p class="home-footnote">
+    无需账号或 API Key，直接体验。
+    <a href="/setup">
+      想在本地跟做？先准备工具 <ArrowRight size={12} />
+    </a>
+  </p>
 </Layout>

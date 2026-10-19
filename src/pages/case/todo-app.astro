@@ -1,161 +1,43 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { TodoLesson } from "../../components/TodoLesson";
-import { CopyButton } from "../../components/CopyButton";
-import { todoChanges, todoPrompt } from "../../data/todo";
-import { highlightPair, highlight } from "../../lib/highlight";
-import { ArrowRight, Info, FolderTree, Check } from "lucide-react";
+import { todoChanges } from "../../data/todo";
+import { highlightPair } from "../../lib/highlight";
+import { Accordion } from "../../components/ui/accordion";
 const highlighted = await Promise.all(
   todoChanges.map((s) => highlightPair(s.before, s.after, s.lang)),
 );
-const commands = await highlight(
-  `npm install
-npm run dev -w todo-server
-# 另开一个终端
-npm run dev -w todo-client
-# 前端构建检查
-npm run build -w todo-client`,
-  "bash",
-);
+const details = [
+  {
+    title: "参考项目与本地跟做说明",
+    content:
+      "结构参考 Baoxd123/todo-app（a5a648a）。公开仓库未标注许可证，本站不分发完整项目。上述代码是整合片段。若已获得项目使用权限：根目录 npm install，两个终端分别运行 npm run dev -w todo-server 和 npm run dev -w todo-client；前端检查运行 npm run build -w todo-client。better-sqlite3 需要兼容的 Node 环境，勿删除旧数据库绕过迁移。验证新增、刷新、编辑、清空、完成状态、旧任务、筛选和拖拽。",
+  },
+];
 ---
 
 <Layout title="案例二：给 Todo 增加备注">
-  <div class="breadcrumb">
-    <a href="/">学习路径</a>
-    <span>/</span>案例 02
-  </div>
-  <section class="page-heading">
-    <span class="eyebrow">CASE STUDY 02 · EXISTING CODEBASE</span>
-    <h1>
-      不重写，也能做好一次改动<span class="orange-period">。</span>
-    </h1>
-    <p>
-      给一个已有的全栈 Todo 项目增加「任务备注」。
-      <br />
-      真正的挑战不是写一个输入框，而是让数据完整地走一遍。
-    </p>
-    <div class="page-tags">
-      <span>React + Vite</span>
-      <span>Express</span>
-      <span>SQLite</span>
-      <span>跨文件协作</span>
-    </div>
-  </section>
-  <div class="info-note">
-    <Info size={16} />
-    <p>
-      结构参考{" "}
-      <a
-        href="https://github.com/Baoxd123/todo-app"
-        target="_blank"
-        rel="noreferrer"
-      >
-        Baoxd123/todo-app
-      </a>
-      ，本地基线
-      a5a648a。仓库未标注许可证，本页不分发完整上游项目；以下为独立编写的教学修改片段，不是完整文件替换稿。
-    </p>
-  </div>
-  <section class="content-section">
-    <div class="section-heading">
-      <div>
-        <span class="eyebrow">01 / READ BEFORE YOU WRITE</span>
-        <h2>先读地图，再动代码。</h2>
-      </div>
-    </div>
-    <div class="project-map">
-      <div>
-        <FolderTree size={20} />
-        <pre>todo-app/
-├─ client/src/
-│  ├─ components/TodoForm.jsx
-│  ├─ components/TodoItem.jsx
-│  ├─ api/todos.js
-│  └─ App.jsx
-└─ server/
-   ├─ db.js
-   └─ routes/todos.js</pre>
-      </div>
-      <div>
-        <h3>这次改什么，不改什么？</h3>
-        <p>
-          改数据库迁移、创建与更新接口、输入表单和列表展示。API
-          封装已传递完整对象，App 已透传数据，不必为了凑文件数量而修改。
-        </p>
-        <p>
-          不增加登录、不更换数据库、不重构状态管理，也不影响原有分类、筛选和拖拽。
-        </p>
-        <span class="inline-tag">一个字段，贯穿三层</span>
-      </div>
-    </div>
-  </section>
-  <section class="content-section">
-    <div class="section-heading">
-      <div>
-        <span class="eyebrow">02 / GIVE THE AGENT CONTEXT</span>
-        <h2>把上下文和边界一起交给 AI。</h2>
-      </div>
-    </div>
-    <div class="wide-prompt">
-      <p>{todoPrompt}</p>
-      <CopyButton text={todoPrompt} client:load />
-    </div>
-  </section>
-  <section class="content-section">
-    <div class="section-heading">
-      <div>
-        <span class="eyebrow">03 / FOLLOW THE CHANGE</span>
-        <h2>沿着数据流，逐层做修改。</h2>
-      </div>
-    </div>
-    <TodoLesson highlighted={highlighted} client:load />
-  </section>
-  <section class="content-section">
-    <div class="section-heading">
-      <div>
-        <span class="eyebrow">04 / VERIFY THE ROUND TRIP</span>
-        <h2>「保存成功」之后，再读一次。</h2>
-      </div>
-    </div>
-    <div class="verification-grid">
-      <div class="article-code" set:html={commands} />
-      <div class="checklist">
-        <p>
-          <Check size={15} /> 新增带备注的任务，刷新后仍存在
-        </p>
-        <p>
-          <Check size={15} /> 编辑备注，再次进入编辑时正确回填
-        </p>
-        <p>
-          <Check size={15} /> 清空备注，刷新后确实为空
-        </p>
-        <p>
-          <Check size={15} /> 切换完成状态，不丢失已有备注
-        </p>
-        <p>
-          <Check size={15} /> 旧数据库迁移后，旧任务正常显示
-        </p>
-        <p>
-          <Check size={15} /> 分类、优先级、筛选和拖拽仍然可用
-        </p>
-      </div>
-    </div>
-    <div class="info-note">
-      <Info size={15} />
-      <p>
-        以上是你在参考工程中需要执行的验证清单，不代表本网页运行了上游后端。原项目依赖
-        Vite 5 与 better-sqlite3 11；如本机 Node
-        版本出现原生模块安装错误，优先核对兼容版本与构建工具，勿删除数据库来绕过迁移。
-      </p>
-    </div>
-  </section>
-  <div class="next-chapter">
+  <div class="lesson-page-heading">
     <div>
-      <span class="eyebrow">NEXT CHAPTER</span>
-      <h3>把这两次开发，变成可复用的方法。</h3>
+      <a href="/">学习实验室</a>
+      <span>/</span>
+      <span>案例 02</span>
     </div>
-    <a class="primary-button" href="/review">
-      工程实践复盘 <ArrowRight size={15} />
-    </a>
+    <p>
+      不重写，也能做好一次改动。<span>跟着一条备注，走完前后端。</span>
+    </p>
+    <a href="/case/from-scratch">案例 01 ↗</a>
   </div>
+  <TodoLesson highlighted={highlighted} client:load />
+  <div class="source-note">
+    <a
+      href="https://github.com/Baoxd123/todo-app"
+      target="_blank"
+      rel="noreferrer"
+    >
+      参考项目 ↗
+    </a>{" "}
+    · React / Express / SQLite · 关键改动片段，不是完整项目分发。
+  </div>
+  <Accordion items={details} client:load />
 </Layout>

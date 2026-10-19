@@ -1,181 +1,78 @@
-import { useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
-import {
-  ArrowRight,
-  ArrowLeft,
-  Check,
-  ChevronRight,
-  Code2,
-  Download,
-  Lightbulb,
-  MessageSquareText,
-  MousePointer2,
-  Sparkles,
-} from "lucide-react";
 import { stages, portfolioHtml } from "@/data/course";
-import { CopyButton } from "./CopyButton";
-import { Browser } from "./ui/browser";
-import { Terminal } from "./ui/terminal";
-import { CodeComparison } from "./ui/code-comparison";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
+import {
+  LessonStudio,
+  type LessonStep,
+  type HighlightedStage,
+} from "./LessonStudio";
+export type { HighlightedStage } from "./LessonStudio";
 
-export type HighlightedStage = { before: string; after: string };
 export function CaseWorkbench({
   highlighted,
-  compact = false,
 }: {
   highlighted: HighlightedStage[];
-  compact?: boolean;
 }) {
-  const [step, setStep] = useState(compact ? 4 : 0);
-  const reduce = useReducedMotion();
-  const stage = stages[step];
+  const kinds: LessonStep["kind"][] = [
+    "brief",
+    "plan",
+    "code",
+    "preview",
+    "diff",
+    "terminal",
+    "delivery",
+  ];
+  const hints = [
+    "先告诉 AI，你想做什么。",
+    "先看计划，不急着写代码。",
+    "确认计划，让代码开始生长。",
+    "打开页面，亲眼找一个问题。",
+    "说清问题，只改需要改的地方。",
+    "检查之后，再记录一个版本。",
+    "把能继续使用的作品交出来。",
+  ];
+  const steps: LessonStep[] = stages.map((stage, i) => ({
+    label: stage.name,
+    title: stage.title,
+    hint: hints[i],
+    prompt: stage.prompt,
+    reply:
+      i === 3
+        ? "本地预览已在右侧展示。先看桌面，再点手机图标切换到 375px。观察标题和项目卡片，是否还能完整显示？"
+        : stage.reply,
+    kind: kinds[i],
+    filename:
+      i === 2 ? "index.html" : i === 5 ? "终端 · 教学命令回放" : stage.filename,
+    code:
+      i === 2
+        ? portfolioHtml(2).replace(/></g, ">\n<")
+        : i === 5
+          ? `$ git diff --check\n# 检查空白错误\n\n$ git diff -- index.html\n# 确认只有响应式样式变化\n\n# 手动检查 375px / 1280px、内容与邮件入口\n# hello@example.com 需要替换为真实邮箱\n\n# 确认以上检查后，再执行：\n$ git add index.html\n$ git commit -m "feat: add responsive portfolio"`
+          : stage.after,
+    highlighted: i === 2 ? undefined : highlighted[i],
+    html: portfolioHtml(i),
+    items:
+      i === 0
+        ? [
+            "给潜在客户看的中文作品集",
+            "个人介绍 + 两个精选项目",
+            "邮件联系入口，交付前替换邮箱",
+            "375px 手机 / 1280px 桌面均可阅读",
+            "不做登录、数据库与 CMS",
+          ]
+        : [
+            "用语义化 HTML 搭好页面结构",
+            "添加介绍、项目卡片与联系入口",
+            "启动本地静态服务器预览",
+            "切换手机视口，发现并修复问题",
+            "查看差异、手动验证，再提交 Git",
+          ],
+    lesson: stage.lesson,
+    detail: <p>{stage.goal}</p>,
+  }));
   return (
-    <div className={`workbench ${compact ? "compact-workbench" : ""}`}>
-      <div className="workbench-top">
-        <div>
-          <span className="live-dot" />
-          <strong>
-            {compact ? "开发过程，不再是黑盒。" : "林间的个人网站"}
-          </strong>
-          <span className="workbench-project">INTERACTIVE WORKSPACE</span>
-        </div>
-        <span className="workbench-number">
-          {String(step + 1).padStart(2, "0")} <span>/ 07</span>
-        </span>
-      </div>
-      <div className="stage-nav" aria-label="开发阶段">
-        {stages.map((s, i) => (
-          <button
-            type="button"
-            key={s.en}
-            className={i === step ? "current" : ""}
-            aria-pressed={step === i}
-            onClick={() => setStep(i)}
-          >
-            <span className="step-number">
-              {i < step ? <Check size={11} /> : String(i + 1).padStart(2, "0")}
-            </span>
-            <span>{s.name}</span>
-            {i < 6 && <ChevronRight className="stage-chevron" size={11} />}
-          </button>
-        ))}
-      </div>
-      <motion.div
-        key={step}
-        initial={reduce ? false : { opacity: 0.5, y: 5 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
-      >
-        {!compact && (
-          <div className="stage-intro">
-            <span className="eyebrow">
-              STEP {String(step + 1).padStart(2, "0")} /{" "}
-              {stage.en.toUpperCase()}
-            </span>
-            <h2>{stage.title}</h2>
-            <p>{stage.goal}</p>
-          </div>
-        )}
-        <div className="workspace-grid">
-          <div className="prompt-column">
-            <div className="panel-heading">
-              <span>
-                <MessageSquareText size={14} /> 这一次，怎样提问
-              </span>
-              <span className="micro-label">PROMPT</span>
-            </div>
-            <div className="prompt-card">
-              <div className="prompt-user">
-                <span className="avatar">我</span>
-                <span>你发给 AI 的指令</span>
-                <span className="prompt-dot">···</span>
-              </div>
-              <p>{stage.prompt}</p>
-              <CopyButton text={stage.prompt} />
-            </div>
-            <div className="agent-response">
-              <span className="agent-icon">
-                <Sparkles size={13} />
-              </span>
-              <div>
-                <strong>Agent 的思路</strong>
-                <p>{stage.reply}</p>
-              </div>
-            </div>
-            <div className="lesson-note">
-              <Lightbulb size={15} />
-              <p>{stage.lesson}</p>
-            </div>
-          </div>
-          <div className="result-column">
-            <Tabs defaultValue="preview">
-              <div className="result-tabs-row">
-                <TabsList aria-label="查看开发结果">
-                  <TabsTrigger value="preview">
-                    <MousePointer2 size={13} />
-                    网页预览
-                  </TabsTrigger>
-                  <TabsTrigger value="code">
-                    <Code2 size={14} />
-                    代码变更
-                  </TabsTrigger>
-                </TabsList>
-                <span className="linked-label">
-                  <span />
-                  随阶段联动
-                </span>
-              </div>
-              <TabsContent value="preview">
-                <Browser html={portfolioHtml(step)} stage={step} />
-              </TabsContent>
-              <TabsContent value="code">
-                <CodeComparison
-                  {...highlighted[step]}
-                  filename={stage.filename}
-                />
-              </TabsContent>
-            </Tabs>
-            <Terminal command={stage.command} output={stage.output} />
-          </div>
-        </div>
-      </motion.div>
-      <div className="workbench-bottom">
-        <span>
-          <span className={`status-dot ${step === 3 ? "warning" : ""}`} />
-          {stage.result}
-        </span>
-        <div>
-          {compact ? (
-            <a href="/case/from-scratch">
-              进入完整案例 <ArrowRight size={14} />
-            </a>
-          ) : (
-            <>
-              <button
-                type="button"
-                disabled={step === 0}
-                onClick={() => setStep(step - 1)}
-              >
-                <ArrowLeft size={14} /> 上一步
-              </button>
-              {step === 6 ? (
-                <a href="/examples/folio.html" download="index.html">
-                  <Download size={14} /> 下载完整页面
-                </a>
-              ) : (
-                <button
-                  className="next-step"
-                  type="button"
-                  onClick={() => setStep(step + 1)}
-                >
-                  下一步 <ArrowRight size={14} />
-                </button>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+    <LessonStudio
+      steps={steps}
+      name="林间的个人网站"
+      next={{ href: "/case/todo-app", label: "试试已有项目" }}
+    />
   );
 }

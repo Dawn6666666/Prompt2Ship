@@ -1,11 +1,15 @@
 import { useState } from "react";
 import {
+  ArrowRight,
   ArrowUpRight,
   Code2,
+  GitBranch,
+  Play,
   TerminalSquare,
 } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
 import { CopyButton } from "./CopyButton";
+import { Accordion } from "./ui/accordion";
+import { TypingAnimation } from "./ui/typing-animation";
 const tools = [
   {
     id: "opencode",
@@ -88,92 +92,200 @@ const tools = [
   },
 ];
 export function SetupGuide() {
-  const [checked, setChecked] = useState<string[]>([]);
-  const checks = [
-    "编辑器能打开项目文件夹",
-    "终端能找到 Node.js / npm 和 Git",
-    "Agent 能读取正确的项目目录",
-    "本地预览能在浏览器中打开",
-  ];
+  const [section, setSection] = useState(0);
+  const [selected, setSelected] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [played, setPlayed] = useState(false);
+  const tool = tools[selected];
+  const versionDemo =
+    "$ node --version\nv24.x.x  # 示例版本\n\n$ npm --version\n11.x.x   # 示例版本\n\n$ git --version\ngit version 2.x.x\n\n# 在你自己的终端运行，确认真实结果。";
   return (
-    <>
-      <Tabs defaultValue="opencode" className="tool-picker">
-        <TabsList aria-label="选择 AI 编程工具">
-          {tools.map((t) => (
-            <TabsTrigger key={t.id} value={t.id}>
-              {t.name}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        {tools.map((tool) => (
-          <TabsContent key={tool.id} value={tool.id}>
-            <div className="tool-panel">
-              <div className="tool-panel-heading">
-                <span className="tool-logo">
-                  <TerminalSquare size={24} />
-                </span>
-                <div>
-                  <h3>{tool.name}</h3>
-                  <span className="inline-tag">{tool.tag}</span>
-                </div>
-                <a href={tool.link} target="_blank" rel="noreferrer">
-                  官方文档 <ArrowUpRight size={14} />
-                </a>
-              </div>
-              <p>{tool.intro}</p>
-              {tool.install && (
-                <div className="install-command">
-                  <code>{tool.install}</code>
-                  <CopyButton text={tool.install} label="复制命令" />
-                </div>
-              )}
-              <ol>
-                {tool.steps.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ol>
-              <div className="launch-command">
-                <Code2 size={15} />
-                <span>启动入口</span>
-                <code>{tool.start}</code>
-              </div>
-              <p className="tool-note">{tool.note}</p>
-            </div>
-          </TabsContent>
+    <div className="focus-panel">
+      <nav className="setup-nav" aria-label="准备步骤">
+        {["准备环境", "选择 Agent", "试一次协作"].map((label, i) => (
+          <button
+            type="button"
+            key={label}
+            aria-current={section === i ? "step" : undefined}
+            onClick={() => setSection(i)}
+          >
+            <span>0{i + 1}</span>
+            {label}
+          </button>
         ))}
-      </Tabs>
-      <section className="setup-checklist">
-        <div>
-          <span className="eyebrow">READY CHECK</span>
-          <h3>准备好，就出发。</h3>
-          <p>
-            这不是考试，只是一份可勾选的出发清单。
-            <br />
-            无需全选，也可以先浏览交互案例。
-          </p>
-        </div>
-        <div>
-          {checks.map((text) => (
-            <label key={text}>
-              <input
-                type="checkbox"
-                checked={checked.includes(text)}
-                onChange={() =>
-                  setChecked((current) =>
-                    current.includes(text)
-                      ? current.filter((c) => c !== text)
-                      : [...current, text],
-                  )
-                }
+      </nav>
+      <div className="setup-scene">
+        {section === 0 && (
+          <>
+            <span className="eyebrow">YOUR LOCAL WORKSPACE</span>
+            <h2>先准备这三样，就够了。</h2>
+            <div className="basics-grid">
+              <a
+                href="https://code.visualstudio.com/download"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Code2 size={23} />
+                <h3>VS Code ↗</h3>
+                <p>打开项目文件夹，文件、终端和 Git 放在一起。</p>
+              </a>
+              <a
+                href="https://nodejs.org/en/download"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <TerminalSquare size={23} />
+                <h3>Node.js ↗</h3>
+                <p>本教程站点用 Node 24；纯 HTML 案例只需浏览器。</p>
+              </a>
+              <a
+                href="https://git-scm.com/downloads"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <GitBranch size={23} />
+                <h3>Git ↗</h3>
+                <p>看清差异，为每次经过确认的修改留下记录。</p>
+              </a>
+            </div>
+            {!playing && !played ? (
+              <button
+                className="quiet-button"
+                type="button"
+                onClick={() => setPlaying(true)}
+              >
+                <Play size={13} />
+                看看怎样检查安装结果
+              </button>
+            ) : (
+              <div className="stream-editor terminal-editor">
+                <div className="editor-title">
+                  <TerminalSquare size={14} />
+                  版本检查 · 命令回放，不检测本机
+                </div>
+                <pre className="stream-code">
+                  {playing ? (
+                    <TypingAnimation
+                      text={versionDemo}
+                      code
+                      onComplete={() => {
+                        setPlaying(false);
+                        setPlayed(true);
+                      }}
+                    />
+                  ) : (
+                    versionDemo
+                  )}
+                </pre>
+              </div>
+            )}
+          </>
+        )}
+        {section === 1 && (
+          <>
+            <span className="eyebrow">ONE PARTNER IS ENOUGH</span>
+            <h2>选一个搭档，不必全装。</h2>
+            <div className="tool-options" aria-label="选择 AI 工具">
+              {tools.map((t, i) => (
+                <button
+                  type="button"
+                  key={t.id}
+                  aria-pressed={selected === i}
+                  onClick={() => setSelected(i)}
+                >
+                  {t.name}
+                </button>
+              ))}
+            </div>
+            <div className="tool-heading">
+              <h3>{tool.name}</h3>
+              <span>{tool.tag}</span>
+              <a href={tool.link} target="_blank" rel="noreferrer">
+                官方文档
+                <ArrowUpRight size={13} />
+              </a>
+            </div>
+            <p>{tool.intro}</p>
+            {tool.install && (
+              <div className="install-command">
+                <code>{tool.install}</code>
+                <CopyButton text={tool.install} label="复制命令" />
+              </div>
+            )}
+            <ol className="tool-steps">
+              {tool.steps.map((text) => (
+                <li key={text}>{text}</li>
+              ))}
+            </ol>
+            <Accordion
+              items={[
+                {
+                  title: "平台、登录与版本注意事项",
+                  content: <p>{tool.note} 官方入口核对于 2026-10-19。</p>,
+                },
+              ]}
+            />
+          </>
+        )}
+        {section === 2 && (
+          <>
+            <span className="eyebrow">FIRST CONVERSATION</span>
+            <h2>进入项目，再开始对话。</h2>
+            <p>
+              在 VS Code 打开文件夹，通过「终端 →
+              新建终端」进入项目目录，然后启动 {tool.name}。
+            </p>
+            <div className="install-command">
+              <code>{tool.start}</code>
+              <CopyButton text={tool.start} label="复制入口" />
+            </div>
+            <div className="install-command">
+              <code>
+                先阅读这个项目，说明目录结构与运行方式。不要修改文件，等我确认计划。
+              </code>
+              <CopyButton
+                text="先阅读这个项目，说明目录结构与运行方式。不要修改文件，等我确认计划。"
+                label="复制提示词"
               />
-              <span>{text}</span>
-            </label>
-          ))}
-          <p className="check-progress" aria-live="polite">
-            {checked.length} / 4 项已确认 · 本次页面有效
-          </p>
+            </div>
+            <Accordion
+              items={[
+                {
+                  title: "第一次协作，怎样保护现有代码？",
+                  content: (
+                    <p>
+                      先运行 git status 确认已有修改，再用 git switch -c
+                      feat/my-first-task 创建分支。完成后看 git diff，检查通过再
+                      git add 和 git commit。已提交的改动用 git revert
+                      &lt;提交ID&gt; 撤销；未提交内容先备份，不用 reset --hard
+                      清空现场。密钥不放进源码，不关闭全部权限确认。新目录先 git
+                      init。
+                    </p>
+                  ),
+                },
+              ]}
+            />
+          </>
+        )}
+        <div className="setup-next">
+          <span>随时跳过准备，先体验案例。</span>
+          {section < 2 ? (
+            <button
+              type="button"
+              className="primary-button"
+              onClick={() => setSection(section + 1)}
+            >
+              下一步
+              <ArrowRight size={14} />
+            </button>
+          ) : (
+            <a className="primary-button" href="/case/from-scratch">
+              开始交互案例
+              <ArrowRight size={14} />
+            </a>
+          )}
         </div>
-      </section>
-    </>
+      </div>
+    </div>
   );
 }

@@ -4,11 +4,11 @@
 
 ## 组件来源
 
-| 来源 | 上游 | 本项目中的适配 |
-| --- | --- | --- |
-| Astro shadcn template | https://github.com/AREA44/astro-shadcn-template | `src/components/Header.tsx`、`src/layouts/Layout.astro`：导航、React island 与主题切换模式 |
-| Magic UI | https://github.com/magicuidesign/magicui | `src/components/ui/browser.tsx`：Safari 浏览器外壳适配为 iframe；`code-comparison.tsx`：前后代码面板；`terminal.tsx`：Motion 终端分行动效 |
-| shadcn/ui | https://github.com/shadcn-ui/ui | `src/components/ui/tabs.tsx`：基于 Radix 的 Tabs 包装器 |
+| 来源                  | 上游                                            | 本项目中的适配                                                                                                                                                                                                            |
+| --------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Astro shadcn template | https://github.com/AREA44/astro-shadcn-template | `src/components/Header.tsx`、`src/layouts/Layout.astro`：导航、React island 与主题切换模式                                                                                                                                |
+| Magic UI              | https://github.com/magicuidesign/magicui        | `src/components/ui/browser.tsx`：Safari 浏览器外壳适配为 iframe；`code-comparison.tsx`：前后代码面板；`terminal.tsx`：Motion 终端分行动效；`typing-animation.tsx`：单次流式打字，适配完成回调、自动滚动与减少动态效果偏好 |
+| shadcn/ui             | https://github.com/shadcn-ui/ui                 | `src/components/ui/tabs.tsx`、`accordion.tsx`：基于 Radix 的标签与折叠面板；`textarea.tsx`：提示词输入框                                                                                                                  |
 
 相关本地来源分别位于 `../FrontendFramework/astro-shadcn-template`、`../FrontendFramework/magicui`、`../FrontendFramework/shadcn-ui`。代码高亮改为 Shiki 构建时生成；浏览器外壳使用可交互 HTML 预览；没有照搬与本站无关的整套示例。
 
