@@ -1,0 +1,127 @@
+:root {
+  --sl-font: var(--p-font);
+  --sl-font-mono: var(--p-mono);
+  --sl-color-bg: var(--p-bg);
+  --sl-color-text: var(--p-ink);
+  --sl-color-text-accent: var(--p-accent);
+  --sl-color-bg-nav: var(--p-bg);
+  --sl-color-bg-sidebar: var(--p-bg);
+  --sl-color-hairline-light: var(--p-line);
+  --sl-color-hairline: var(--p-line);
+  --sl-text-xs: 0.75rem;
+  --sl-text-sm: 0.875rem;
+  --sl-text-h1: 2rem;
+  --sl-text-h2: 1.5rem;
+  --sl-text-h3: 1.125rem;
+  --sl-content-width: 52rem;
+  --sl-nav-height: 76px;
+}
+.header {
+  padding: 0 !important;
+  border-bottom: 0 !important;
+}
+.header .site-header {
+  width: 100%;
+  max-width: none;
+}
+.docs-search {
+  position: fixed;
+  top: 18px;
+  right: 32px;
+  z-index: 60;
+}
+.header .header-tools {
+  padding-right: 52px;
+}
+.docs-search button[data-open-modal] {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  padding: 10px;
+  border: 0;
+  background: transparent;
+}
+.docs-search button[data-open-modal] > :not(svg) {
+  display: none;
+}
+.sl-markdown-content
+  :is(.ready-scene, .done-check, .terminal-view, .prompt-block, .guide-tools)
+  :is(h2, h3, p, pre, button, label, span, div) {
+  margin-top: 0;
+}
+.sl-markdown-content .ready-scene {
+  margin: 24px 0;
+}
+.sl-markdown-content :is(button, .button, .text-link) {
+  text-decoration: none;
+}
+.sl-markdown-content .inline-actions {
+  margin: 24px 0;
+}
+.sl-markdown-content .terminal-view pre {
+  margin: 0;
+}
+.sl-markdown-content .done-check p {
+  margin-top: 8px;
+}
+.sl-markdown-content .question-item h3 {
+  margin: 0;
+}
+.sl-markdown-content .question-item {
+  margin: 0;
+}
+.sl-markdown-content .question-trigger {
+  font-size: 16px;
+  line-height: 1.7;
+}
+.sl-markdown-content .guide-tools button {
+  color: var(--p-ink);
+}
+.sl-markdown-content .check-row {
+  margin-top: 0;
+}
+.sl-markdown-content .choice {
+  margin: 8px 0;
+}
+.sl-markdown-content .terminal-output pre {
+  white-space: pre-wrap;
+}
+.sl-markdown-content .terminal-view small {
+  color: #b7c1d2;
+}
+.right-sidebar {
+  font-size: 12px;
+}
+.sidebar a[aria-current="page"],
+.sidebar a[aria-current="page"] span {
+  color: var(--p-bg);
+}
+@media (max-width: 799px) {
+  :root {
+    --sl-nav-height: 64px;
+  }
+  .header .site-header {
+    height: 64px;
+    padding: 0 16px;
+    gap: 16px;
+  }
+  .header :is(.desktop-nav, .source-link, .mobile-nav) {
+    display: none;
+  }
+  .header .header-tools {
+    padding-right: 96px;
+  }
+  .sl-menu-button {
+    top: 12px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+  }
+  .docs-search {
+    top: 12px;
+    right: 60px;
+  }
+  .content-panel {
+    padding-top: 24px;
+  }
+}

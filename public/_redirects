@@ -1,0 +1,16 @@
+/case/from-scratch /case/homepage/ 301
+/case/from-scratch/ /case/homepage/ 301
+/case/todo-app /case/todo/ 301
+/case/todo-app/ /case/todo/ 301
+/learn /start/ 301
+/learn/ /start/ 301
+/setup /start/ 301
+/setup/ /start/ 301
+/review /guide/ 301
+/review/ /guide/ 301
+/learn/setup/vscode/* /start/editor/ 301
+/learn/setup/runtime/* /start/tools/ 301
+/learn/setup/agent/* /start/agent/ 301
+/learn/workflow/* /guide/ 301
+/examples/folio.html /examples/homepage-v2.html 301
+/examples/folio-v1.html /examples/homepage-v1.html 301

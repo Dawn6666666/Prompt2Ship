@@ -4,6 +4,21 @@ import tailwindcss from "@tailwindcss/vite";
 import starlight from "@astrojs/starlight";
 
 export default defineConfig({
+  redirects: {
+    "/examples/folio.html": "/examples/homepage-v2.html",
+    "/examples/folio-v1.html": "/examples/homepage-v1.html",
+    "/case/from-scratch": "/case/homepage/",
+    "/case/todo-app": "/case/todo/",
+    "/review": "/guide/",
+    "/setup": "/start/",
+    "/learn": "/start/",
+    "/learn/setup/vscode": "/start/editor/",
+    "/learn/setup/runtime": "/start/tools/",
+    "/learn/setup/agent": "/start/agent/",
+    "/learn/workflow/first-task": "/guide/",
+    "/learn/workflow/run-and-feedback": "/guide/",
+    "/learn/workflow/git": "/guide/",
+  },
   integrations: [
     react(),
     starlight({
@@ -14,41 +29,28 @@ export default defineConfig({
       disable404Route: true,
       customCss: [
         "./src/styles/tokens.css",
-        "./src/styles/teaching.css",
-        "./src/styles/docs.css",
-        "./src/styles/completion.css",
+        "./src/styles/base.css",
+        "./src/styles/workbench.css",
+        "./src/styles/reading.css",
       ],
       components: { Header: "./src/components/docs/DocsHeader.astro" },
       sidebar: [
-        { label: "从这里开始", items: [{ label: "学习路线", slug: "learn" }] },
+        { label: "准备", items: [{ label: "从这里开始", slug: "start" }] },
         {
-          label: "01 · 准备开发环境",
+          label: "把工具连起来",
           items: [
-            { label: "安装与认识 VS Code", slug: "learn/setup/vscode" },
-            { label: "准备本地运行环境", slug: "learn/setup/runtime" },
-            { label: "选择一个编程 Agent", slug: "learn/setup/agent" },
+            { label: "1. 编辑器", slug: "start/editor" },
+            { label: "2. 运行与版本工具", slug: "start/tools" },
+            { label: "3. 连接 Agent", slug: "start/agent" },
+            { label: "4. 开工检查", slug: "start/check" },
           ],
         },
         {
-          label: "02 · 学会与 Agent 协作",
+          label: "开始做项目",
           items: [
-            {
-              label: "发出第一个清楚的任务",
-              slug: "learn/workflow/first-task",
-            },
-            {
-              label: "运行、观察与反馈",
-              slug: "learn/workflow/run-and-feedback",
-            },
-            { label: "用 Git 看清每一次修改", slug: "learn/workflow/git" },
-          ],
-        },
-        {
-          label: "03 · 进入交互案例",
-          items: [
-            { label: "从零做一个作品网站 ↗", link: "/case/from-scratch" },
-            { label: "给 Todo 增加任务备注 ↗", link: "/case/todo-app" },
-            { label: "方法与提示词速查 ↗", link: "/review" },
+            { label: "案例一：个人主页 ↗", link: "/case/homepage/" },
+            { label: "案例二：Todo 备注 ↗", link: "/case/todo/" },
+            { label: "方法速查", slug: "guide" },
           ],
         },
       ],

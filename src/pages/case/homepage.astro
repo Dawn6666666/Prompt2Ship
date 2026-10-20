@@ -1,0 +1,17 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { CaseShell } from "../../components/workbench/CaseShell";
+import { caseAssets } from "../../lib/case-assets";
+const assets = await caseAssets();
+---
+
+<Layout title="案例一：做一个个人主页" workspace>
+  <CaseShell assets={assets} client:load />
+  <noscript>
+    <p class="reading">
+      案例需要 JavaScript。你仍可以
+      <a href="/examples/homepage-v2.html">查看完整示例网页</a>，或
+      <a href="/start/">阅读准备教程</a>。
+    </p>
+  </noscript>
+</Layout>

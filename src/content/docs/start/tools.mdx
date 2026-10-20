@@ -1,0 +1,32 @@
+---
+title: 准备运行与版本工具
+description: 安装 Node.js、npm 和 Git，检查它们能否在终端运行。
+---
+
+import { ToolSetup } from "../../../components/lessons/ToolSetup";
+
+**Node.js** 运行本地工具，**npm** 安装依赖（随 Node 一起安装），**Git** 留下代码版本。这三样不是 Agent，也不是 VS Code 插件。
+
+## 安装并检查
+
+案例在 **Node.js 24 LTS** 上验证。选择系统后去官方入口安装，再在 VS Code 集成终端逐条运行检查命令。
+
+<ToolSetup client:load />
+
+小版本号不用和示例相同。每条命令都能输出版本号，才说明对应工具可用。
+
+## 常见问题
+
+**提示“不是内部或外部命令”或 command not found**：先关闭并重新打开终端；刚安装时也可以重开 VS Code。仍失败时检查安装路径是否加入 PATH。
+
+**PowerShell 提示 npm.ps1 无法运行**：在 VS Code 终端的下拉菜单切换到“命令提示符”再试；不用为了本教程修改全局安全策略。
+
+**npm 下载失败**：检查网络与错误信息。不要遇到报错就给所有命令加 sudo，或复制来历不明的“一键修复”。
+
+## 两个案例怎样运行
+
+案例一只有一个 `index.html`，在 `my-homepage` 里运行 `npx serve@14.2.4 .`。首次需要联网，提示安装时输入 `y`。打开终端实际显示的 Local 地址；默认 3000，被占用时可能另选端口。
+
+案例二是已有的前后端项目，使用它自己的启动命令，需要两个终端。具体步骤放在案例二，不必现在记住。
+
+下一步：[安装并连接 Agent](/start/agent/)。

@@ -1,0 +1,14 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { CaseShell } from "../../components/workbench/CaseShell";
+import { caseAssets } from "../../lib/case-assets";
+const assets = await caseAssets();
+---
+
+<Layout title="工作台联动检查" workspace noindex>
+  <p class="container">
+    内部检查页：依次切换五步，核对文件、终端、预览、Diff、需求单与自查状态。使用
+    ?step=3 直达运行场景。
+  </p>
+  <CaseShell assets={assets} client:load />
+</Layout>

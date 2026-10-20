@@ -1,13 +1,13 @@
 ---
 import { Header } from "../components/Header";
 import "../styles/tokens.css";
-import "../styles/global.css";
-import "../styles/teaching.css";
-import "../styles/completion.css";
+import "../styles/base.css";
+import "../styles/workbench.css";
 const {
-  title = "从想法，到交付。",
+  title = "和 AI 一起，做出你的第一个网页",
   description = "从 VS Code 和编程 Agent 开始，通过可操作的案例，看懂 AI 如何参与需求、代码、验证与交付。",
   workspace = false,
+  noindex = false,
 } = Astro.props;
 ---
 
@@ -17,6 +17,7 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#fafaf8" />
     <title>{title} — Prompt2Ship</title>
     <link rel="icon" href="/favicon.svg" />
@@ -35,23 +36,20 @@ const {
     </script>
   </head>
   <body class:list={["p-site", { "p-workspace": workspace }]}>
-    <a class="p-skip" href="#main">
+    <a class="skip-link" href="#main">
       跳到正文
     </a>
     <Header path={Astro.url.pathname} client:load />
     <main id="main">
       <slot />
     </main>
-    <footer class="p-footer">
-      <a class="p-footer-brand" href="/">
-        Prompt2Ship<span>从一句想法，到一次交付。</span>
-      </a>
-      <div>
-        <a href="/learn/">学习路线</a>
-        <a href="/review">方法速查</a>
-        <a href="https://github.com/Dawn6666666/Prompt2Ship">GitHub ↗</a>
-      </div>
-      <span class="p-footer-note">在过程里，学会创造。</span>
+    <footer class="site-footer">
+      <span>Prompt2Ship · 一份可以跟着做的 AI 编程入门指南</span>
+      <p>
+        命令输出和 Agent 对话是预设演示；个人主页预览是真实
+        HTML。本站不读取你的电脑，也不调用 AI。
+      </p>
+      <a href="/guide/">方法速查 ↗</a>
     </footer>
   </body>
 </html>

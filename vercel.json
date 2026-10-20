@@ -3,5 +3,50 @@
   "framework": "astro",
   "installCommand": "npm ci",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/case/from-scratch",
+      "destination": "/case/homepage/",
+      "permanent": true
+    },
+    {
+      "source": "/case/todo-app",
+      "destination": "/case/todo/",
+      "permanent": true
+    },
+    { "source": "/learn", "destination": "/start/", "permanent": true },
+    { "source": "/setup", "destination": "/start/", "permanent": true },
+    { "source": "/review", "destination": "/guide/", "permanent": true },
+    {
+      "source": "/learn/setup/vscode",
+      "destination": "/start/editor/",
+      "permanent": true
+    },
+    {
+      "source": "/learn/setup/runtime",
+      "destination": "/start/tools/",
+      "permanent": true
+    },
+    {
+      "source": "/learn/setup/agent",
+      "destination": "/start/agent/",
+      "permanent": true
+    },
+    {
+      "source": "/learn/workflow/:path*",
+      "destination": "/guide/",
+      "permanent": true
+    },
+    {
+      "source": "/examples/folio.html",
+      "destination": "/examples/homepage-v2.html",
+      "permanent": true
+    },
+    {
+      "source": "/examples/folio-v1.html",
+      "destination": "/examples/homepage-v1.html",
+      "permanent": true
+    }
+  ]
 }

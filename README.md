@@ -1,74 +1,72 @@
 # Prompt2Ship
 
-面向初学者的 AI Coding 交互式教程。沿着「搭建环境 → 与 Agent 协作 → 从零做网站 → 修改已有全栈项目 → 验证交付」学习，每个动态只解释一个明确动作。
+给大一下学期、刚接触 Vibe Coding 的同学的交互入门指南。先准备 VS Code 和编程 Agent，再通过两个案例练习：想清楚 → 定计划 → 生成并运行 → 发现问题并修改 → 检查并交付。需求分析是主线，不把生成代码当成完成任务。
 
-## 本地运行
+## 本地开发
 
-需要 Node.js 24。
+需要 Node.js 24；浏览器测试使用本机 Chrome。
 
 ```sh
 npm ci
 npm run dev
 ```
 
-访问终端打印的地址。更新依赖后，重启已运行的开发服务器。
+打开终端显示的地址。生产搜索需要构建后使用。
 
 ```sh
-npm run check       # Astro、MDX 与 TypeScript 检查
-npm test            # 差异计算与阶段快照检查
-npm run test:e2e    # 构建后检查浏览器交互、主题与移动端布局
-npm run build       # 静态产物 dist/
-npm run preview     # 查看生产构建；文档搜索在生产构建中可用
+npm run check          # Astro / MDX / TypeScript
+npm run lint:styles    # 禁止微小字号和令牌外圆角
+npm test               # 真实 Diff、Git bundle 和案例素材检查
+npm run test:e2e       # 构建 + Chrome 全流程、移动端与键盘检查
+npm run build          # 内容校验 + 静态输出 dist/
+npm run preview
 ```
 
-浏览器测试需要 Python 3 与本机 Chrome，在独立的 4399 端口提供静态构建，避免复用正在开发的 Vite 服务。其他环境可将 `playwright.config.ts` 的 `launchOptions.channel` 改为已安装的浏览器配置。
+端到端测试用独立 Node 静态服务器（4399），不依赖 Python、不复用开发服务器。不具备 Chrome 的环境可调整 `playwright.config.ts` 的浏览器配置。
 
-## 页面与交互
+## 页面
 
-| 路由                 | 内容                                                              |
-| -------------------- | ----------------------------------------------------------------- |
-| `/`                  | 可操作的初稿 → 发现问题 → 反馈修复预览与学习路线                  |
-| `/learn/`            | Starlight 教程入口，章节导航、目录与全文搜索                      |
-| `/learn/setup/…`     | VS Code、运行环境、Agent 选择与连接                               |
-| `/learn/workflow/…`  | 任务描述、运行反馈、Git 状态与检查                                |
-| `/case/from-scratch` | 七阶段作品网站；提示词、实际 HTML、可调视口、代码差异与下载       |
-| `/case/todo-app`     | 七阶段备注改造；文件地图、多文件 diff、四种操作的数据流与验证记录 |
-| `/review`            | 五种协作方法的提示词对照与可复制模板                              |
+| 路由              | 内容                                            |
+| ----------------- | ----------------------------------------------- |
+| `/`               | 三步真实网页演示、学习入口                      |
+| `/start/`         | 准备总览                                        |
+| `/start/editor/`  | VS Code 安装与界面地图                          |
+| `/start/tools/`   | Node、Git 检查与系统差异                        |
+| `/start/agent/`   | OpenCode V2 安装、连接、首次只读任务            |
+| `/start/check/`   | 从空目录开始的工作台就绪检查                    |
+| `/case/homepage/` | 周小满的单文件个人主页；手机溢出与局部 CSS 修复 |
+| `/case/todo/`     | 已有 Todo 增加备注；勾选完成清空备注的回归修复  |
+| `/guide/`         | 需求单五问、反馈四要素、常见问题和清除记录      |
+| `/dev/workbench/` | 不索引的内部联动检查页                          |
 
-案例阶段可通过 URL hash 分享，例如 `/case/from-scratch#iterate`、`/case/todo-app#flow`。旧 `/setup` 路由重定向到 VS Code 教程。
+案例用 `?step=3` 分享当前步骤，浏览器后退有效。静态页面先显示骨架再水合，不闪现错误步骤。需求草稿、自查进度仅存当前浏览器；旧进度保留在 legacy 命名空间，不替代新版验收。
 
 ## 内容与组件
 
-- `src/content/docs/`：MDX 教程，每页一个主题；Starlight 提供文档结构与 Expressive Code。
-- `src/components/dynamics/Activity.tsx`：动态容器、步骤控制、手动播放与减少动画支持；`data/activities.ts`、`checkpoints.ts` 约定目标、观察点与完成依据。
-- `src/components/dynamics/PracticeTask.tsx`：六篇教程与两个案例的自查练习，浏览器本地记录进度；不自动判定本机操作。
-- `src/data/agent-setup.ts`：OpenCode 2 默认安装、模型连接与首次只读任务；`ReferenceImage.tsx`：Radix 图片放大与局部定位。
-- `src/data/todo-follow.ts`、`components/cases/TodoFollowAlong.tsx`：固定基线、双终端、AI 修改或参考补丁、验收与提交命令。
-- `src/components/dynamics/`：编辑器导览、提示词构建、Git 状态、响应式预览、Todo 数据流。
-- `src/components/CaseWorkbench.tsx`、`TodoLesson.tsx`：案例阶段与成果联动。
-- `src/data/course.ts`：作品网站阶段与完整 HTML；预览和下载共用同一份源数据。
-- `src/data/todo.ts`、`todo-flow.ts`：备注关键代码与四种请求场景。
-- `src/lib/highlight.ts`：构建时执行 diff 和 Shiki；客户端不加载高亮引擎。
-- `src/styles/tokens.css`：全站明暗主题变量；`global.css`、`teaching.css`、`docs.css` 分别管理页面、教学组件和文档适配，`completion.css` 管理跟做、练习与验证材料。
+- `docs/README.md`：已批准的重构指南；`docs/10-roadmap.md`：实施勾选；`docs/11-implementation.md`：当前验证与待办。
+- `components/workbench/`：`CaseShell`、文件树、终端、真实 iframe、状态条和需求单抽屉。
+- `components/lessons/`：需求拆解器、反馈选择、Todo 演示与数据流。
+- `data/homepage.ts`、`requirement.ts`、`scenes.ts`：步骤文案、两套五问、声明式场景 patch。
+- `lib/scene-state.ts`：集中状态；跳转小步累积应用 patch。自查记录与示例状态独立。
+- `lib/case-assets.ts`、`highlight.ts`：构建时 Shiki 与真实 Diff，不把高亮引擎发送到浏览器。
+- `public/examples/homepage-v1.html`、`homepage-v2.html`：预览、代码与下载共同的真实素材源。
+- `styles/tokens.css`、`base.css`、`workbench.css`、`reading.css`：令牌、站点、场景、Starlight 适配。
 
-## Todo 验证与补丁
-
-以本地 `../FrontendFramework/todo-app` 的 `a5a648a` 为基线，复制到临时目录，增加 notes 后实际运行 SQLite、Express 接口、前端构建与 Chrome 界面操作。不会修改参考库。
+## 真实验证记录
 
 ```sh
+npm run verify:homepage
 npm run verify:todo
-# 或指定参考库位置
+# Todo 的参考库可以显式指定
 npm run verify:todo -- /path/to/todo-app
 ```
 
-检查包括旧数据迁移、重复启动、新增后读取、编辑、状态切换保留备注、清空、输入校验、筛选排序回归和删除。另用真实浏览器验证表单新增、多行备注回读、编辑回填、取消编辑、状态切换与清空，并核对最终 SQLite 值。环境、HTTP 请求与响应、构建输出、截图路径和补丁 SHA-256 写入 `src/data/todo-evidence.json`，完整修改写入 `public/examples/todo-notes.patch`，教程展示的是该次检查记录。
+两个脚本在 `/tmp/opencode` 的一次性目录工作，不修改参考项目。主页生成真实 v1/v2 提交和可下载 Git bundle，并检查修改仅涉及 CSS、正文不变。Todo 以 `../FrontendFramework/todo-app` 的 `a5a648a` 为基线，先复现勾选完成清空备注，再实际检查 SQLite、Express、构建、原项目 Chrome 操作与四文件范围；输出补丁、JSON、截图和真实 Git 记录。浏览器内的 Todo 是预设交互，不连接这些验证后端。
 
-教学网页不连接 Todo 后端、不调用 AI、不保存用户任务。终端输出和数据流均为标注的示例；作品预览运行实际 HTML。案例代码用于本地跟做，示例姓名、作品与邮箱在交付前需要替换。
+安装教程以官方文档为准，OpenCode V2 命令核对于 2026-10-20。网页不调用实时 AI、不操作读者终端、不检测本机安装状态。“示例检查通过”不代表读者已完成操作。交付前需要自行替换人物、邮箱和项目链接。
 
-## 开发参考与部署
+## 参考与部署
 
-优先查阅 [`../FrontendFramework/AI_INDEX.md`](../FrontendFramework/AI_INDEX.md)，只按需复用 Starlight、shadcn/ui、Magic UI、Motion 等组件，来源见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。不要整体复制参考项目。
+组件来源见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)，接续开发见 [AGENT_GUIDE.md](./AGENT_GUIDE.md)。优先按需复用 `../FrontendFramework/AI_INDEX.md` 中的 Starlight、shadcn/Radix、Magic UI、Motion，不整套复制。
 
-`dist/` 可部署到静态托管服务。现有 `vercel.json` 使用 `npm ci` 和 `npm run build`，不需要后端或密钥。确定正式域名后再配置 `astro.config.mjs` 的 `site`。
-
-接续开发说明见 [AGENT_GUIDE.md](./AGENT_GUIDE.md)，产品目标见 [PRD.md](./PRD.md)。
+`dist/` 是纯静态产物。Vercel 的 `vercel.json` 提供永久重定向（308）；Netlify/Cloudflare Pages 可使用 `public/_redirects`（301）。其他静态托管由 Astro 生成的 HTML 刷新页兜底，若要求 HTTP 301，需配置托管层。旧 hash 不属于服务器请求，旧阶段链接落到新案例默认步骤。正式域名确认后配置 `astro.config.mjs` 的 `site`；目前不猜测域名。

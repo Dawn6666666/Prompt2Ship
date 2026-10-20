@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>周小满 · 个人主页</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: #fafbf9; color: #202c3b; font-family: system-ui, sans-serif; line-height: 1.7; }
+main { width: 100%; max-width: 760px; margin: 0 auto; padding: 48px 24px; }
+h1 { font-size: clamp(32px, 5vw, 56px); line-height: 1.2; margin: 20px 0; letter-spacing: -2px; }
+.projects { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 560px) { .projects { grid-template-columns: 1fr; } }
+.project { padding: 24px; border: 1px solid #dce2e9; border-radius: 12px; background: white; }
+.project h3 { margin-top: 0; }
+a { color: #2f5bea; }
+.intro { color: #657184; margin-bottom: 36px; }
+.avatar { width: 48px; height: 48px; border-radius: 50%; background: #e2e9f9; display: grid; place-items: center; color: #2f5bea; }
+footer { margin-top: 36px; border-top: 1px solid #dce2e9; padding-top: 24px; }
+</style>
+</head>
+<body>
+<main>
+<header><div class="avatar" aria-label="头像占位">周</div><p>你好，很高兴认识你。</p><h1>我是周小满，<br>正在把想法变成作品。</h1><p class="intro">大一学生，学习计算机，喜欢做有用的小工具。这里是我的两个小项目。</p></header>
+<section aria-label="两个项目" class="projects">
+<article class="project"><h3>成绩管理小工具</h3><p>我的 C 语言课程大作业，可以录入成绩、查询和统计平均分。</p><a href="#">查看项目（待替换链接） ↗</a></article>
+<article class="project"><h3>社团招新网页</h3><p>为摄影社做的一页招新介绍，展示活动和报名方式。</p><a href="#">查看项目（待替换链接） ↗</a></article>
+</section>
+<footer><p>有想法想聊聊？</p><a href="mailto:xiaoman@example.com">xiaoman@example.com ↗</a><p>示例人物与内容，请替换为你自己的信息。</p></footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,63 @@
+import { useState } from "react";
+import { flowScenarios } from "../../data/todo-flow";
+export function TodoFlow() {
+  const [scenario, setScenario] = useState(3),
+    [node, setNode] = useState(1);
+  const data = flowScenarios[scenario];
+  return (
+    <div className="todo-flow">
+      <h3>为什么“不传”不等于“清空”？</h3>
+      <p className="muted">修复后的数据流 · 固定示例，不连接真实接口。</p>
+      <div className="flow-choices" aria-label="选择备注操作">
+        {flowScenarios.map((s, i) => (
+          <button
+            key={s.id}
+            aria-pressed={scenario === i}
+            onClick={() => setScenario(i)}
+          >
+            {s.label}
+          </button>
+        ))}
+      </div>
+      <div className="flow-choices" aria-label="数据经过的位置">
+        {["表单", "请求", "后端", "数据库", "重新读取"].map((label, i) => (
+          <button
+            key={label}
+            aria-pressed={node === i}
+            onClick={() => setNode(i)}
+          >
+            {i + 1}. {label}
+          </button>
+        ))}
+      </div>
+      <div className="flow-inspector" role="status">
+        {node === 0 ? (
+          <p>
+            {scenario === 3
+              ? "只点击完成，没有编辑备注。"
+              : scenario === 2
+                ? "编辑框留空，点击保存。"
+                : `在备注框输入：${data.after}`}
+          </p>
+        ) : node === 1 ? (
+          <pre>{`${data.method} ${data.path}\n${JSON.stringify(data.body, null, 2)}`}</pre>
+        ) : node === 2 ? (
+          <>
+            <code>notes !== undefined ? notes.trim() : existing.notes</code>
+            <p>
+              传入的 notes：
+              {"notes" in data.body
+                ? JSON.stringify(data.body.notes)
+                : "undefined · 没有传入"}
+            </p>
+            <p>{data.explanation}</p>
+          </>
+        ) : node === 3 ? (
+          <pre>{`todos.notes = ${JSON.stringify(data.after)}`}</pre>
+        ) : (
+          <p>再次读取的备注：{data.after || "（空字符串）"}</p>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -1,6 +1,5 @@
 /** Reproduce the notes lesson in a disposable copy. Never edits the reference repository. */
 import { cp, mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
@@ -21,7 +20,7 @@ assert.equal(
   "a5a648a",
   "The lesson is pinned to upstream a5a648a. Review a different baseline explicitly.",
 );
-const work = await mkdtemp(join(tmpdir(), "prompt2ship-todo-"));
+const work = await mkdtemp("/tmp/opencode/prompt2ship-todo-");
 for (const item of ["package.json", "package-lock.json", "client", "server"])
   await cp(join(source, item), join(work, item), {
     recursive: true,
@@ -45,6 +44,12 @@ const run = (program, args, opts = {}) => {
   return output;
 };
 run("git", ["init", "-q"]);
+run("git", ["config", "user.name", "Prompt2Ship verification"]);
+run("git", ["config", "user.email", "verification@example.invalid"]);
+await writeFile(
+  join(work, ".gitignore"),
+  "node_modules/\ndist/\n*.db\n*.db-shm\n*.db-wal\n",
+);
 run("git", ["add", "."]);
 run("git", [
   "-c",
@@ -56,6 +61,7 @@ run("git", [
   "upstream baseline",
 ]);
 console.log(`Verification copy: ${work}`);
+const baseline = run("git", ["rev-parse", "HEAD"]).trim();
 run("npm", ["ci", "--no-audit", "--no-fund"]);
 const require = createRequire(join(work, "server/package.json"));
 const originalDb = require(join(work, "server/db.js"));
@@ -150,6 +156,66 @@ await edit("client/src/components/TodoItem.jsx", (text) =>
           fontSize: 13, color: '#6b7280', margin: '6px 0' }}>{todo.notes}</p>}`,
   ),
 );
+// Save and exercise a real defective v1 before restoring the one-line fix.
+const routePath = "server/routes/todos.js";
+const fixedRoute = await readFile(join(work, routePath), "utf8");
+assert.ok(
+  fixedRoute.includes("notes !== undefined ? notes.trim() : existing.notes"),
+);
+await writeFile(
+  join(work, routePath),
+  fixedRoute.replace(
+    "notes !== undefined ? notes.trim() : existing.notes",
+    "(notes ?? '').trim()",
+  ),
+);
+run("git", [
+  "add",
+  "server/db.js",
+  routePath,
+  "client/src/components/TodoForm.jsx",
+  "client/src/components/TodoItem.jsx",
+]);
+run("git", ["commit", "-qm", "v1 添加任务备注（待检查）"]);
+const v1 = run("git", ["rev-parse", "--short=7", "HEAD"]).trim();
+const express = require("express");
+const brokenApp = express();
+brokenApp.use(express.json());
+brokenApp.use("/api/todos", require(join(work, routePath)));
+const brokenServer = brokenApp.listen(0, "127.0.0.1");
+await new Promise((resolve) => brokenServer.once("listening", resolve));
+let defect;
+try {
+  const url = `http://127.0.0.1:${brokenServer.address().port}/api/todos`;
+  const post = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: "v1 缺陷复现", notes: "这条备注应该保留" }),
+  });
+  const created = await post.json();
+  const put = await fetch(`${url}/${created.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ completed: true }),
+  });
+  const toggled = await put.json();
+  assert.equal(created.notes, "这条备注应该保留");
+  assert.equal(toggled.notes, "");
+  await fetch(`${url}/${created.id}`, { method: "DELETE" });
+  defect = {
+    commit: v1,
+    request: { completed: true },
+    before: created.notes,
+    after: toggled.notes,
+    reproduced: true,
+  };
+} finally {
+  await new Promise((resolve) => brokenServer.close(resolve));
+}
+require(join(work, "server/db.js")).close();
+delete require.cache[require.resolve(join(work, routePath))];
+delete require.cache[require.resolve(join(work, "server/db.js"))];
+await writeFile(join(work, routePath), fixedRoute);
 const checks = [];
 let browserEvidence;
 let browserVersion = "";
@@ -178,7 +244,6 @@ check("重复运行迁移", "再次初始化数据库，不重复加列，不删
   );
   assert.equal(migrated.prepare("SELECT count(*) AS n FROM todos").get().n, 1);
 });
-const express = require("express");
 const app = express();
 app.use(express.json());
 app.use("/api/todos", require(join(work, "server/routes/todos.js")));
@@ -361,6 +426,7 @@ const patch = execFileSync(
   "git",
   [
     "diff",
+    baseline,
     "--",
     "server/db.js",
     "server/routes/todos.js",
@@ -373,6 +439,24 @@ await mkdir(join(root, "public/examples"), { recursive: true });
 await writeFile(join(root, "public/examples/todo-notes.patch"), patch);
 // Check that the downloadable artifact applies cleanly to the pinned source.
 run("git", ["apply", "--reverse", "--check", "-"], { input: patch });
+const changedFiles = run("git", ["diff", "--name-only", baseline])
+  .trim()
+  .split("\n")
+  .sort();
+check("修改范围", "相对基线恰好只改动数据库、接口、表单和列表四个文件。", () =>
+  assert.deepEqual(changedFiles, [
+    "client/src/components/TodoForm.jsx",
+    "client/src/components/TodoItem.jsx",
+    "server/db.js",
+    "server/routes/todos.js",
+  ]),
+);
+run("git", ["diff", "--check"]);
+run("git", ["add", routePath]);
+run("git", ["commit", "-qm", "v2 修复切换完成状态清空备注"]);
+const v2 = run("git", ["rev-parse", "--short=7", "HEAD"]).trim();
+const gitLog = run("git", ["log", "-2", "--oneline"]).trim();
+assert.equal(run("git", ["status", "--porcelain"]).trim(), "");
 const apiResults = checks
   .map((entry) => `PASS ${entry.name}: ${entry.detail}`)
   .join("\n");
@@ -384,6 +468,8 @@ const evidence = {
   checkedAt: new Date().toISOString().slice(0, 10),
   upstream,
   checks,
+  defect,
+  git: { v1, v2, log: gitLog, changedFiles },
   frontendBuild: true,
   browser: browserEvidence,
   environment: {
@@ -403,6 +489,10 @@ const evidence = {
 };
 await writeFile(
   join(root, "src/data/todo-evidence.json"),
+  JSON.stringify(evidence, null, 2) + "\n",
+);
+await writeFile(
+  join(root, "public/examples/todo-verification.json"),
   JSON.stringify(evidence, null, 2) + "\n",
 );
 console.log(

@@ -1,42 +1,52 @@
 @import "@fontsource-variable/inter";
 :root {
   color-scheme: light;
-  --p-bg: #fafaf8;
-  --p-panel: #ffffff;
-  --p-ink: #222826;
-  --p-muted: #717773;
-  --p-line: #e3e6e1;
-  --p-soft: #f0f2ed;
-  --p-accent: #315df4;
+  --p-bg: #fff;
+  --p-panel: #fff;
+  --p-soft: #f7f7f5;
+  --p-line: #e6e6e2;
+  --p-ink: #1c1c1a;
+  --p-muted: #666660;
+  --p-accent: #2f5bea;
   --p-accent-soft: #edf1ff;
-  --p-green: #24795b;
+  --p-green: #11734b;
   --p-green-soft: #eaf5ef;
-  --p-orange: #a86a26;
-  --p-orange-soft: #fff3df;
-  --p-red: #b94c48;
+  --p-red: #c43535;
   --p-red-soft: #fff0ee;
+  --p-orange: #945b07;
+  --p-orange-soft: #fff3df;
   --p-code: #191f28;
-  --p-code-ink: #dce4f0;
+  --p-code-ink: #e1e7ef;
+  --state-reply: #7953cb;
+  --state-saved: #2375c9;
+  --state-running: #197e59;
+  --state-verified: #116343;
   --p-font:
-    "Inter Variable", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "PingFang SC", "Microsoft YaHei", sans-serif;
+    "Inter Variable", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --p-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --radius-sm: 6px;
+  --radius-lg: 12px;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
 }
 :root.dark,
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --p-bg: #151917;
-  --p-panel: #1c221e;
-  --p-ink: #edf0e9;
-  --p-muted: #a0aaa0;
-  --p-line: #333c34;
-  --p-soft: #252e27;
-  --p-accent: #99acff;
-  --p-accent-soft: #29324a;
-  --p-green: #8dd7b7;
-  --p-green-soft: #23382f;
-  --p-orange: #edbd7b;
-  --p-orange-soft: #3b3021;
-  --p-red: #f3a19c;
-  --p-red-soft: #3d2928;
+  --p-bg: #141414;
+  --p-panel: #1f1f1e;
+  --p-soft: #1b1b1a;
+  --p-line: #353532;
+  --p-ink: #ededea;
+  --p-muted: #aaa9a3;
+  --p-accent: #9bb2ff;
+  --p-accent-soft: #252e49;
+  --p-green: #77dbb1;
+  --p-green-soft: #18372a;
+  --p-red: #ff9a94;
+  --p-red-soft: #402523;
+  --p-orange: #e9ba72;
+  --p-orange-soft: #362d20;
+  --state-reply: #c1a5ff;
+  --state-saved: #86bbfa;
+  --state-running: #79d9b1;
+  --state-verified: #a1e7c7;
 }

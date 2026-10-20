@@ -4,6 +4,6 @@ import Search from "@astrojs/starlight/components/Search.astro";
 ---
 
 <Header path={Astro.url.pathname} embedded client:load />
-<div class="docs-search">
+<div class="docs-search" aria-label="搜索教程">
   <Search />
 </div>

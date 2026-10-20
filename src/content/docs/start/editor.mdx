@@ -1,0 +1,33 @@
+---
+title: 安装并认识 VS Code
+description: 只需要找到文件区、编辑区和集成终端。
+---
+
+import { ReadinessCheck } from "../../../components/lessons/ReadinessCheck";
+
+VS Code 是编辑器：文件在哪里、代码改了什么、命令在哪输入，都可以在同一个窗口里看。
+
+## 安装
+
+1. 打开 [VS Code 官方下载页](https://code.visualstudio.com/download)。
+2. 选择你的系统与芯片：Windows 通常是 x64；Mac 可在“关于本机”查看 Apple 芯片或 Intel。
+3. 安装并启动。Windows 安装时可勾选添加到 PATH；安装后重开终端。
+4. 可选：在扩展区搜索 **Chinese (Simplified) Language Pack**，确认发布者为 Microsoft。
+
+不要从不明下载站安装。暂时不用装一大批插件。
+
+## 只认识三个区域
+
+- **文件区**：左侧资源管理器，显示当前项目里的文件。
+- **编辑区**：点击文件后，在中间查看和编辑，`Ctrl+S`（Mac `⌘S`）保存。
+- **集成终端**：菜单“终端 → 新建终端”，用来输入命令。先看提示符的路径，确认当前目录。
+
+点击三个区域看各自的职责。这里是界面地图，不是远程 VS Code。
+
+<ReadinessCheck initialStep={2} client:load />
+
+## code 命令找不到？
+
+可以先用 VS Code 的“文件 → 打开文件夹”，不影响后续学习。Mac 可从命令面板搜索 **Shell Command: Install 'code' command in PATH**。Windows 可检查安装时是否添加到 PATH，再重开终端。
+
+下一步：[准备运行与版本工具](/start/tools/)。

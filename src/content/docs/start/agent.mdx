@@ -1,0 +1,36 @@
+---
+title: 安装并连接一个编程 Agent
+description: 以 OpenCode V2 为主线，确认登录、模型与只读响应。
+---
+
+import { ToolSetup } from "../../../components/lessons/ToolSetup";
+import { Prompt } from "../../../components/workbench/Primitives";
+
+编程 Agent 不只是回答问题，还能在你授权后读写项目文件、运行命令。第一次使用时，**先检查它打开的是哪个目录，先给只读任务，再允许修改。**
+
+## 推荐主线：OpenCode V2
+
+本页安装与连接步骤按 [OpenCode V2 官方文档](https://opencode.ai/v2/docs/)核对，日期 **2026-10-20**。工具会更新；界面或安装步骤不一致时，以官方文档为准。
+
+<ToolSetup agent client:load />
+
+安装工具、连接提供商、选择模型是三件不同的事。能打开工具界面，不代表模型已经可用。
+
+## 在项目目录发一个只读请求
+
+在 VS Code 打开 `my-homepage` 后，从集成终端运行 `opencode`。连接并选好模型后发送：
+
+<Prompt
+  client:load
+  text="只回复一个 HTML 页面的基本结构，并用一句话解释 html、head、body。不要创建或修改任何文件。"
+/>
+
+看到响应，就证明这次请求走通了。**这还没有证明文件已创建，更没有证明网页能运行。**
+
+不要把 API Key 写进源文件、需求单或 Git。发截图前检查是否包含密钥。遇到命令授权提示时，先读路径和作用，不要习惯性全部放行。
+
+## 已经在用其他工具？
+
+可以继续用 [Claude Code](https://code.claude.com/docs/en/overview) 或 [Codex](https://developers.openai.com/codex/cli/)。后面的需求单与验收方法不依赖特定品牌；安装、登录和付费条件请看各自官方文档。
+
+下一步：[开工检查](/start/check/)。

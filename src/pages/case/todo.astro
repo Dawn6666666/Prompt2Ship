@@ -1,0 +1,10 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { CaseShell } from "../../components/workbench/CaseShell";
+import { caseAssets } from "../../lib/case-assets";
+const assets = await caseAssets();
+---
+
+<Layout title="案例二：给 Todo 增加备注" workspace>
+  <CaseShell todo assets={assets} client:load />
+</Layout>

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { changedLines, highlightPair } from "../src/lib/highlight.ts";
-import { portfolioHtml } from "../src/data/course.ts";
+import { readFileSync } from "node:fs";
 
 test("diff locates a changed repeated line instead of comparing text membership", () => {
   const result = changedLines(
@@ -30,11 +30,17 @@ test("unchanged stage does not manufacture modifications", async () => {
 });
 
 test("preview and downloadable final artifact retain the same content across the fix", () => {
-  const before = portfolioHtml(2);
-  const after = portfolioHtml(4);
+  const before = readFileSync(
+    new URL("../public/examples/homepage-v1.html", import.meta.url),
+    "utf8",
+  );
+  const after = readFileSync(
+    new URL("../public/examples/homepage-v2.html", import.meta.url),
+    "utf8",
+  );
   assert.equal(before.split("</head>")[1], after.split("</head>")[1]);
   assert.match(before, /main \{ width: 760px/);
-  assert.match(after, /main \{ max-width: 760px/);
+  assert.match(after, /main \{ width: 100%; max-width: 760px/);
   assert.match(after, /grid-template-columns: 1fr;/);
   assert.doesNotMatch(after, /<script/);
 });
