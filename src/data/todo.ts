@@ -30,6 +30,9 @@ const result = db.prepare(
   'INSERT INTO todos (title, category, priority, sort_order) VALUES (?, ?, ?, ?)'
 ).run(title.trim(), category, priority, sort_order);`,
     after: `const { title, category = '', priority = 'medium', notes = '' } = req.body;
+if (typeof notes !== 'string') {
+  return res.status(400).json({ error: 'Notes must be a string' });
+}
 // 保留标题检查与 sort_order 计算
 const result = db.prepare(
   'INSERT INTO todos (title, category, priority, sort_order, notes) VALUES (?, ?, ?, ?, ?)'
@@ -48,6 +51,9 @@ db.prepare(
   'UPDATE todos SET title = ?, completed = ?, category = ?, priority = ? WHERE id = ?'
 ).run(updated.title, updated.completed, updated.category, updated.priority, id);`,
     after: `const { title, completed, category, priority, notes } = req.body;
+if (notes !== undefined && typeof notes !== 'string') {
+  return res.status(400).json({ error: 'Notes must be a string' });
+}
 // 保留 existing 查询与 updated 对象，增加：
 updated.notes = notes !== undefined ? notes.trim() : existing.notes;
 db.prepare(

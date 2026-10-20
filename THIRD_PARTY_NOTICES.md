@@ -4,19 +4,21 @@
 
 ## 组件来源
 
-| 来源                  | 上游                                            | 本项目中的适配                                                                                                                                                                                                            |
-| --------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Astro shadcn template | https://github.com/AREA44/astro-shadcn-template | `src/components/Header.tsx`、`src/layouts/Layout.astro`：导航、React island 与主题切换模式                                                                                                                                |
-| Magic UI              | https://github.com/magicuidesign/magicui        | `src/components/ui/browser.tsx`：Safari 浏览器外壳适配为 iframe；`code-comparison.tsx`：前后代码面板；`terminal.tsx`：Motion 终端分行动效；`typing-animation.tsx`：单次流式打字，适配完成回调、自动滚动与减少动态效果偏好；`file-tree.tsx`：精简的 Radix 折叠目录，用于入门流程 |
-| shadcn/ui             | https://github.com/shadcn-ui/ui                 | `src/components/ui/tabs.tsx`、`accordion.tsx`：基于 Radix 的标签与折叠面板；`textarea.tsx`：提示词输入框                                                                                                                  |
+| 来源                  | 上游                                            | 本项目中的适配                                                                                                                                      |
+| --------------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Astro shadcn template | https://github.com/AREA44/astro-shadcn-template | `src/components/Header.tsx`、`src/layouts/Layout.astro`：导航、React island 与主题切换模式                                                          |
+| Magic UI              | https://github.com/magicuidesign/magicui        | `src/components/dynamics/PortfolioPreview.tsx`：Safari 外壳参考与实际 iframe；`ui/code-comparison.tsx`：前后代码面板，扩展统一差异视图              |
+| shadcn/ui             | https://github.com/shadcn-ui/ui                 | `src/components/ui/tabs.tsx`、`slider.tsx`：Radix 标签与视口滑杆；`dynamics/ReferenceImage.tsx`：参考本地 Dialog 的组合方式，提供图片放大与键盘操作 |
+| Astro Starlight       | https://github.com/withastro/starlight          | 文档布局、搜索、章节导航、MDX 与 Expressive Code，通过依赖集成                                                                                      |
+| Motion                | https://github.com/motiondivision/motion        | 参考本地 tab-select 的共享布局状态指示；使用 Motion React 的过渡与减少动态效果支持                                                                  |
 
 相关本地来源分别位于 `../FrontendFramework/astro-shadcn-template`、`../FrontendFramework/magicui`、`../FrontendFramework/shadcn-ui`。代码高亮改为 Shiki 构建时生成；浏览器外壳使用可交互 HTML 预览；没有照搬与本站无关的整套示例。
 
 ## MIT notices
 
-本轮另外适配了 shadcn/ui 的 `ui/resizable.tsx` 和 `ui/toggle-group.tsx`，分别用于 `src/components/ui/resizable.tsx`（基于 react-resizable-panels 的可拖动分栏）与 `choice-group.tsx`（基于 Radix Toggle Group 的回答选项）。保留下方 shadcn MIT 声明。Awwwards / Obys FORMAT、Grids 仅作为布局和视觉节奏参考，没有复制其代码或素材；未引入 React Bits 或 Origin UI 源码。
+旧版未使用的聊天回放、Resizable 与流式打字组件已移除。未引入 React Bits 或 Origin UI 源码；本轮重点采用文档、标签、滑杆和状态过渡。
 
-以上三个来源均使用 MIT License，分别保留其版权声明：
+以下直接适配的三个来源使用 MIT License，分别保留其版权声明；其他依赖的许可随包提供：
 
 ```text
 Astro shadcn template:
@@ -53,9 +55,17 @@ SOFTWARE.
 
 - 原始项目：https://github.com/Baoxd123/todo-app
 - 本地参考：`../FrontendFramework/todo-app`，提交 `a5a648a`。
-- 核对日期：2026-10-19。上游未提供 LICENSE，不应将公开可见误认为可任意再分发。
-- 本站引用项目结构、解释既有数据流并编写局部修改教学，未打包或分发上游完整源码。实际使用该上游项目时，请自行确认授权条件。
+- 核对日期：2026-10-20。上游 README 的 License 部分声明 MIT，仓库未提供独立 LICENSE 文件。
+- 本站引用项目结构、解释数据流并编写局部修改教学，提供本次修改的补丁与验证脚本，未打包上游完整源码。
 
 ## npm 依赖
 
 Astro、React、Radix UI、Tailwind CSS、Motion、Lucide、Shiki、Inter 等依赖遵循各自随包提供的许可；完整依赖版本由 `package-lock.json` 锁定。
+
+## VS Code 真实界面参考
+
+- `public/images/vscode/workbench.png`：Microsoft，[VS Code User Interface](https://code.visualstudio.com/docs/getstarted/userinterface)，原图未修改。
+- `public/images/vscode/open-terminal.png`：Microsoft，[Terminal Getting Started](https://code.visualstudio.com/docs/terminal/getting-started)，原图未修改。
+- 上述文档图片遵循 vscode-docs 的 [Creative Commons Attribution 3.0 United States](https://github.com/microsoft/vscode-docs/blob/main/LICENSE.md) 许可，版权归 Microsoft Corporation；页面放大仅改变显示比例。
+- `public/images/vscode/download.png`：2026-10-20 对 [VS Code 官方下载页](https://code.visualstudio.com/download) 的参考截图，仅用于解释系统与芯片选择。商标与产品界面权利归各自所有者。
+- `public/examples/todo-browser-verified.png`：本站验证脚本在 Todo 临时副本运行后生成的界面截图，只包含测试数据。

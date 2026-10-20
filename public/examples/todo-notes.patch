@@ -1,0 +1,132 @@
+diff --git a/client/src/components/TodoForm.jsx b/client/src/components/TodoForm.jsx
+index b05ed20..df3ce7e 100644
+--- a/client/src/components/TodoForm.jsx
++++ b/client/src/components/TodoForm.jsx
+@@ -5,27 +5,31 @@ export default function TodoForm({ onSubmit, editingTodo, onCancel }) {
+   const [title, setTitle] = useState('');
+   const [category, setCategory] = useState('');
+   const [priority, setPriority] = useState('medium');
++  const [notes, setNotes] = useState('');
+ 
+   useEffect(() => {
+     if (editingTodo) {
+       setTitle(editingTodo.title);
+       setCategory(editingTodo.category || '');
+       setPriority(editingTodo.priority || 'medium');
++      setNotes(editingTodo.notes ?? '');
+     } else {
+       setTitle('');
+       setCategory('');
+       setPriority('medium');
++      setNotes('');
+     }
+   }, [editingTodo]);
+ 
+   const handleSubmit = (e) => {
+     e.preventDefault();
+     if (!title.trim()) return;
+-    onSubmit({ title, category, priority });
++    onSubmit({ title, category, priority, notes });
+     if (!editingTodo) {
+       setTitle('');
+       setCategory('');
+       setPriority('medium');
++      setNotes('');
+     }
+   };
+ 
+@@ -38,6 +42,10 @@ export default function TodoForm({ onSubmit, editingTodo, onCancel }) {
+         value={title}
+         onChange={(e) => setTitle(e.target.value)}
+       />
++      <label htmlFor="task-notes">任务备注（可选）</label>
++      <textarea id="task-notes" className={styles.input}
++        value={notes} onChange={event => setNotes(event.target.value)}
++        placeholder="补充背景、链接或下一步…" rows={3} />
+       <div className={styles.row}>
+         <input
+           className={styles.categoryInput}
+diff --git a/client/src/components/TodoItem.jsx b/client/src/components/TodoItem.jsx
+index 2486dab..77c8f8c 100644
+--- a/client/src/components/TodoItem.jsx
++++ b/client/src/components/TodoItem.jsx
+@@ -18,6 +18,8 @@ export default function TodoItem({ todo, onToggle, onDelete, onEdit, dragHandler
+       />
+       <div className={styles.content}>
+         <span className={styles.title}>{todo.title}</span>
++        {todo.notes && <p style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere',
++          fontSize: 13, color: '#6b7280', margin: '6px 0' }}>{todo.notes}</p>}
+         <div className={styles.meta}>
+           {todo.category && <span className={styles.category}>{todo.category}</span>}
+           <span className={`${styles.priority} ${styles[todo.priority]}`}>
+diff --git a/server/db.js b/server/db.js
+index e1e337e..3faa627 100644
+--- a/server/db.js
++++ b/server/db.js
+@@ -17,4 +17,10 @@ db.exec(`
+   )
+ `);
+ 
++// Add the field once, preserving existing tasks.
++const columns = db.prepare('PRAGMA table_info(todos)').all();
++if (!columns.some(column => column.name === 'notes')) {
++  db.exec("ALTER TABLE todos ADD COLUMN notes TEXT NOT NULL DEFAULT ''");
++}
++
+ module.exports = db;
+diff --git a/server/routes/todos.js b/server/routes/todos.js
+index 96cc837..85e7501 100644
+--- a/server/routes/todos.js
++++ b/server/routes/todos.js
+@@ -31,7 +31,11 @@ router.get('/', (req, res) => {
+ 
+ // POST /api/todos - create
+ router.post('/', (req, res) => {
+-  const { title, category = '', priority = 'medium' } = req.body;
++  const { title, category = '', priority = 'medium', notes = '' } = req.body;
++
++  if (typeof notes !== 'string') {
++    return res.status(400).json({ error: 'Notes must be a string' });
++  }
+ 
+   if (!title || !title.trim()) {
+     return res.status(400).json({ error: 'Title is required' });
+@@ -41,8 +45,8 @@ router.post('/', (req, res) => {
+   const sort_order = maxOrder.max + 1;
+ 
+   const result = db.prepare(
+-    'INSERT INTO todos (title, category, priority, sort_order) VALUES (?, ?, ?, ?)'
+-  ).run(title.trim(), category, priority, sort_order);
++    'INSERT INTO todos (title, category, priority, sort_order, notes) VALUES (?, ?, ?, ?, ?)'
++  ).run(title.trim(), category, priority, sort_order, notes.trim());
+ 
+   const todo = db.prepare('SELECT * FROM todos WHERE id = ?').get(result.lastInsertRowid);
+   res.status(201).json(todo);
+@@ -70,7 +74,11 @@ router.put('/reorder', (req, res) => {
+ // PUT /api/todos/:id - update
+ router.put('/:id', (req, res) => {
+   const { id } = req.params;
+-  const { title, completed, category, priority } = req.body;
++  const { title, completed, category, priority, notes } = req.body;
++
++  if (notes !== undefined && typeof notes !== 'string') {
++    return res.status(400).json({ error: 'Notes must be a string' });
++  }
+ 
+   const existing = db.prepare('SELECT * FROM todos WHERE id = ?').get(id);
+   if (!existing) {
+@@ -82,11 +90,12 @@ router.put('/:id', (req, res) => {
+     completed: completed !== undefined ? (completed ? 1 : 0) : existing.completed,
+     category: category !== undefined ? category : existing.category,
+     priority: priority !== undefined ? priority : existing.priority,
++    notes: notes !== undefined ? notes.trim() : existing.notes,
+   };
+ 
+   db.prepare(
+-    'UPDATE todos SET title = ?, completed = ?, category = ?, priority = ? WHERE id = ?'
+-  ).run(updated.title, updated.completed, updated.category, updated.priority, id);
++    'UPDATE todos SET title = ?, completed = ?, category = ?, priority = ?, notes = ? WHERE id = ?'
++  ).run(updated.title, updated.completed, updated.category, updated.priority, updated.notes, id);
+ 
+   const todo = db.prepare('SELECT * FROM todos WHERE id = ?').get(id);
+   res.json(todo);

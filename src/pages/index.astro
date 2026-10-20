@@ -1,75 +1,201 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { PromptDemo } from "../components/PromptDemo";
-import { ArrowRight, Blocks, Layers2 } from "lucide-react";
-import { onboardingStages } from "../data/onboarding";
+import { HeroDemo } from "../components/dynamics/PortfolioPreview";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BookOpen,
+  Code2,
+  Database,
+  GitBranch,
+  Monitor,
+  MousePointer2,
+  Sparkles,
+} from "lucide-react";
+const chapters = [
+  {
+    number: "01",
+    title: "准备你的工作台",
+    description: "VS Code、运行环境和一个编程 Agent。",
+    href: "/learn/setup/vscode/",
+    link: "搭建开发环境",
+    icon: Monitor,
+  },
+  {
+    number: "02",
+    title: "学会和 Agent 协作",
+    description: "说清需求，看懂计划，用具体反馈推进。",
+    href: "/learn/workflow/first-task/",
+    link: "掌握通用流程",
+    icon: Sparkles,
+  },
+  {
+    number: "03",
+    title: "看一个网站从零成形",
+    description: "从需求到交付，观察每次修改的原因。",
+    href: "/case/from-scratch",
+    link: "进入从零案例",
+    icon: Code2,
+  },
+  {
+    number: "04",
+    title: "走进已有全栈项目",
+    description: "沿着一条备注，理解前后端与数据库。",
+    href: "/case/todo-app",
+    link: "进入全栈案例",
+    icon: GitBranch,
+  },
+];
 ---
 
-<Layout title="看见 AI Coding，从想法到作品">
-  <section class="home-intro">
-    <span class="eyebrow">
-      <span class="live-dot" /> THE AI CODING SHOWCASE
-    </span>
-    <h1>
-      看见 AI Coding。<span>从想法，到作品。</span>
-    </h1>
-    <p>刚接触 Vibe Coding？从装好工具、建好项目开始，再看需求怎样变成一个作品。</p>
-  </section>
-  <section class="onboarding-roadmap" aria-labelledby="roadmap-title">
-    <div class="roadmap-heading">
+<Layout title="从一句想法，到真正交付">
+  <div class="p-home">
+    <section class="home-hero">
       <div>
-        <span class="eyebrow">START HERE / 从零上手</span>
-        <h2 id="roadmap-title">第一次接触，按这条路线看。</h2>
+        <span class="hero-kicker">
+          <span class="status-dot" /> AN INTERACTIVE GUIDE TO AI CODING
+        </span>
+        <h1>
+          从一句想法，
+          <br />到<span class="hero-accent hero-serif">真正交付</span>。
+        </h1>
       </div>
-      <a href="/setup">观看入门流程 <ArrowRight size={14} /></a>
+      <div class="home-hero-copy">
+        <p>
+          让 AI 参与开发，也让你看懂开发。
+          <br />
+          从装好工具开始，用两个可操作的案例，走过需求、代码、验证与交付。
+        </p>
+        <div class="hero-actions">
+          <a href="/learn/setup/vscode/" class="p-button p-button-primary">
+            从第一步开始 <ArrowRight size={15} />
+          </a>
+          <a href="/case/from-scratch" class="hero-text-link">
+            先看一个案例 <ArrowUpRight size={14} />
+          </a>
+        </div>
+      </div>
+    </section>
+    <HeroDemo client:load />
+    <div class="home-caption">
+      <span>
+        <MousePointer2 size={12} /> 点击阶段，看看同一个网站如何变化。
+      </span>
+      <span>预设案例 · 实际 HTML 预览 · 无需连接 AI</span>
     </div>
-    <ol>
-      {
-        onboardingStages.map((stage, i) => (
-          <li>
-            <a href={`/setup#${stage.id}`}>
-              <span class="roadmap-number">0{i + 1}</span>
-              <div>
-                <h3>{stage.label}</h3>
-                <p>{stage.short}</p>
-              </div>
-              <ArrowRight size={14} />
+    <section class="home-section" aria-labelledby="learning-title">
+      <div class="home-section-heading">
+        <div>
+          <span class="page-eyebrow">THE LEARNING PATH</span>
+          <h2 id="learning-title">一步一步，把过程走通。</h2>
+        </div>
+        <a href="/learn/">
+          查看完整路线 <ArrowUpRight size={14} />
+        </a>
+      </div>
+      <div class="learning-path">
+        {chapters.map((chapter) => (
+          <article class="path-stop">
+            <div class="path-stop-top">
+              <span>{chapter.number}</span>
+              <chapter.icon size={21} strokeWidth={1.5} />
+            </div>
+            <h3>{chapter.title}</h3>
+            <p>{chapter.description}</p>
+            <a href={chapter.href}>
+              {chapter.link} <ArrowRight size={12} />
             </a>
-          </li>
-        ))
-      }
-    </ol>
-    <p class="roadmap-note">不是安装任务，也不需要跟着敲命令。先看懂过程，再看完整案例。</p>
-  </section>
-  <PromptDemo client:load />
-  <div class="case-choices">
-    <a class="case-choice" href="/case/from-scratch">
-      <span class="case-choice-icon">
-        <Blocks size={22} />
-      </span>
-      <div>
-        <small>CASE 01 · 从零开始</small>
-        <h2>从一句话，到一个网站。</h2>
-        <p>五步需求分析 → 制作计划 → 代码 → 预览 → 交付</p>
+          </article>
+        ))}
       </div>
-      <ArrowRight size={19} />
-    </a>
-    <a class="case-choice" href="/case/todo-app">
-      <span class="case-choice-icon green">
-        <Layers2 size={22} />
-      </span>
-      <div>
-        <small>CASE 02 · 已有项目</small>
-        <h2>给 Todo 增加一条备注。</h2>
-        <p>读项目 → 分层修改 → 验证数据流</p>
+    </section>
+    <section class="home-section" aria-labelledby="cases-title">
+      <div class="home-section-heading">
+        <div>
+          <span class="page-eyebrow">LEARN THROUGH THE PROCESS</span>
+          <h2 id="cases-title">两个项目，两种开发起点。</h2>
+        </div>
+        <span class="small-label">切换阶段，观察代码与结果。</span>
       </div>
-      <ArrowRight size={19} />
-    </a>
+      <div class="home-cases">
+        <a class="case-card" href="/case/from-scratch">
+          <div class="case-card-art portfolio-art">
+            <div class="mini-portfolio">
+              <div class="mini-portfolio-top">
+                <strong>林间 / LIN</strong>
+                <span>聊聊新项目 ↗</span>
+              </div>
+              <h3>
+                让复杂的事情，
+                <br />
+                变得简单一点。
+              </h3>
+              <p>独立设计师 · 数字产品与日常生活</p>
+              <div class="mini-projects">
+                <div>◒</div>
+                <div>↗</div>
+              </div>
+            </div>
+          </div>
+          <div class="case-card-body">
+            <div class="case-card-label">
+              <span>CASE 01 / START FROM ZERO</span>
+              <ArrowUpRight size={16} />
+            </div>
+            <h3>从零，做一个作品网站。</h3>
+            <p>把一句想法拆成需求，让第一版出现，再通过反馈修复。</p>
+            <div class="case-card-tags">
+              <span>HTML / CSS</span>
+              <span>7 个开发阶段</span>
+              <span>可下载作品</span>
+            </div>
+          </div>
+        </a>
+        <a class="case-card" href="/case/todo-app">
+          <div class="case-card-art todo-art">
+            <div class="mini-todo">
+              <span>MY LITTLE TODO</span>
+              <div class="mini-task">
+                <i />
+                <div>
+                  交付作品网站<p>补充手机截图，检查联系入口。</p>
+                </div>
+              </div>
+              <div class="mini-task">
+                <i />
+                <div>整理课程项目</div>
+              </div>
+            </div>
+            <ArrowRight size={20} color="#8397aa" />
+            <div class="mini-db">
+              <Database size={31} strokeWidth={1.3} />
+              <span>notes: "…"</span>
+            </div>
+          </div>
+          <div class="case-card-body">
+            <div class="case-card-label">
+              <span>CASE 02 / WORK WITH A CODEBASE</span>
+              <ArrowUpRight size={16} />
+            </div>
+            <h3>一条备注，串起整个全栈。</h3>
+            <p>读懂已有项目，在前端、接口和数据库之间完成一次修改。</p>
+            <div class="case-card-tags">
+              <span>React / Express / SQLite</span>
+              <span>字段流转</span>
+              <span>验证记录</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+    <section class="home-closing">
+      <div>
+        <h2>第一个动态，从装好编辑器开始。</h2>
+        <p>每次只学一个明确的动作，带着看得见的结果往前走。</p>
+      </div>
+      <a href="/learn/setup/vscode/" class="p-button">
+        <BookOpen size={15} /> 安装与认识 VS Code <ArrowRight size={15} />
+      </a>
+    </section>
   </div>
-  <p class="home-footnote">
-    所有内容均为预设演示，无需安装工具或连接 AI。
-    <a href="/setup">
-      从安装工具开始了解 <ArrowRight size={12} />
-    </a>
-  </p>
 </Layout>

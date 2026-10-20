@@ -1,0 +1,9 @@
+---
+import { Header } from "../Header";
+import Search from "@astrojs/starlight/components/Search.astro";
+---
+
+<Header path={Astro.url.pathname} embedded client:load />
+<div class="docs-search">
+  <Search />
+</div>

@@ -3,11 +3,15 @@ import Layout from "../layouts/Layout.astro";
 import { ReviewPlayground } from "../components/ReviewPlayground";
 ---
 
-<Layout title="把经验变成方法">
-  <div class="page-intro focus-panel">
-    <span class="eyebrow">TAKE THE METHOD WITH YOU</span>
-    <h1>下一次，怎样和 AI 合作得更好？</h1>
-    <p>选四个真实场景，把一句模糊的话，变成一次清楚的协作。</p>
+<Layout title="把过程，变成下一次的方法">
+  <div class="review-page">
+    <div class="review-intro">
+      <span class="page-eyebrow">KEEP THE METHOD</span>
+      <h1>把过程，变成下一次的方法。</h1>
+      <p>
+        五个协作动作，一份可复用的提示词骨架。需要时，回到对应案例查看细节。
+      </p>
+    </div>
+    <ReviewPlayground client:load />
   </div>
-  <ReviewPlayground client:load />
 </Layout>

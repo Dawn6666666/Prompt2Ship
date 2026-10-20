@@ -1,0 +1,116 @@
+{
+  "checkedAt": "2026-10-20",
+  "upstream": "a5a648a",
+  "checks": [
+    {
+      "name": "旧数据迁移",
+      "detail": "已有任务保留，新增 notes 列的默认值为空字符串。",
+      "passed": true
+    },
+    {
+      "name": "重复运行迁移",
+      "detail": "再次初始化数据库，不重复加列，不删除旧任务。",
+      "passed": true
+    },
+    {
+      "name": "新增与重新读取",
+      "detail": "POST 保存备注；独立 GET 请求能读取修剪后的内容。",
+      "passed": true
+    },
+    {
+      "name": "编辑备注",
+      "detail": "只更新 notes，任务标题、分类和优先级保持原值。",
+      "passed": true
+    },
+    {
+      "name": "切换状态保留备注",
+      "detail": "PUT 只传 completed 时，保留已有 notes。",
+      "passed": true
+    },
+    {
+      "name": "主动清空备注",
+      "detail": "传空字符串后，独立 GET 返回的备注仍为空。",
+      "passed": true
+    },
+    {
+      "name": "备注输入校验",
+      "detail": "创建与更新均拒绝非字符串备注，返回 400。",
+      "passed": true
+    },
+    {
+      "name": "筛选与排序回归",
+      "detail": "分类、优先级、标题搜索和拖拽排序接口仍可用。",
+      "passed": true
+    },
+    {
+      "name": "删除与旧任务保留",
+      "detail": "删除新增任务成功，原有任务仍存在。",
+      "passed": true
+    }
+  ],
+  "frontendBuild": true,
+  "browser": {
+    "passed": true,
+    "steps": [
+      "通过原项目表单新增多行备注，提交后输入框清空；刷新后备注仍存在。",
+      "点击编辑时正确回填；更新备注并刷新，显示新内容。",
+      "取消编辑不会保存草稿，新建表单不残留上次备注。",
+      "仅切换完成状态，刷新后完成状态和原备注均保留。",
+      "主动清空备注后刷新，列表、GET 响应与 SQLite 均为空字符串；旧任务仍存在。"
+    ],
+    "screenshot": "/examples/todo-browser-verified.png"
+  },
+  "environment": {
+    "node": "v24.20.0",
+    "npm": "11.19.0",
+    "browser": "Chrome 155.0.8059.79",
+    "platform": "linux x64"
+  },
+  "commands": [
+    {
+      "command": "npm run verify:todo",
+      "output": "9 API/SQLite checks passed; frontend build passed; 5 browser scenarios passed."
+    },
+    {
+      "command": "npm ci --no-audit --no-fund",
+      "output": "added 174 packages in 51s"
+    },
+    {
+      "command": "POST /api/todos",
+      "output": "Request: {\"title\":\"交付作品网站\",\"notes\":\"  补充手机截图，检查联系入口。  \",\"category\":\"web\",\"priority\":\"high\"}\nHTTP 201\nResponse: {\"id\":2,\"title\":\"交付作品网站\",\"completed\":0,\"category\":\"web\",\"priority\":\"high\",\"sort_order\":1,\"created_at\":\"2026-10-20 07:50:16\",\"notes\":\"补充手机截图，检查联系入口。\"}"
+    },
+    {
+      "command": "PUT /api/todos/2",
+      "output": "Request: {\"notes\":\"手机截图已补充，等待最后检查。\"}\nHTTP 200\nResponse: {\"id\":2,\"title\":\"交付作品网站\",\"completed\":0,\"category\":\"web\",\"priority\":\"high\",\"sort_order\":1,\"created_at\":\"2026-10-20 07:50:16\",\"notes\":\"手机截图已补充，等待最后检查。\"}"
+    },
+    {
+      "command": "PUT /api/todos/2",
+      "output": "Request: {\"completed\":true}\nHTTP 200\nResponse: {\"id\":2,\"title\":\"交付作品网站\",\"completed\":1,\"category\":\"web\",\"priority\":\"high\",\"sort_order\":1,\"created_at\":\"2026-10-20 07:50:16\",\"notes\":\"手机截图已补充，等待最后检查。\"}"
+    },
+    {
+      "command": "PUT /api/todos/2",
+      "output": "Request: {\"notes\":\"\"}\nHTTP 200\nResponse: {\"id\":2,\"title\":\"交付作品网站\",\"completed\":1,\"category\":\"web\",\"priority\":\"high\",\"sort_order\":1,\"created_at\":\"2026-10-20 07:50:16\",\"notes\":\"\"}"
+    },
+    {
+      "command": "PUT /api/todos/2",
+      "output": "Request: {\"notes\":42}\nHTTP 400\nResponse: {\"error\":\"Notes must be a string\"}"
+    },
+    {
+      "command": "POST /api/todos",
+      "output": "Request: {\"title\":\"非法备注\",\"notes\":null}\nHTTP 400\nResponse: {\"error\":\"Notes must be a string\"}"
+    },
+    {
+      "command": "npm run build --workspace=todo-client",
+      "output": "> todo-client@1.0.0 build\n> vite build\n\nvite v5.4.21 building for production...\ntransforming...\n✓ 40 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.40 kB │ gzip:  0.27 kB\ndist/assets/index-DKfHu9TB.css    3.53 kB │ gzip:  1.12 kB\ndist/assets/index-Cl2gAm7u.js   148.88 kB │ gzip: 48.16 kB\n✓ built in 617ms"
+    },
+    {
+      "command": "浏览器实际操作 → GET /api/todos → SELECT notes FROM todos",
+      "output": "PASS 通过原项目表单新增多行备注，提交后输入框清空；刷新后备注仍存在。\nPASS 点击编辑时正确回填；更新备注并刷新，显示新内容。\nPASS 取消编辑不会保存草稿，新建表单不残留上次备注。\nPASS 仅切换完成状态，刷新后完成状态和原备注均保留。\nPASS 主动清空备注后刷新，列表、GET 响应与 SQLite 均为空字符串；旧任务仍存在。"
+    },
+    {
+      "command": "SQLite 迁移 + Express 实际 HTTP 请求断言",
+      "output": "PASS 旧数据迁移: 已有任务保留，新增 notes 列的默认值为空字符串。\nPASS 重复运行迁移: 再次初始化数据库，不重复加列，不删除旧任务。\nPASS 新增与重新读取: POST 保存备注；独立 GET 请求能读取修剪后的内容。\nPASS 编辑备注: 只更新 notes，任务标题、分类和优先级保持原值。\nPASS 切换状态保留备注: PUT 只传 completed 时，保留已有 notes。\nPASS 主动清空备注: 传空字符串后，独立 GET 返回的备注仍为空。\nPASS 备注输入校验: 创建与更新均拒绝非字符串备注，返回 400。\nPASS 筛选与排序回归: 分类、优先级、标题搜索和拖拽排序接口仍可用。\nPASS 删除与旧任务保留: 删除新增任务成功，原有任务仍存在。"
+    }
+  ],
+  "patchSha256": "4eb9274b531f284b225d1a1cf9f91784e91979952872e4679cb9166ea940b8c5"
+}

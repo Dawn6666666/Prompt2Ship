@@ -1,149 +1,107 @@
 import { useState } from "react";
-import { ArrowRight, Play, RotateCcw } from "lucide-react";
-import { TypingAnimation } from "./ui/typing-animation";
-import { Accordion } from "./ui/accordion";
+import { ArrowUpRight } from "lucide-react";
 import { CopyButton } from "./CopyButton";
 const scenes = [
   {
     label: "说清需求",
-    title: "愿望，怎样变成任务？",
+    title: "先把“完成”说具体。",
     before: "帮我做个好看的网站。",
     after:
-      "为独立设计师做一个中文单页，给潜在客户看。包含个人介绍、两个精选项目和邮件入口。375px 手机下无横向溢出。不做登录和数据库。",
-    takeaway: "交代给谁用、做什么、怎样算完成。技术名词不是重点。",
+      "为独立设计师做一个中文单页，给潜在客户看。包含个人介绍、两个精选项目和邮件入口。375px 手机下无横向溢出。不做登录和数据库。先梳理需求与验收标准。",
+    reason: "目标、内容、范围和验收标准齐全，AI 才有明确的行动依据。",
+    href: "/case/from-scratch#define",
+    link: "回看需求阶段",
   },
   {
-    label: "限定修改",
-    title: "反馈，怎样不变成重写？",
+    label: "提供上下文",
+    title: "已有项目，先读再改。",
+    before: "给这个 Todo 加备注。",
+    after:
+      "先阅读表单、App、API 封装、路由和数据库，说明任务的数据流。增加可选 notes，支持新增、编辑、清空；保留已有任务、筛选和拖拽。先列计划，暂不改代码。",
+    reason: "指出需要理解的地方，同时给出必须保留的行为。",
+    href: "/case/todo-app#understand",
+    link: "回看项目地图",
+  },
+  {
+    label: "反馈迭代",
+    title: "把现象变成可复现的问题。",
     before: "手机上不好看，再优化一下。",
     after:
       "375px 下页面横向溢出。将 main 改为最大宽度，标题字号随屏幕缩放，560px 以下卡片单列。只改这些样式，保留配色、文案与邮件链接。",
-    takeaway: "反馈要有环境、现象、预期和不变的边界。",
+    reason: "说清环境、现象、预期与边界，修改才能收敛。",
+    href: "/case/from-scratch#iterate",
+    link: "回看响应式修复",
   },
   {
-    label: "真实验证",
-    title: "一句完成，怎样得到证据？",
+    label: "运行验证",
+    title: "让“已经完成”有证据。",
     before: "AI 说已经保存，应该没问题。",
     after:
-      "新增一条备注 → 刷新后读取 → 编辑并保存 → 清空并刷新 → 切换完成状态。检查旧任务、筛选和拖拽。记录实际结果，不把未执行的检查说成通过。",
-    takeaway: "代码生成不等于功能完成；把完整用户行为走一遍。",
+      "新增备注后重新读取，再编辑、清空并重新读取。只切换完成状态时，旧备注应保留。测试旧数据、筛选和排序，列出实际执行的命令、结果与未检查项。",
+    reason: "输入、保存、重新读取要形成闭环，也要确认原有功能没有回归。",
+    href: "/case/todo-app#verify",
+    link: "查看案例验证记录",
   },
   {
-    label: "小步提交",
-    title: "一次修改，怎样可以回溯？",
+    label: "检查与提交",
+    title: "留下一个能回溯的版本。",
     before: "直接把所有改动都提交吧。",
     after:
-      "先 git status，再 git diff。确认只包含本次任务、没有密钥和无关文件。验证通过后，提交一个职责单一的版本。不要覆盖他人已有修改。",
-    takeaway: "先检查，再提交。Git 保存的是确认过的改动，不是 AI 的承诺。",
+      "先查看 git status 与 git diff。确认只包含本次任务、没有无关文件。运行检查后，只暂存相关文件，再提交一个职责明确的版本。",
+    reason: "用差异确认范围，用验证确认行为，再记录版本。",
+    href: "/learn/workflow/git/",
+    link: "学习 Git 工作流",
   },
 ];
 const template =
-  "目标：为谁解决什么问题？\n上下文：技术栈、关键文件、已有约束。\n范围：做什么，明确不做什么。\n计划：先解释现状，等确认再实现。\n验证：运行什么命令，检查哪些行为？\n交付：实际结果、改动文件与剩余事项。";
+  "目标：为谁解决什么问题？\n上下文：现有项目、相关文件与运行方式。\n范围：这次做什么，保留哪些已有行为？\n计划：先读现状、列步骤，确认后实现。\n验证：运行哪些命令，检查哪些用户操作？\n交付：改动文件、实际结果与剩余事项。";
 export function ReviewPlayground() {
   const [index, setIndex] = useState(0);
+  const current = scenes[index];
   return (
-    <div className="focus-panel">
-      <div className="review-picker">
-        <nav className="review-options" aria-label="选择复盘场景">
-          {scenes.map((scene, i) => (
+    <>
+      <div className="review-workbench">
+        <nav className="review-nav" aria-label="选择协作方法">
+          {scenes.map((x, i) => (
             <button
+              key={x.label}
               type="button"
-              key={scene.label}
               aria-pressed={index === i}
               onClick={() => setIndex(i)}
             >
               <span>0{i + 1}</span>
-              {scene.label}
-              <ArrowRight size={13} />
+              {x.label}
             </button>
           ))}
         </nav>
-        <ReviewScene key={index} scene={scenes[index]} />
-      </div>
-      <div className="review-bottom">
-        <Accordion
-          items={[
-            {
-              title: "带走一份可复用的协作模板",
-              content: (
-                <>
-                  <pre className="template-pre">{template}</pre>
-                  <CopyButton text={template} label="复制模板" />
-                </>
-              ),
-            },
-            {
-              title: "还有两件事，工具不能替你决定",
-              content: (
-                <>
-                  <p>
-                    先读项目，再做计划。跨轮次保留关键决策与未完成事项，避免 AI
-                    凭空猜测范围。
-                  </p>
-                  <p>
-                    许可证、密钥、破坏性命令和交付质量仍由人判断。公开仓库不等于可以任意再分发。
-                  </p>
-                </>
-              ),
-            },
-          ]}
-        />
-      </div>
-    </div>
-  );
-}
-function ReviewScene({ scene }: { scene: (typeof scenes)[number] }) {
-  const [state, setState] = useState<"before" | "typing" | "after">("before");
-  return (
-    <section className="review-scene">
-      <span className="eyebrow">MAKE THE NEXT PROMPT BETTER</span>
-      <h2>{scene.title}</h2>
-      <p>
-        {state === "after"
-          ? scene.takeaway
-          : "把模糊的表达，换成能被执行与检查的要求。"}
-      </p>
-      <div className="prompt-comparison">
-        <div>
-          <small>{state === "before" ? "模糊的表达" : "更清楚的协作"}</small>
-          <p>
-            {state === "typing" ? (
-              <TypingAnimation
-                text={scene.after}
-                onComplete={() => setState("after")}
-              />
-            ) : state === "before" ? (
-              scene.before
-            ) : (
-              scene.after
-            )}
-          </p>
+        <div className="review-content">
+          <h2>{current.title}</h2>
+          <div className="review-prompt bad">
+            <span className="small-label">信息还不够</span>
+            <p>{current.before}</p>
+          </div>
+          <div className="review-prompt">
+            <span className="small-label">可以直接参考的表达</span>
+            <p>{current.after}</p>
+            <CopyButton text={current.after} />
+          </div>
+          <p className="review-reason">{current.reason}</p>
+          <a className="p-button p-button-quiet" href={current.href}>
+            {current.link}
+            <ArrowUpRight size={14} />
+          </a>
         </div>
       </div>
-      {state === "before" ? (
-        <button
-          className="primary-button"
-          type="button"
-          onClick={() => setState("typing")}
-        >
-          <Play size={13} />
-          把它说具体
-        </button>
-      ) : state === "after" ? (
-        <div className="setup-next">
-          <button
-            className="quiet-button"
-            type="button"
-            onClick={() => setState("before")}
-          >
-            <RotateCcw size={13} />
-            再比较一次
-          </button>
-          <CopyButton text={scene.after} label="复制这个例子" />
+      <section className="review-template">
+        <h2>把这份协作模板带走。</h2>
+        <pre>{template}</pre>
+        <div className="review-template-actions">
+          <CopyButton text={template} label="复制完整模板" />
+          <a href="/case/from-scratch" className="p-button">
+            回到交互案例 <ArrowUpRight size={14} />
+          </a>
         </div>
-      ) : (
-        <span className="tool-note">正在改写…</span>
-      )}
-    </section>
+      </section>
+    </>
   );
 }

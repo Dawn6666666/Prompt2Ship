@@ -1,0 +1,317 @@
+:root {
+  --sl-font: var(--p-font);
+  --sl-color-bg: var(--p-bg);
+  --sl-color-bg-nav: var(--p-bg);
+  --sl-color-bg-sidebar: var(--p-bg);
+  --sl-color-accent: var(--p-accent);
+  --sl-color-accent-low: var(--p-accent-soft);
+  --sl-color-accent-high: var(--p-accent);
+  --sl-nav-height: 76px;
+  --sl-nav-pad-y: 0;
+  --sl-nav-pad-x: 0;
+  --sl-sidebar-width: 17rem;
+  --sl-content-width: 49rem;
+  --sl-text-h1: 2.3rem;
+  --sl-text-h2: 1.45rem;
+  --sl-text-h3: 1.1rem;
+  --sl-text-body: 1rem;
+  --sl-color-hairline-shade: var(--p-line);
+}
+:root[data-theme="light"] {
+  --sl-color-text: var(--p-ink);
+  --sl-color-text-accent: var(--p-accent);
+}
+:root[data-theme="dark"] {
+  --sl-color-text: var(--p-ink);
+  --sl-color-text-accent: var(--p-accent);
+}
+header.header:has(.p-header) {
+  padding: 0 !important;
+  border-bottom: 1px solid var(--p-line);
+}
+header.header > .p-header,
+header.header > astro-island > .p-header {
+  max-width: none;
+  border-bottom: 0;
+  padding-right: 95px;
+}
+.docs-search {
+  position: absolute;
+  right: 31px;
+  top: 22px;
+  z-index: 41;
+}
+.docs-search button[data-open-modal] {
+  width: 31px;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 5px;
+  color: var(--p-muted);
+}
+.docs-search button[data-open-modal] > span,
+.docs-search button[data-open-modal] > kbd {
+  display: none;
+}
+.docs-search dialog {
+  color: var(--p-ink);
+}
+.sidebar-content {
+  padding: 2rem 1.4rem !important;
+}
+.sidebar-content .top-level > li + li {
+  margin-top: 1.6rem;
+}
+.sidebar-content summary {
+  font-size: 11px;
+  color: var(--p-muted);
+  font-weight: 500;
+}
+.sidebar-content .large {
+  font-size: 11px;
+}
+.sidebar-content a {
+  font-size: 12px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+  border-radius: 5px;
+}
+.sidebar-content a[aria-current="page"] {
+  background: var(--p-accent-soft);
+  color: var(--p-accent);
+}
+.sidebar-content ul ul li {
+  border-left-color: var(--p-line);
+}
+.content-panel {
+  border-top-color: var(--p-line);
+}
+.content-panel h1 {
+  font-weight: 600;
+  letter-spacing: -1.3px;
+  line-height: 1.4;
+}
+.sl-markdown-content {
+  line-height: 1.9;
+}
+.sl-markdown-content > p {
+  color: var(--p-muted);
+  font-size: 15px;
+}
+.sl-markdown-content strong {
+  color: var(--p-ink);
+  font-weight: 600;
+}
+.sl-markdown-content h2 {
+  font-weight: 550;
+  letter-spacing: -0.5px;
+  margin-top: 2.8rem;
+}
+.sl-markdown-content h3 {
+  font-weight: 550;
+}
+.sl-markdown-content code:not(pre code) {
+  font-size: 0.85em;
+}
+.right-sidebar-panel {
+  font-size: 11px;
+}
+.right-sidebar-panel h2 {
+  font-size: 11px !important;
+  font-weight: 500;
+}
+.sl-markdown-content .expressive-code {
+  margin-top: 1rem;
+}
+.sl-markdown-content .expressive-code pre {
+  font-size: 12px;
+}
+.sl-link-button {
+  font-size: 13px;
+}
+.lesson-lead {
+  font-size: 17px !important;
+  line-height: 1.9;
+  color: var(--p-ink) !important;
+}
+.lesson-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 25px;
+  font-size: 10px;
+  color: var(--p-muted);
+}
+.lesson-meta span {
+  padding: 4px 8px;
+  background: var(--p-soft);
+  border-radius: 4px;
+}
+.lesson-checks {
+  list-style: none;
+  padding: 18px 20px !important;
+  background: var(--p-green-soft);
+  border-radius: 7px;
+  margin-top: 25px;
+}
+.lesson-checks li {
+  font-size: 12px;
+  color: var(--p-green);
+  padding: 5px 0;
+}
+.lesson-checks li:before {
+  content: "✓";
+  margin-right: 9px;
+}
+.lesson-next {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border: 1px solid var(--p-line);
+  padding: 18px 20px;
+  border-radius: 7px;
+  text-decoration: none;
+  margin-top: 30px;
+  color: var(--p-ink) !important;
+  background: var(--p-panel);
+}
+.lesson-next > span {
+  font-size: 11px;
+  color: var(--p-muted);
+}
+.lesson-next > strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.learning-chapters {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.learning-chapter {
+  border: 1px solid var(--p-line);
+  padding: 22px;
+  border-radius: 8px;
+  background: var(--p-panel);
+}
+.learning-chapter > span {
+  font: 10px var(--p-mono);
+  color: var(--p-accent);
+  letter-spacing: 1px;
+}
+.learning-chapter h3 {
+  font-size: 19px;
+  margin: 8px 0 10px !important;
+}
+.learning-chapter p {
+  font-size: 13px;
+  color: var(--p-muted);
+  margin: 0 0 15px !important;
+}
+.learning-chapter > a {
+  display: inline-flex;
+  font-size: 11px;
+  margin: 0 15px 4px 0;
+  text-decoration: none;
+  color: var(--p-accent);
+}
+.tool-reference {
+  border-collapse: collapse;
+  font-size: 12px;
+  width: 100%;
+}
+.tool-reference td,
+.tool-reference th {
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--p-line);
+  text-align: left;
+}
+.tool-reference th {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--p-muted);
+}
+@media (max-width: 850px) {
+  :root {
+    --sl-nav-height: 68px;
+  }
+  .docs-search {
+    top: 18px;
+    right: 26px;
+  }
+  header.header > .p-header,
+  header.header > astro-island > .p-header {
+    padding-right: 75px;
+  }
+  .p-header .p-start-button {
+    display: none;
+  }
+}
+@media (max-width: 680px) {
+  :root {
+    --sl-nav-height: 64px;
+    --sl-text-h1: 1.8rem;
+    --sl-text-h2: 1.3rem;
+  }
+  .docs-search {
+    right: 56px;
+    top: 17px;
+  }
+  .p-header .p-mobile-menu {
+    display: none;
+  }
+  header.header > .p-header,
+  header.header > astro-island > .p-header {
+    padding-right: 96px;
+  }
+  .docs-search button[data-open-modal] {
+    width: 25px;
+  }
+  .sl-markdown-content > p {
+    font-size: 14px;
+  }
+  .lesson-lead {
+    font-size: 15px !important;
+  }
+  .learning-chapter {
+    padding: 18px;
+  }
+  .learning-chapter h3 {
+    font-size: 17px;
+  }
+  .lesson-next {
+    flex-direction: column;
+    align-items: start;
+    gap: 6px;
+  }
+  .tool-reference {
+    font-size: 10px;
+  }
+}
+
+/* Starlight owns the mobile chapter menu; reserve its space in the shared header. */
+@media (max-width: 799px) {
+  .p-header .p-nav,
+  .p-header .p-mobile-menu,
+  .p-header .p-github {
+    display: none;
+  }
+  header.header > astro-island > .p-header {
+    padding-right: 96px;
+  }
+  .docs-search {
+    right: 56px;
+  }
+  .sl-menu-button {
+    right: 14px !important;
+    width: 32px !important;
+    height: 32px !important;
+    top: calc((var(--sl-nav-height) - 32px) / 2) !important;
+    border-radius: 5px !important;
+    background: transparent !important;
+    color: var(--p-ink) !important;
+    box-shadow: none !important;
+  }
+}

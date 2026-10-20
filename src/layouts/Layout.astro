@@ -1,13 +1,14 @@
 ---
 import { Header } from "../components/Header";
-import "@fontsource-variable/inter";
+import "../styles/tokens.css";
 import "../styles/global.css";
+import "../styles/teaching.css";
+import "../styles/completion.css";
 const {
-  title = "让想法，真正上线。",
-  description = "面向刚接触 Vibe Coding 的同学，从安装 IDE、编程 Agent、初始化项目开始，用交互演示看懂需求分析到作品交付。",
+  title = "从想法，到交付。",
+  description = "从 VS Code 和编程 Agent 开始，通过可操作的案例，看懂 AI 如何参与需求、代码、验证与交付。",
   workspace = false,
 } = Astro.props;
-const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 
 <!doctype html>
@@ -16,35 +17,41 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#f8f9f6" />
+    <meta name="theme-color" content="#fafaf8" />
     <title>{title} — Prompt2Ship</title>
     <link rel="icon" href="/favicon.svg" />
     <script is:inline>
-      const theme = localStorage.getItem("theme");
-      document.documentElement.classList.toggle(
-        "dark",
-        theme === "dark" ||
-          (!theme && matchMedia("(prefers-color-scheme: dark)").matches),
-      );
+      try {
+        const saved =
+          localStorage.getItem("theme") ||
+          localStorage.getItem("starlight-theme");
+        const dark =
+          saved === "dark" ||
+          ((!saved || saved === "auto") &&
+            matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark", dark);
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+      } catch {}
     </script>
   </head>
-  <body class:list={{ "workspace-page": workspace }}>
-    <a class="skip-link" href="#main">
+  <body class:list={["p-site", { "p-workspace": workspace }]}>
+    <a class="p-skip" href="#main">
       跳到正文
     </a>
-    <Header path={path} client:load />
-    <main id="main" class="main-content">
+    <Header path={Astro.url.pathname} client:load />
+    <main id="main">
       <slot />
-      {!workspace && (
-        <footer class="site-footer">
-          <span>
-            Prompt2Ship <span class="muted">/ 让好想法落地。</span>
-          </span>
-          <span>
-            <a href="/setup">从零上手</a> · <a href="/review">方法复盘</a>
-          </span>
-        </footer>
-      )}
     </main>
+    <footer class="p-footer">
+      <a class="p-footer-brand" href="/">
+        Prompt2Ship<span>从一句想法，到一次交付。</span>
+      </a>
+      <div>
+        <a href="/learn/">学习路线</a>
+        <a href="/review">方法速查</a>
+        <a href="https://github.com/Dawn6666666/Prompt2Ship">GitHub ↗</a>
+      </div>
+      <span class="p-footer-note">在过程里，学会创造。</span>
+    </footer>
   </body>
 </html>

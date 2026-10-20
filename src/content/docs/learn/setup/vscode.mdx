@@ -1,0 +1,78 @@
+---
+title: 安装与认识 VS Code
+description: 安装编辑器，打开项目文件夹，找到代码区与集成终端。
+---
+
+import { Steps } from "@astrojs/starlight/components";
+import { EditorTour } from "../../../../components/dynamics/EditorTour";
+
+import { PracticeTask } from "../../../../components/dynamics/PracticeTask";
+
+<p className="lesson-lead">
+  这一步的目标：打开一个项目文件夹，并找到文件区、编辑区和终端。
+</p>
+<div className="lesson-meta">
+  <span>环境准备 / 01</span>
+  <span>动态 01</span>
+  <span>Windows · macOS · Linux</span>
+</div>
+
+## 安装并打开编辑器
+
+<Steps>
+  <ol>
+    <li>
+      打开{" "}
+      <a href="https://code.visualstudio.com/download">VS Code 官方下载页</a>
+      ，选择你的操作系统与芯片版本。
+    </li>
+    <li>
+      按安装向导完成安装。macOS 将应用放进“应用程序”；Linux
+      根据发行版选择安装包。
+    </li>
+    <li>
+      启动 VS Code，通过“文件 → 打开文件夹”打开一个专用目录，例如{" "}
+      <code>my-first-site</code>。
+    </li>
+    <li>通过“终端 → 新建终端”打开集成终端。</li>
+  </ol>
+</Steps>
+
+<EditorTour client:load />
+
+## 三个位置，分别负责什么
+
+| 位置     | 你会在这里做什么                           |
+| -------- | ------------------------------------------ |
+| 文件区   | 找到项目文件，查看 AI 新建或修改了哪些文件 |
+| 编辑区   | 阅读代码、检查差异，必要时手动修改         |
+| 集成终端 | 输入命令、启动程序，查看输出和报错         |
+
+**先打开项目文件夹，再启动 Agent。** 这样编辑器、终端和 Agent 才会围绕同一个项目工作。
+
+## 常见卡点
+
+<details>
+  <summary>文件区没有看到项目文件？</summary>
+  <p>
+    确认打开的是项目所在文件夹，而不是单独一个文件。空项目暂时没有文件是正常的，后面的案例会创建
+    index.html。
+  </p>
+</details>
+<details>
+  <summary>终端里的路径与项目文件夹不同？</summary>
+  <p>
+    关闭旧终端，在打开项目后新建终端；也可以使用 cd
+    进入正确目录。输入命令前，先看提示符里的路径。
+  </p>
+</details>
+
+<PracticeTask
+  client:load
+  id="vscode"
+  task="在电脑上新建一个 my-first-site 文件夹，用 VS Code 打开，并找到集成终端。"
+  checks={[
+    "文件区显示 my-first-site，知道编辑区在哪里",
+    "终端当前路径指向这个文件夹",
+  ]}
+/>

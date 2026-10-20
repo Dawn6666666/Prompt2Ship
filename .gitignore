@@ -8,6 +8,8 @@ dist/
 .cache/
 .openchamber/
 .vercel/
+playwright-report/
+test-results/
 
 # Environment variables
 .env

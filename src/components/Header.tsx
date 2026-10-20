@@ -1,93 +1,115 @@
 import { useEffect, useState } from "react";
-import { ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
-import { navigation } from "@/data/course";
+import {
+  ArrowUpRight,
+  BookOpen,
+  ChevronDown,
+  GitBranch as Github,
+  Menu,
+  Moon,
+  Sun,
+  X,
+} from "lucide-react";
 
-// Theme persistence adapted from the local Astro shadcn template ThemeToggle.
-export function Header({ path }: { path: string }) {
+export function Header({
+  path = "/",
+  embedded = false,
+}: {
+  path?: string;
+  embedded?: boolean;
+}) {
+  const Root = embedded ? "div" : "header";
   const [dark, setDark] = useState(false);
   const [open, setOpen] = useState(false);
   useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
+    setDark(
+      document.documentElement.dataset.theme === "dark" ||
+        document.documentElement.classList.contains("dark"),
+    );
   }, []);
-  function toggleTheme() {
+  function toggle() {
     const next = !dark;
     setDark(next);
     document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem("theme", next ? "dark" : "light");
+    document.documentElement.dataset.theme = next ? "dark" : "light";
+    try {
+      localStorage.setItem("theme", next ? "dark" : "light");
+      localStorage.setItem("starlight-theme", next ? "dark" : "light");
+    } catch {
+      /* Optional storage. */
+    }
   }
   return (
-    <>
-      <header className="site-header">
-        <a className="brand" href="/" aria-label="Prompt2Ship 首页">
-          <span className="brand-icon">
-            p<span>↗</span>
-          </span>
-          <span>
-            Prompt<span className="brand-two">2</span>Ship
-            <span className="brand-dot">.</span>
-          </span>
+    <Root className="p-header">
+      <a href="/" className="p-brand" aria-label="Prompt2Ship 首页">
+        <span className="p-brand-mark">
+          p<span>↗</span>
+        </span>
+        <span>
+          Prompt<span className="brand-2">2</span>Ship
+          <span className="brand-period">.</span>
+        </span>
+      </a>
+      <nav className={`p-nav ${open ? "is-open" : ""}`} aria-label="主导航">
+        <a href="/" aria-current={path === "/" ? "page" : undefined}>
+          首页
         </a>
-        <nav className="header-nav" aria-label="主导航">
-          <a className={path === "/" ? "active" : ""} href="/">
-            流程总览
-          </a>
-          <a className={path === "/setup" ? "active" : ""} href="/setup">
-            从零上手
-          </a>
-          <a
-            className={path.startsWith("/case") ? "active" : ""}
-            href="/case/from-scratch"
-          >
-            交互案例<span className="tiny-tag">02</span>
-          </a>
-          <a className={path === "/review" ? "active" : ""} href="/review">
-            方法复盘
-          </a>
-        </nav>
-        <div className="header-actions">
-          <a
-            className="github-link"
-            href="https://github.com/Dawn6666666/Prompt2Ship"
-            target="_blank"
-            rel="noreferrer"
-          >
-            GitHub <ArrowUpRight size={13} />
-          </a>
-          <span className="header-divider" />
-          <button
-            className="icon-button"
-            type="button"
-            onClick={toggleTheme}
-            aria-label="切换明暗主题"
-            aria-pressed={dark}
-          >
-            {dark ? <Sun size={17} /> : <Moon size={17} />}
-          </button>
-          <button
-            className="icon-button mobile-menu-button"
-            onClick={() => setOpen(!open)}
-            type="button"
-            aria-label="打开学习导航"
-            aria-expanded={open}
-          >
-            {open ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-      </header>
-      {open && (
-        <nav className="mobile-navigation" aria-label="移动端学习导航">
-          {navigation.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              aria-current={path === item.href ? "page" : undefined}
-            >
-              {item.label}
-              <ArrowUpRight size={14} />
+        <a
+          href="/learn/"
+          aria-current={path.startsWith("/learn") ? "page" : undefined}
+        >
+          学习路线
+        </a>
+        <details className="p-case-menu">
+          <summary className={path.startsWith("/case") ? "active" : ""}>
+            交互案例 <ChevronDown size={13} />
+          </summary>
+          <div>
+            <a href="/case/from-scratch">
+              <span>01</span> 从零做一个网站 <ArrowUpRight size={13} />
             </a>
-          ))}
-        </nav>
-      )}
-    </>
+            <a href="/case/todo-app">
+              <span>02</span> 给 Todo 增加备注 <ArrowUpRight size={13} />
+            </a>
+          </div>
+        </details>
+        <a
+          href="/review"
+          aria-current={path === "/review" ? "page" : undefined}
+        >
+          方法速查
+        </a>
+      </nav>
+      <div className="p-header-actions">
+        <a
+          className="p-github"
+          href="https://github.com/Dawn6666666/Prompt2Ship"
+          aria-label="查看 GitHub 源码"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <Github size={18} />
+        </a>
+        <button
+          type="button"
+          className="p-icon-button"
+          onClick={toggle}
+          aria-label={dark ? "切换浅色主题" : "切换深色主题"}
+        >
+          {dark ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
+        <a className="p-start-button" href="/learn/setup/vscode/">
+          <BookOpen size={14} /> 开始学习 <ArrowUpRight size={14} />
+        </a>
+        <button
+          type="button"
+          className="p-mobile-menu p-icon-button"
+          onClick={() => setOpen(!open)}
+          aria-expanded={open}
+          aria-label="切换导航菜单"
+        >
+          {open ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </div>
+    </Root>
   );
 }

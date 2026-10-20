@@ -1,36 +1,19 @@
-export const navigation = [
-  { label: "流程总览", href: "/", icon: "overview" },
-  { label: "从零上手：工具到需求", href: "/setup", icon: "setup", meta: "入门篇" },
-  {
-    label: "从一句话到一个网站",
-    href: "/case/from-scratch",
-    icon: "scratch",
-    meta: "案例 01",
-  },
-  {
-    label: "给 Todo 增加备注",
-    href: "/case/todo-app",
-    icon: "todo",
-    meta: "案例 02",
-  },
-  { label: "把经验变成方法", href: "/review", icon: "review", meta: "复盘篇" },
-];
-
 export const initialCss = `body { margin: 0; font-family: system-ui, sans-serif; background: #f6f3eb; color: #292b26; }
 main { width: 760px; margin: 0 auto; padding: 64px 24px; }
 h1 { font-size: 64px; line-height: 1.12; letter-spacing: -3px; }
 .projects { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .project { background: #e5e8dc; padding: 28px; border-radius: 12px; }
-a { color: #bc4c2f; }`;
+a { color: #bc4c2f; }
+`;
 export const finalCss =
   initialCss
     .replace("width: 760px;", "max-width: 760px;")
     .replace("font-size: 64px;", "font-size: clamp(38px, 8vw, 64px);") +
-  `
-@media (max-width: 560px) {
+  `@media (max-width: 560px) {
   main { padding: 32px 20px; }
   .projects { grid-template-columns: 1fr; }
-}`;
+}
+`;
 export function portfolioHtml(stage: number) {
   if (stage < 2) return "";
   return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>林间 — 独立设计师</title><style>${stage >= 4 ? finalCss : initialCss}</style></head><body><main>
@@ -96,9 +79,11 @@ export const stages = [
     lang: "css",
     before: "/* 尚未创建页面样式 */",
     after: initialCss,
-    command: "# 将 AI 生成的页面保存为 index.html\ngit status --short",
-    output: "?? index.html\n完整页面可在最终阶段下载。",
-    result: "首个版本已生成，尚未验证",
+    command:
+      '# 保存初稿为 index.html 后，先记录 v1\ngit add index.html\ngit diff --staged\ngit commit -m "feat: add portfolio draft"\ngit status --short',
+    output:
+      "初稿已作为 v1 提交；git status --short 应无输出。\n下一阶段运行初稿，再观察并修复问题。",
+    result: "初稿已记录为 v1，尚待浏览器检查",
     lesson: "代码生成不等于任务完成。预览是初稿，先看真实效果再给反馈。",
   },
   {
@@ -152,7 +137,7 @@ export const stages = [
     before: finalCss,
     after: finalCss,
     command:
-      'git diff --check\ngit diff -- index.html\ngit add index.html\ngit commit -m "feat: add responsive portfolio"',
+      'git diff --check\ngit diff -- index.html\ngit add index.html\ngit commit -m "fix: adapt portfolio for mobile"',
     output: "教学命令示例，非网页实时执行。\n手动检查后再运行 git commit。",
     result: "检查清单：布局 / 内容 / 链接",
     lesson: "Git 提交记录的是经过确认的版本，不是 AI 的一句「已经完成」。",
