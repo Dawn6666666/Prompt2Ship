@@ -54,7 +54,7 @@
     }
   ],
   "defect": {
-    "commit": "e0a0f52",
+    "commit": "3a7caee",
     "request": {
       "completed": true
     },
@@ -63,9 +63,9 @@
     "reproduced": true
   },
   "git": {
-    "v1": "e0a0f52",
-    "v2": "810be02",
-    "log": "810be02 v2 修复切换完成状态清空备注\ne0a0f52 v1 添加任务备注（待检查）",
+    "v1": "3a7caee",
+    "v2": "ed94802",
+    "log": "ed94802 v2 修复切换完成状态清空备注\n3a7caee v1 添加任务备注（待检查）",
     "changedFiles": [
       "client/src/components/TodoForm.jsx",
       "client/src/components/TodoItem.jsx",
@@ -81,7 +81,10 @@
       "点击编辑时正确回填；更新备注并刷新，显示新内容。",
       "取消编辑不会保存草稿，新建表单不残留上次备注。",
       "仅切换完成状态，刷新后完成状态和原备注均保留。",
-      "主动清空备注后刷新，列表、GET 响应与 SQLite 均为空字符串；旧任务仍存在。"
+      "主动清空备注后刷新，列表、GET 响应与 SQLite 均为空字符串；旧任务仍存在。",
+      "通过真实表单设置分类为学习、优先级为 high；保存并刷新后分类、优先级与备注均保留。",
+      "实际切换分类、优先级与标题搜索筛选，列表只显示匹配任务；清除筛选后恢复完整列表。",
+      "通过真实鼠标拖拽将任务移到首位；刷新页面及 GET 返回顺序一致，备注没有丢失。"
     ],
     "screenshot": "/examples/todo-browser-verified.png"
   },
@@ -94,7 +97,7 @@
   "commands": [
     {
       "command": "npm run verify:todo",
-      "output": "10 API/SQLite checks passed; frontend build passed; 5 browser scenarios passed."
+      "output": "10 API/SQLite checks passed; frontend build passed; 8 browser scenarios passed."
     },
     {
       "command": "npm ci --no-audit --no-fund",
@@ -102,19 +105,19 @@
     },
     {
       "command": "POST /api/todos",
-      "output": "Request: {\"title\":\"交付作品网站\",\"notes\":\"  补充手机截图，检查联系入口。  \",\"category\":\"web\",\"priority\":\"high\"}\nHTTP 201\nResponse: {\"id\":3,\"title\":\"交付作品网站\",\"completed\":0,\"category\":\"web\",\"priority\":\"high\",\"sort_order\":1,\"created_at\":\"2026-10-20 12:36:41\",\"notes\":\"补充手机截图，检查联系入口。\"}"
+      "output": "Request: {\"title\":\"交付作品网站\",\"notes\":\"  补充手机截图，检查联系入口。  \",\"category\":\"web\",\"priority\":\"high\"}\nHTTP 201\nResponse: {\"id\":3,\"title\":\"交付作品网站\",\"completed\":0,\"category\":\"web\",\"priority\":\"high\",\"sort_order\":1,\"created_at\":\"2026-10-20 16:42:57\",\"notes\":\"补充手机截图，检查联系入口。\"}"
     },
     {
       "command": "PUT /api/todos/3",
-      "output": "Request: {\"notes\":\"手机截图已补充，等待最后检查。\"}\nHTTP 200\nResponse: {\"id\":3,\"title\":\"交付作品网站\",\"completed\":0,\"category\":\"web\",\"priority\":\"high\",\"sort_order\":1,\"created_at\":\"2026-10-20 12:36:41\",\"notes\":\"手机截图已补充，等待最后检查。\"}"
+      "output": "Request: {\"notes\":\"手机截图已补充，等待最后检查。\"}\nHTTP 200\nResponse: {\"id\":3,\"title\":\"交付作品网站\",\"completed\":0,\"category\":\"web\",\"priority\":\"high\",\"sort_order\":1,\"created_at\":\"2026-10-20 16:42:57\",\"notes\":\"手机截图已补充，等待最后检查。\"}"
     },
     {
       "command": "PUT /api/todos/3",
-      "output": "Request: {\"completed\":true}\nHTTP 200\nResponse: {\"id\":3,\"title\":\"交付作品网站\",\"completed\":1,\"category\":\"web\",\"priority\":\"high\",\"sort_order\":1,\"created_at\":\"2026-10-20 12:36:41\",\"notes\":\"手机截图已补充，等待最后检查。\"}"
+      "output": "Request: {\"completed\":true}\nHTTP 200\nResponse: {\"id\":3,\"title\":\"交付作品网站\",\"completed\":1,\"category\":\"web\",\"priority\":\"high\",\"sort_order\":1,\"created_at\":\"2026-10-20 16:42:57\",\"notes\":\"手机截图已补充，等待最后检查。\"}"
     },
     {
       "command": "PUT /api/todos/3",
-      "output": "Request: {\"notes\":\"\"}\nHTTP 200\nResponse: {\"id\":3,\"title\":\"交付作品网站\",\"completed\":1,\"category\":\"web\",\"priority\":\"high\",\"sort_order\":1,\"created_at\":\"2026-10-20 12:36:41\",\"notes\":\"\"}"
+      "output": "Request: {\"notes\":\"\"}\nHTTP 200\nResponse: {\"id\":3,\"title\":\"交付作品网站\",\"completed\":1,\"category\":\"web\",\"priority\":\"high\",\"sort_order\":1,\"created_at\":\"2026-10-20 16:42:57\",\"notes\":\"\"}"
     },
     {
       "command": "PUT /api/todos/3",
@@ -126,11 +129,11 @@
     },
     {
       "command": "npm run build --workspace=todo-client",
-      "output": "> todo-client@1.0.0 build\n> vite build\n\nvite v5.4.21 building for production...\ntransforming...\n✓ 40 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.40 kB │ gzip:  0.27 kB\ndist/assets/index-DKfHu9TB.css    3.53 kB │ gzip:  1.12 kB\ndist/assets/index-Cl2gAm7u.js   148.88 kB │ gzip: 48.16 kB\n✓ built in 636ms"
+      "output": "> todo-client@1.0.0 build\n> vite build\n\nvite v5.4.21 building for production...\ntransforming...\n✓ 40 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.40 kB │ gzip:  0.27 kB\ndist/assets/index-DKfHu9TB.css    3.53 kB │ gzip:  1.12 kB\ndist/assets/index-Cl2gAm7u.js   148.88 kB │ gzip: 48.16 kB\n✓ built in 668ms"
     },
     {
       "command": "浏览器实际操作 → GET /api/todos → SELECT notes FROM todos",
-      "output": "PASS 通过原项目表单新增多行备注，提交后输入框清空；刷新后备注仍存在。\nPASS 点击编辑时正确回填；更新备注并刷新，显示新内容。\nPASS 取消编辑不会保存草稿，新建表单不残留上次备注。\nPASS 仅切换完成状态，刷新后完成状态和原备注均保留。\nPASS 主动清空备注后刷新，列表、GET 响应与 SQLite 均为空字符串；旧任务仍存在。"
+      "output": "PASS 通过原项目表单新增多行备注，提交后输入框清空；刷新后备注仍存在。\nPASS 点击编辑时正确回填；更新备注并刷新，显示新内容。\nPASS 取消编辑不会保存草稿，新建表单不残留上次备注。\nPASS 仅切换完成状态，刷新后完成状态和原备注均保留。\nPASS 主动清空备注后刷新，列表、GET 响应与 SQLite 均为空字符串；旧任务仍存在。\nPASS 通过真实表单设置分类为学习、优先级为 high；保存并刷新后分类、优先级与备注均保留。\nPASS 实际切换分类、优先级与标题搜索筛选，列表只显示匹配任务；清除筛选后恢复完整列表。\nPASS 通过真实鼠标拖拽将任务移到首位；刷新页面及 GET 返回顺序一致，备注没有丢失。"
     },
     {
       "command": "SQLite 迁移 + Express 实际 HTTP 请求断言",

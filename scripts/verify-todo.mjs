@@ -406,6 +406,80 @@ try {
     steps.push(
       "主动清空备注后刷新，列表、GET 响应与 SQLite 均为空字符串；旧任务仍存在。",
     );
+    // Drive the original controls, not only their HTTP endpoints, for regression evidence.
+    await title.fill("浏览器回归任务");
+    await page.getByPlaceholder("Category", { exact: true }).fill("学习");
+    await page.locator("form select").selectOption("high");
+    await notes.fill("分类和拖拽后也要保留。");
+    await page.getByRole("button", { name: "Add", exact: true }).click();
+    const regression = page
+      .locator('[draggable="true"]')
+      .filter({ hasText: "浏览器回归任务" });
+    await expect(regression).toContainText("学习");
+    await expect(regression).toContainText("High");
+    await page.reload();
+    await expect(regression).toContainText("学习");
+    await expect(regression).toContainText("High");
+    steps.push(
+      "通过真实表单设置分类为学习、优先级为 high；保存并刷新后分类、优先级与备注均保留。",
+    );
+    const categoryFilter = page
+      .locator("select")
+      .filter({
+        has: page.locator('option[value=""]', { hasText: "All Categories" }),
+      });
+    const priorityFilter = page
+      .locator("select")
+      .filter({
+        has: page.locator('option[value=""]', { hasText: "All Priorities" }),
+      });
+    await categoryFilter.selectOption("学习");
+    await expect(regression).toBeVisible();
+    await expect(task).toHaveCount(0);
+    await categoryFilter.selectOption("");
+    await expect(task).toBeVisible();
+    await priorityFilter.selectOption("high");
+    await expect(regression).toBeVisible();
+    await expect(task).toHaveCount(0);
+    await priorityFilter.selectOption("");
+    await expect(task).toBeVisible();
+    await page
+      .getByPlaceholder("Search...", { exact: true })
+      .fill("浏览器回归任务");
+    await expect(regression).toBeVisible();
+    await expect(task).toHaveCount(0);
+    await page.getByPlaceholder("Search...", { exact: true }).fill("");
+    await expect(task).toBeVisible();
+    steps.push(
+      "实际切换分类、优先级与标题搜索筛选，列表只显示匹配任务；清除筛选后恢复完整列表。",
+    );
+    const first = page.locator('[draggable="true"]').first();
+    const beforeOrder = (await api()).data.map((item) => item.id);
+    const regressionId = (await api()).data.find(
+      (item) => item.title === "浏览器回归任务",
+    ).id;
+    assert.notEqual(beforeOrder[0], regressionId);
+    await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          response.url().endsWith("/api/todos/reorder") &&
+          response.request().method() === "PUT" &&
+          response.status() === 200,
+      ),
+      regression.dragTo(first),
+    ]);
+    await expect(page.locator('[draggable="true"]').first()).toContainText(
+      "浏览器回归任务",
+    );
+    await page.reload();
+    await expect(page.locator('[draggable="true"]').first()).toContainText(
+      "浏览器回归任务",
+    );
+    await expect(regression).toContainText("分类和拖拽后也要保留");
+    assert.equal((await api()).data[0].id, regressionId);
+    steps.push(
+      "通过真实鼠标拖拽将任务移到首位；刷新页面及 GET 返回顺序一致，备注没有丢失。",
+    );
     browserEvidence = {
       passed: true,
       steps,

@@ -7,13 +7,22 @@ export function Sheet({
   trigger,
   children,
   description = "可随时按 Escape 关闭。",
+  open: controlledOpen,
+  onOpenChange,
 }: {
   title: string;
   trigger: ReactNode;
   children: ReactNode;
   description?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = (value: boolean) => {
+    setInternalOpen(value);
+    onOpenChange?.(value);
+  };
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>

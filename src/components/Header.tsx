@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Menu, Moon, Sun } from "lucide-react";
 import { Sheet } from "./ui/sheet";
+import { LearningProgress } from "./site/LearningProgress";
 const links = [
   ["/start/", "准备"],
   ["/case/homepage/", "案例一"],
@@ -54,7 +55,10 @@ export function Header({
           .
         </span>
       </a>
-      <div className="desktop-nav">{nav}</div>
+      <div className="desktop-nav">
+        {nav}
+        <LearningProgress mode="compact" />
+      </div>
       <div className="header-tools">
         <a
           href="https://github.com/Dawn6666666/Prompt2Ship"
@@ -78,6 +82,7 @@ export function Header({
               </button>
             }
           >
+            <LearningProgress mode="all" />
             {nav}
           </Sheet>
         </div>

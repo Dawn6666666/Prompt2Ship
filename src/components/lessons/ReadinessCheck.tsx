@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { FileCode, Monitor, Terminal } from "lucide-react";
 import {
   DoneCheck,
   FileTree,
   Prompt,
   TerminalView,
+  CommandBlock,
 } from "../workbench/Primitives";
-import { checks, setupCommands, systems, type System } from "../../data/setup";
+import { EditorMap } from "./EditorMap";
+import { setupCommands, systems, type System } from "../../data/setup";
 import { usePreference } from "../../lib/usePreference";
 const systemIds = ["windows", "mac", "linux"] as const;
 export function useSystem() {
@@ -33,43 +34,41 @@ export function SystemPicker({
     </div>
   );
 }
-export function ReadinessCheck({ initialStep = 0 }: { initialStep?: number }) {
-  const [step, setStep] = useState(initialStep),
-    [executed, setExecuted] = useState<boolean[]>(Array(5).fill(false)),
-    [area, setArea] = useState("files");
+const ids = ["folder", "workspace", "path", "repository", "readonly-agent"];
+export function PreparationSystem() {
   const [system, setSystem] = useSystem();
-  const [hidden, setHidden] = useState(false);
-  function run() {
-    setExecuted((e) => e.map((v, i) => (i <= step ? true : v)));
-  }
-  const commands = [
-    setupCommands.create,
-    setupCommands.git,
-    setupCommands.open,
-    checks,
-    "只回复一个 HTML 页面的基本结构，不要创建或修改任何文件。",
-  ];
-  const outputs = [
+  return (
+    <div>
+      <SystemPicker value={system} onChange={setSystem} />
+      <p className="muted">
+        系统选择会保存在此浏览器中，后续安装说明和命令一起切换。不检测本机系统。
+      </p>
+    </div>
+  );
+}
+export function ReadinessCheck() {
+  const [step, setStep] = useState(0),
+    [executed, setExecuted] = useState<boolean[]>(Array(5).fill(false));
+  const [system, setSystem] = useSystem(),
+    [hidden, setHidden] = useState(false);
+  const path =
     system === "windows"
-      ? "PS C:\\Users\\student\\my-homepage>"
-      : "~/my-homepage $",
-    "Initialized empty Git repository in my-homepage/.git/\nNo commits yet\nnothing to commit",
-    "VS Code 已打开 my-homepage 工作区。",
-    "node: v24.x.x\nnpm: 11.x.x\ngit: 2.x.x",
-    '<!doctype html>\n<html lang="zh-CN">\n<head><title>我的页面</title></head>\n<body><h1>你好</h1></body>\n</html>',
-  ];
-  const descriptions = [
-    "创建专门的项目文件夹。以后命令都在这里执行。",
-    ".git 保存版本信息。初始化成功不代表已经提交代码。",
-    "终端输入 code .，也可以通过“文件 → 打开文件夹”打开。",
-    "出现三个版本号，才能确认运行和版本工具可用。这里是示例输出，不是检测你的电脑。",
-    "能回复只证明 Agent 连通了。这里没有创建文件，也没有运行网页。",
+      ? "C:\\Users\\student\\my-homepage"
+      : "/home/student/my-homepage";
+  const actualPath = system === "mac" ? "/Users/student/my-homepage" : path;
+  const run = () => setExecuted((e) => e.map((v, i) => i <= step || v));
+  const criteria = [
+    "知道新建的 my-homepage 文件夹在电脑哪里。",
+    "已用 VS Code 打开 my-homepage。",
+    "终端输出的当前路径以 my-homepage 结尾。",
+    "git status 显示尚无提交。",
+    "Agent 读取了当前目录，且没有修改文件。",
   ];
   return (
     <div>
       <div className="ready-scene">
         <div className="ready-actions">
-          {["建目录", "初始化 Git", "打开工作区", "检查环境", "验证 Agent"].map(
+          {["建目录", "打开工作区", "确认路径", "初始化 Git", "验证 Agent"].map(
             (s, i) => (
               <button
                 key={s}
@@ -83,142 +82,141 @@ export function ReadinessCheck({ initialStep = 0 }: { initialStep?: number }) {
         </div>
         <div className="ready-pane">
           <SystemPicker value={system} onChange={setSystem} />
-          <p className="notice">{descriptions[step]}</p>
-          {step < 2 && (
+          {step === 0 && (
             <>
-              <TerminalView
-                folder={
-                  step === 0 && !executed[0] ? "用户主目录" : "my-homepage"
-                }
-                command={commands[step]}
-                output={outputs[step]}
-                executed={executed[step]}
-                onRun={run}
-              />
-              <FileTree
-                files={
-                  executed[0]
-                    ? [
-                        ...(executed[1] && hidden
-                          ? [{ name: ".git", status: "隐藏目录" }]
-                          : []),
-                      ]
-                    : []
-                }
-                folder={executed[0] ? "my-homepage" : "尚未创建项目目录"}
-                gitReady={executed[1]}
-                onSelect={() => {}}
-              />
-              {executed[1] && (
-                <label className="choice">
-                  <input
-                    type="checkbox"
-                    checked={hidden}
-                    onChange={(e) => setHidden(e.target.checked)}
-                  />
-                  显示隐藏的 .git 目录
-                </label>
-              )}
-              <p className="muted">
-                当前路径：
-                {executed[0]
-                  ? system === "windows"
-                    ? "C:\\Users\\student\\my-homepage"
-                    : "~/my-homepage"
-                  : "用户主目录"}
+              <p className="notice">
+                先用
+                {system === "windows"
+                  ? "文件资源管理器"
+                  : system === "mac"
+                    ? "访达"
+                    : "文件管理器"}
+                打开自己的项目存放位置，新建名为 my-homepage
+                的文件夹。记住它的位置，不需要先输入命令。
               </p>
+              <button className="button secondary" onClick={run}>
+                演示新建文件夹
+              </button>
+              <details>
+                <summary>熟悉终端？也可以用命令创建</summary>
+                <CommandBlock text={setupCommands.create} />
+                <p>在你选好的父目录执行；已有同名项目时不要重复创建或覆盖。</p>
+              </details>
+            </>
+          )}
+          {step === 1 && (
+            <>
+              <p className="notice">
+                在 VS Code 选择“文件 → 打开文件夹”，选中刚创建的
+                my-homepage。只信任你自己创建或了解来源的目录。
+              </p>
+              <button className="button secondary" onClick={run}>
+                演示打开文件夹
+              </button>
+              <EditorMap />
+              <details>
+                <summary>可选的 code 命令</summary>
+                <CommandBlock text={setupCommands.open} />
+                <p>
+                  仅在 my-homepage 目录内执行；code 命令不可用时用菜单即可。
+                </p>
+              </details>
             </>
           )}
           {step === 2 && (
             <>
+              <p className="notice">
+                菜单“终端 →
+                新建终端”。先问清“命令会在哪个目录执行”，再操作文件。
+              </p>
               <TerminalView
-                command={commands[step]}
-                output={outputs[step]}
-                executed={executed[step]}
+                folder="my-homepage"
+                command={system === "windows" ? "Get-Location" : "pwd"}
+                output={actualPath}
+                executed={executed[2]}
                 onRun={run}
               />
-              <div className="editor-map">
-                {[
-                  ["files", "文件区", FileCode],
-                  ["editor", "编辑区", Monitor],
-                  ["terminal", "集成终端", Terminal],
-                ].map(([id, label, Icon]) => {
-                  const I = Icon as typeof Monitor;
-                  return (
-                    <button
-                      className={area === id ? "selected" : ""}
-                      key={String(id)}
-                      onClick={() => setArea(String(id))}
-                    >
-                      <I size={20} />
-                      {String(label)}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="notice">
-                {area === "files"
-                  ? "文件区：查看项目目录，点击文件打开。"
-                  : area === "editor"
-                    ? "编辑区：查看、编辑文件，Ctrl+S / ⌘S 保存。"
-                    : "集成终端：输入命令。菜单“终端 → 新建终端”，检查当前路径为 my-homepage。"}
+              <p>
+                Windows 示例使用 PowerShell；若切换到命令提示符，用 cd
+                查看当前路径。你的用户名、父目录可能不同，只需核对末尾目录。
               </p>
             </>
           )}
           {step === 3 && (
             <>
+              <p className="notice">
+                确认路径正确后，再初始化
+                Git。这里只建立版本仓库，还没有记录任何代码版本。
+              </p>
               <TerminalView
-                command={checks}
-                output={outputs[3]}
+                command={setupCommands.git}
+                output="Initialized empty Git repository in my-homepage/.git/\nNo commits yet\nnothing to commit"
                 executed={executed[3]}
                 onRun={run}
               />
-              <details>
-                <summary>命令找不到 / 输出不一致？</summary>
-                <p>
-                  小版本号不必一致。Node 推荐 24 LTS。安装后重开 VS Code
-                  和终端；仍找不到时，回到
-                  <a href="/start/tools/">运行工具安装</a>。PowerShell 若阻止
-                  npm.ps1，可在终端下拉菜单切换“命令提示符”后重试，不必修改系统安全策略。
-                </p>
-              </details>
+              <label className="choice">
+                <input
+                  type="checkbox"
+                  checked={hidden}
+                  onChange={(e) => setHidden(e.target.checked)}
+                />
+                显示隐藏的 .git 目录
+              </label>
             </>
           )}
           {step === 4 && (
             <>
-              <Prompt text={commands[4]} />
+              <p className="notice">
+                先确保 Node/npm/Git 的版本检查已在
+                <a href="/start/tools/">运行工具页</a>完成，并在
+                <a href="/start/agent/">Agent 页</a>
+                连接模型。现在才在当前项目中启动 Agent。
+              </p>
+              <CommandBlock text="opencode" />
+              <Prompt text="请只读查看当前目录，告诉我当前项目路径、有哪些文件、Git 是否已经初始化。不要创建、修改文件或安装依赖。" />
               <button className="button secondary" onClick={run}>
                 查看示例响应
               </button>
               {executed[4] && (
-                <>
-                  <pre className="response-code">{outputs[4]}</pre>
-                  <p className="notice">
-                    html 是页面根节点；head 放标题等信息；body
-                    放可见内容。尚未保存为 index.html。
+                <div className="agent-reply">
+                  <b>Agent · 只读结果示例</b>
+                  <p>
+                    当前项目：{actualPath}。尚无网页文件；发现
+                    .git，仓库已初始化但没有提交。没有创建或修改文件。
                   </p>
-                </>
+                </div>
               )}
+              <p>
+                Agent 正在运行时，该终端由它接收输入。下一步要执行 Shell
+                命令，请另开集成终端；不要把 Shell 命令直接当对话发送。
+              </p>
             </>
           )}
+          <FileTree
+            files={
+              executed[3] && hidden
+                ? [{ name: ".git", status: "隐藏目录" }]
+                : []
+            }
+            folder={executed[0] ? "my-homepage" : "尚未创建项目目录"}
+            gitReady={executed[3]}
+            onSelect={() => {}}
+          />
+          <p
+            className={`muted ${step === 2 && executed[2] ? "path-linked" : ""}`}
+          >
+            当前工作区：{executed[1] ? actualPath : "尚未打开项目"}
+          </p>
         </div>
       </div>
       <DoneCheck
         page="start"
-        id={String(step + 1)}
-        criteria={
-          [
-            "知道 my-homepage 放在哪里，终端当前路径正确。",
-            "git status 显示仓库就绪，尚无提交。",
-            "能找到文件区、编辑区和集成终端。",
-            "本机三条命令都有版本输出。",
-            "本机 Agent 对只读请求给出了响应。",
-          ][step]
-        }
+        id={ids[step]}
+        criteria={criteria[step]}
         result={
           executed[step]
-            ? "已展示该步示例结果，不代表本机已完成。"
-            : "点击“演示执行”查看状态变化。"
+            ? "已展示该步示例，不代表本机完成。"
+            : "先观察操作后的变化，再在本机跟做。"
         }
       />
       {step < 4 ? (

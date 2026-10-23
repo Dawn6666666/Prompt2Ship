@@ -1,7 +1,8 @@
 // Browser shell adapted from Magic UI Safari; real HTML, no scripts or external services.
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { ExternalLink, Globe, Monitor, Smartphone, Tablet } from "lucide-react";
 import { Slider } from "../ui/slider";
+export type PreviewPosition = { top: number; left: number };
 export function PreviewPane({
   html,
   width,
@@ -9,6 +10,7 @@ export function PreviewPane({
   version,
   onVersionChange,
   focus = "",
+  positionRef,
 }: {
   html: string;
   width: number;
@@ -16,12 +18,15 @@ export function PreviewPane({
   version: "v1" | "v2";
   onVersionChange?: (v: "v1" | "v2") => void;
   focus?: string;
+  positionRef?: RefObject<PreviewPosition>;
 }) {
   const container = useRef<HTMLDivElement>(null),
     frame = useRef<HTMLIFrameElement>(null);
-  const position = useRef({ top: 0, left: 0 });
+  const localPosition = useRef({ top: 0, left: 0 });
+  const position = positionRef ?? localPosition;
   const [available, setAvailable] = useState(720);
   const [overflow, setOverflow] = useState(false);
+  const [actualSize, setActualSize] = useState(false);
   useEffect(() => {
     const win = frame.current?.contentWindow;
     if (!win) return;
@@ -52,7 +57,10 @@ export function PreviewPane({
       target?.scrollIntoView({ block: "center" });
     }
   }, [focus]);
-  const scale = Math.min(1, Math.max(1, available - 24) / width);
+  const scale =
+    width === 375 || actualSize
+      ? 1
+      : Math.min(1, Math.max(1, available - 24) / width);
   const content = html.replace(
     "</head>",
     "<style>.teaching-focus{outline:3px solid #2f5bea;outline-offset:3px}</style></head>",
@@ -99,6 +107,19 @@ export function PreviewPane({
             );
           })}
         </div>
+        <button
+          className="preview-size-toggle"
+          aria-pressed={actualSize || width === 375}
+          onClick={() => setActualSize(!actualSize)}
+          disabled={width === 375}
+        >
+          {width === 375 || actualSize ? "原尺寸阅读" : "缩略看布局"}
+          {width !== 375
+            ? actualSize
+              ? " · 切换缩略"
+              : " · 切换原尺寸"
+            : " · 375px"}
+        </button>
         {onVersionChange && (
           <div className="segmented">
             <button
@@ -116,6 +137,11 @@ export function PreviewPane({
           </div>
         )}
       </div>
+      {(actualSize || width === 375) && (
+        <p className="preview-help">
+          原尺寸不缩小文字；容器较窄时可在预览区横向滑动。页面本身是否溢出，以底部检测为准。
+        </p>
+      )}
       <div className="preview-canvas" ref={container}>
         <div
           className="preview-scaled"

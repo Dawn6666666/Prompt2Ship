@@ -3,9 +3,7 @@
   "v1": "75678d6",
   "v2": "f481d9c",
   "log": "f481d9c v2 修复手机端横向溢出\n75678d6 v1 个人主页初稿",
-  "changedFiles": [
-    "index.html"
-  ],
+  "changedFiles": ["index.html"],
   "scope": "只改 CSS；浏览器验收见自动化交互测试。",
   "command": "git log -2 --oneline",
   "source": "scripts/verify-homepage.mjs 在一次性目录创建的真实 Git 仓库；不是读者本机的历史。"

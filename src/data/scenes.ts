@@ -7,13 +7,14 @@ export type ScenePatch = Partial<{
   file: string;
   focus: string;
   change: number;
+  briefRow: number;
 }>;
 export const stepPatches: ScenePatch[] = [
   { view: "agent" },
-  { view: "code" },
+  { view: "code", briefRow: 2 },
   { view: "agent", width: 1280, version: "v1" },
-  { view: "preview", width: 375, version: "v1" },
-  { view: "code", version: "v2" },
+  { view: "preview", width: 1280, version: "v1", briefRow: 3 },
+  { view: "code", version: "v2", briefRow: 3 },
 ];
 export const substepPatches: ScenePatch[][] = [
   [{}, {}, {}, {}],
@@ -25,10 +26,20 @@ export const substepPatches: ScenePatch[][] = [
     { view: "terminal" },
   ],
   [
-    { view: "preview", version: "v1" },
-    { view: "preview" },
+    { view: "preview", width: 1280, version: "v1" },
+    { view: "preview", width: 375 },
     { view: "diff", version: "v2" },
     { view: "preview" },
   ],
   [{}, {}, {}],
 ];
+export const sceneFiles = {
+  homepage: ["需求单.md", "index.html"],
+  todo: [
+    "server/db.js",
+    "server/routes/todos.js",
+    "client/src/components/TodoForm.jsx",
+    "client/src/components/TodoItem.jsx",
+  ],
+  todoRetained: ["client/src/api/todos.js", "client/src/App.jsx"],
+};

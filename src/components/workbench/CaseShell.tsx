@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -18,10 +18,16 @@ import {
 } from "../lessons/FeedbackPicker";
 import { TodoDemo } from "../lessons/TodoDemo";
 import { TodoFlow } from "../lessons/TodoFlow";
+import { LessonRecap } from "../lessons/LessonRecap";
+import { CodeStructure } from "./CodeStructure";
+import { TodoCodeMap } from "./TodoCodeMap";
+import { AgentCreationPanel } from "./AgentCreationPanel";
+import { VerificationPanel } from "./VerificationPanel";
+import { acceptanceChecks, requirementSpec } from "../../data/acceptance";
 import {
   Brief,
   BriefDrawer,
-  CodeView,
+  CommandBlock,
   DoneCheck,
   FileTree,
   Prompt,
@@ -37,18 +43,19 @@ import {
   runCommand,
 } from "../../data/homepage";
 import { homepageBrief, todoBrief, makePrompt } from "../../data/requirement";
-import { todoChanges } from "../../data/todo";
+import { projectFiles } from "../../data/project-map";
 import { todoCommands, todoBaseline } from "../../data/todo-follow";
 import evidence from "../../data/todo-evidence.json";
 import homepageEvidence from "../../data/homepage-evidence.json";
 import { useProgress } from "../../lib/progress";
-import { useSceneState } from "../../lib/scene-state";
+import { useSceneState, sceneArtifacts } from "../../lib/scene-state";
 import type { HighlightPair } from "../../lib/highlight";
 export type CaseAssets = {
   source: string;
   sourceAfter: string;
   diff: HighlightPair;
   todoDiffs: HighlightPair[];
+  todoInitialDiffs: HighlightPair[];
   fix: HighlightPair;
 };
 function StepButton({
@@ -84,7 +91,22 @@ export function CaseShell({
 }) {
   const page = todo ? "todo" : "homepage";
   const [scene, dispatch] = useSceneState();
-  const { step, sub, view, width, version, file, change, focus } = scene;
+  const { step, sub, view, width, version, file, focus, briefRow } = scene;
+  const [briefOpen, setBriefOpen] = useState(false);
+  const [addressLinked, setAddressLinked] = useState(false);
+  useEffect(() => {
+    if (!addressLinked) return;
+    const timer = window.setTimeout(() => setAddressLinked(false), 1200);
+    return () => window.clearTimeout(timer);
+  }, [addressLinked]);
+  const [inspected, setInspected] = useState<string[]>([]);
+  const previewPosition = useRef({ top: 0, left: 0 });
+  const spec = requirementSpec(todo);
+  const checkDefinitions = acceptanceChecks(todo);
+  function showBrief(row: number) {
+    dispatch({ type: "patch", patch: { briefRow: row } });
+    setBriefOpen(true);
+  }
   const [ready, setReady] = useState(false);
   const setView = (view: string) =>
     dispatch({ type: "patch", patch: { view } });
@@ -121,6 +143,16 @@ export function CaseShell({
     return () => window.removeEventListener("popstate", read);
   }, []);
   useEffect(() => {
+    if (!ready) return;
+    try {
+      localStorage.setItem(
+        "p2s:last-scene",
+        JSON.stringify({ page, step: step + 1 }),
+      );
+      window.dispatchEvent(new Event("p2s-progress"));
+    } catch {}
+  }, [page, step, ready]);
+  useEffect(() => {
     try {
       const saved = JSON.parse(
         localStorage.getItem(`p2s:checks:${page}`) || "null",
@@ -146,70 +178,22 @@ export function CaseShell({
         正在打开演示工作区…
       </div>
     );
-  const status = [
-    step > 0,
-    step > 2 || (step === 2 && sub >= 1),
-    step > 2 || (step === 2 && sub >= 2),
-    step === 4,
-  ];
-  const files = todo
-    ? [
-        "server/db.js",
-        "server/routes/todos.js",
-        "client/src/components/TodoForm.jsx",
-        "client/src/components/TodoItem.jsx",
-      ].map((name) => ({
-        name,
-        status: step === 1 ? "将修改" : step >= 2 ? "M" : "",
-      }))
-    : [
-        { name: "需求单.md" },
-        ...(step >= 3 || (step === 2 && sub >= 1)
-          ? [
-              {
-                name: "index.html",
-                status: step === 2 && sub < 3 ? "新建" : "",
-              },
-            ]
-          : []),
-      ];
+  const { status, files } = sceneArtifacts(
+    scene,
+    todo,
+    inspected.length,
+    checkDefinitions.length,
+  );
   const brief = todo ? todoBrief : homepageBrief;
+  const briefTone =
+    (step === 1 && sub === 1) ||
+    (step === 3 && sub < 2 && (todo || width < 760))
+      ? "conflict"
+      : (step === 1 && sub >= 2) || (step === 3 && sub >= 2)
+        ? "match"
+        : "neutral";
   const gitEvidence = todo ? evidence.git : homepageEvidence;
   const diff = todo ? assets.fix : assets.diff;
-  const checkItems = todo
-    ? [
-        "新增、编辑、清空备注",
-        "刷新后仍然保留",
-        "勾选完成后备注仍在",
-        "分类与优先级照常",
-        "筛选与拖拽照常",
-        "仅修改计划中的四个文件",
-      ]
-    : [
-        "名字和一句介绍",
-        "两个项目及待替换链接",
-        "邮箱链接格式正确",
-        "1280px 下完整显示",
-        "375px 下没有横向溢出",
-        "网页只有一个 HTML，没有框架",
-      ];
-  const tips = todo
-    ? [
-        "使用原项目表单新增、编辑后，再主动清空。",
-        "刷新页面，再从列表读到同一条备注。",
-        "勾选完成再刷新，备注保持原值。",
-        "切换分类与优先级，确认列表及保存结果。",
-        "筛选一次、拖拽一次，再刷新核对顺序。",
-        "git diff --stat 应与计划文件列表一致。",
-      ]
-    : [
-        "查看页面顶部，确认名字和介绍存在。",
-        "数两张项目卡，项目 # 链接必须在交付前替换。",
-        "检查 href 为 mailto:xiaoman@example.com；本机需配置邮件应用才能打开。",
-        "切换到 1280px，看内容是否完整。",
-        "切换到 375px，并观察预览底部真实溢出检测。",
-        "查看文件区，并检查 HTML 没有引入框架。",
-      ];
   return (
     <div
       className="case-shell"
@@ -249,7 +233,10 @@ export function CaseShell({
         </div>
         <BriefDrawer
           todo={todo}
-          row={step === 3 || step === 4 ? 3 : step === 1 ? 2 : -1}
+          row={briefRow}
+          open={briefOpen}
+          onOpenChange={setBriefOpen}
+          tone={briefTone}
         />
       </div>
       <div className="step-rail">
@@ -334,6 +321,22 @@ export function CaseShell({
         <div className="lesson-scene">
           <p className="mobile-goal">{current.goal}</p>
           <StatusTrack values={status} />
+          {step > 0 && briefRow >= 0 && (
+            <div
+              className={`requirement-reference ${briefTone === "conflict" ? "has-conflict" : ""}`}
+            >
+              <b>关联需求 · {spec[briefRow].label}</b>
+              <p>{spec[briefRow].answer}</p>
+              <button className="text-link" onClick={() => showBrief(briefRow)}>
+                定位这条需求 ↗
+              </button>
+              {step === 3 && (
+                <small>
+                  这是未达到原验收要求的缺陷；若要新增暗色模式，则属于新需求，应先更新需求单与计划。
+                </small>
+              )}
+            </div>
+          )}
           <div className="scene-body" key={step}>
             {step === 0 && (
               <>
@@ -373,41 +376,91 @@ export function CaseShell({
                       <span>尚未写入文件</span>
                     </div>
                     <Prompt text={makePrompt(brief, todo)} />
+                    {todo &&
+                      projectFiles.some(
+                        (entry) => entry.name === file && !entry.change,
+                      ) && (
+                        <p className="notice" role="status">
+                          本次保持不动：
+                          {
+                            projectFiles.find((entry) => entry.name === file)
+                              ?.reason
+                          }
+                        </p>
+                      )}
                     {sub >= 1 && (
                       <>
                         <div className="agent-reply">
                           <b>Agent 的计划</b>
                           {todo ? (
-                            files.map((f, i) => (
-                              <button
-                                className={`plan-line ${file === f.name ? "selected" : ""}`}
-                                onClick={() => setFile(f.name)}
-                                key={f.name}
-                              >
-                                {i + 1}. {f.name}
-                                <span>
-                                  {
-                                    [
-                                      "数据库增加 notes，旧任务默认空字符串。",
-                                      "接口接收备注；不传时保留，空字符串时清空。",
-                                      "表单新增备注输入，编辑时回填。",
-                                      "列表展示备注，保留原来的操作。",
-                                    ][i]
-                                  }
-                                </span>
-                              </button>
-                            ))
+                            files
+                              .filter((f) => f.status === "将修改")
+                              .map((f, i) => (
+                                <button
+                                  className={`plan-line ${file === f.name ? "selected" : ""}`}
+                                  onClick={() => {
+                                    setFile(f.name);
+                                    dispatch({
+                                      type: "patch",
+                                      patch: {
+                                        briefRow: i === 0 ? 4 : i === 3 ? 1 : 2,
+                                      },
+                                    });
+                                  }}
+                                  key={f.name}
+                                >
+                                  {i + 1}. {f.name}
+                                  <span>
+                                    {
+                                      [
+                                        "数据库增加 notes，旧任务默认空字符串。",
+                                        "接口接收备注；不传时保留，空字符串时清空。",
+                                        "表单新增备注输入，编辑时回填。",
+                                        "列表展示备注，保留原来的操作。",
+                                      ][i]
+                                    }
+                                  </span>
+                                </button>
+                              ))
                           ) : (
                             <ol>
-                              <li>创建 index.html：介绍、两个项目、邮箱。</li>
+                              <li>
+                                <button
+                                  className="text-link"
+                                  onClick={() => showBrief(1)}
+                                >
+                                  创建 index.html：介绍、两个项目、邮箱。 ↗
+                                  对应必须有
+                                </button>
+                              </li>
                               <li className={sub === 1 ? "conflict" : ""}>
                                 {sub === 1
                                   ? "使用 Tailwind CDN 写样式 ← 与不用框架冲突"
                                   : "使用原生 CSS，放在同一个 HTML 里。"}
                               </li>
+                              <li>
+                                <button
+                                  className="text-link"
+                                  onClick={() => showBrief(2)}
+                                >
+                                  核对不用框架、单文件的边界 ↗
+                                </button>
+                              </li>
                               <li>头像和项目链接先用占位。</li>
                               <li>配色选白底深蓝。需要补充真实项目链接。</li>
                             </ol>
+                          )}
+                          {todo && (
+                            <p className="notice">
+                              保持不动：请求封装和 App.jsx
+                              的页面组织、筛选与拖拽。
+                              {
+                                projectFiles.find(
+                                  (entry) =>
+                                    entry.name === file && !entry.change,
+                                )?.reason
+                              }
+                            </p>
                           )}
                         </div>
                         <div className="notice">
@@ -475,47 +528,55 @@ export function CaseShell({
                           ))}
                         </TabsList>
                         <TabsContent value="agent">
-                          <div className="agent-panel">
-                            <Prompt
-                              text={
-                                step === 3
-                                  ? todo
-                                    ? todoFeedback
-                                    : goodFeedback
-                                  : "按确认的计划创建或修改文件，完成后说明改了哪些地方。"
-                              }
+                          {step === 2 ? (
+                            <AgentCreationPanel
+                              todo={todo}
+                              prompt="按确认的计划创建或修改文件，完成后说明改了哪些地方。"
+                              onInspect={() => advance(1)}
                             />
-                            <div className="agent-reply">
-                              <b>Agent 回复</b>
-                              <p>
-                                {step === 3
-                                  ? "已局部修改，接下来请检查真实 Diff 和运行效果。"
-                                  : "已按计划处理。请到文件区核实文件，再启动程序。"}
+                          ) : (
+                            <div className="agent-panel">
+                              <Prompt
+                                text={
+                                  step === 3
+                                    ? todo
+                                      ? todoFeedback
+                                      : goodFeedback
+                                    : "按确认的计划创建或修改文件，完成后说明改了哪些地方。"
+                                }
+                              />
+                              <div className="agent-reply">
+                                <b>Agent 回复</b>
+                                <p>
+                                  {step === 3
+                                    ? sub >= 2
+                                      ? "已局部修改，接下来请检查真实 Diff 和运行效果。"
+                                      : "尚未修改。先复现并描述问题，再授权局部修复。"
+                                    : "已按计划处理。请到文件区核实文件，再启动程序。"}
+                                </p>
+                              </div>
+                              <p className="notice">
+                                这条回复本身不能证明文件已经保存。点击文件区核实。
                               </p>
                             </div>
-                            <p className="notice">
-                              这条回复本身不能证明文件已经保存。点击文件区核实。
-                            </p>
-                          </div>
+                          )}
                         </TabsContent>
                         <TabsContent value="code">
-                          {todo ? (
+                          {step === 2 && sub === 0 ? (
+                            <p className="empty-state">
+                              此时只有 Agent
+                              的回复，尚未核实文件保存。下一小步查看文件。
+                            </p>
+                          ) : todo ? (
                             <>
-                              <div className="change-map">
-                                {[0, 1, 3, 4].map((idx, i) => (
-                                  <button
-                                    key={idx}
-                                    aria-pressed={change === i}
-                                    onClick={() => setChange(i)}
-                                  >
-                                    {["数据库", "接口", "表单", "列表"][i]}
-                                  </button>
-                                ))}
-                              </div>
-                              <CodeComparison
-                                {...assets.todoDiffs[[0, 1, 3, 4][change] || 0]}
-                                filename={
-                                  todoChanges[[0, 1, 3, 4][change] || 0].file
+                              <TodoCodeMap
+                                file={file}
+                                onFileChange={setFile}
+                                version={version}
+                                pairs={
+                                  version === "v1"
+                                    ? assets.todoInitialDiffs
+                                    : assets.todoDiffs
                                 }
                               />
                             </>
@@ -529,7 +590,8 @@ export function CaseShell({
                               尚未出现。下一小步，到文件区核实创建结果。
                             </p>
                           ) : (
-                            <CodeView
+                            <CodeStructure
+                              version={version}
                               html={
                                 version === "v2"
                                   ? assets.sourceAfter
@@ -562,7 +624,10 @@ export function CaseShell({
                           >
                             <button
                               className="terminal-link"
-                              onClick={() => setView("preview")}
+                              onClick={() => {
+                                setView("preview");
+                                setAddressLinked(true);
+                              }}
                             >
                               {todo
                                 ? "http://localhost:5173"
@@ -575,12 +640,27 @@ export function CaseShell({
                               ? "原项目需要两个终端：前后端分别运行。修改后端后按 Ctrl+C，再重新启动。"
                               : "HTML 文件 → serve 本地服务器 → 浏览器。关闭服务后，本地地址不再可用。首次运行需联网；端口占用时以终端实际地址为准。"}
                           </p>
+                          <p className="notice">
+                            终端分工：Agent
+                            占一个终端；本地服务器持续占用另一个终端。运行 Git
+                            命令请再新建终端并确认项目路径，不要粘贴进正在运行的服务或
+                            Agent。案例二前端、后端也需各自终端。
+                          </p>
                         </TabsContent>
                         <TabsContent
                           value="preview"
+                          className={
+                            addressLinked ? "address-linked" : undefined
+                          }
                           forceMount
                           hidden={view !== "preview"}
                         >
+                          {addressLinked && (
+                            <p className="notice" role="status">
+                              终端地址 →
+                              当前预览：同一份本地运行结果。这里展示预设示例，不连接你电脑的服务。
+                            </p>
+                          )}
                           {step === 2 && sub < 2 ? (
                             <div className="empty-state">
                               <h3>文件还没有运行</h3>
@@ -626,6 +706,7 @@ export function CaseShell({
                                 step === 3 ? setVersion : undefined
                               }
                               focus={focus}
+                              positionRef={previewPosition}
                             />
                           )}
                         </TabsContent>
@@ -657,6 +738,7 @@ export function CaseShell({
                                 ? "server/routes/todos.js · PUT"
                                 : "index.html"
                             }
+                            compact={todo}
                           />
                           {!todo && (
                             <div className="change-focus">
@@ -683,6 +765,7 @@ export function CaseShell({
                               version={version}
                               onVersionChange={setVersion}
                               focus={focus}
+                              positionRef={previewPosition}
                             />
                           )}
                         </TabsContent>
@@ -706,40 +789,22 @@ export function CaseShell({
                 </div>
                 {sub === 0 ? (
                   <>
-                    <div className="check-list">
-                      {checkItems.map((item, i) => (
-                        <div className="check-row" key={item}>
-                          <button
-                            onClick={() => {
-                              setFocus(
-                                i === 0
-                                  ? "header"
-                                  : i === 1
-                                    ? ".projects"
-                                    : i === 2
-                                      ? "footer"
-                                      : "",
-                              );
-                              setWidth(i === 4 ? 375 : 1280);
-                            }}
-                          >
-                            <b>{item}</b>
-                            <span>{tips[i]}</span>
-                          </button>
-                          <span className="check-result">✓ 示例通过</span>
-                          <label className="choice">
-                            <input
-                              aria-label={`我检查过了：${item}`}
-                              type="checkbox"
-                              checked={!!checks[i]}
-                              onChange={(e) => checkAt(i, e.target.checked)}
-                            />
-                            我检查过了
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                    {todo ? (
+                    <VerificationPanel
+                      todo={todo}
+                      checks={checks}
+                      onCheck={checkAt}
+                      onInspect={(id, row) => {
+                        setInspected((previous) =>
+                          previous.includes(id) ? previous : [...previous, id],
+                        );
+                        dispatch({ type: "patch", patch: { briefRow: row } });
+                      }}
+                      width={width}
+                      onWidthChange={setWidth}
+                      source={assets.sourceAfter}
+                      position={previewPosition}
+                    />
+                    {todo && (
                       <details className="evidence">
                         <summary>
                           展开真实验证记录 · {evidence.checkedAt}
@@ -769,14 +834,6 @@ export function CaseShell({
                           查看完整验证 JSON
                         </a>
                       </details>
-                    ) : (
-                      <PreviewPane
-                        html={homepageVersions.v2}
-                        width={width}
-                        onWidthChange={setWidth}
-                        version="v2"
-                        focus={focus}
-                      />
                     )}
                   </>
                 ) : sub === 1 ? (
@@ -784,7 +841,9 @@ export function CaseShell({
                     {todo && (
                       <>
                         <pre className="scope-list">
-                          {files.map((f) => "M " + f.name).join("\n")}
+                          {evidence.git.changedFiles
+                            .map((name) => "M " + name)
+                            .join("\n")}
                         </pre>
                         <p className="notice">
                           四个文件对应计划中的数据库、接口、表单、列表。完整改动见下载补丁；下方聚焦最后修复。
@@ -817,7 +876,6 @@ export function CaseShell({
                       <button
                         className="text-link"
                         onClick={() => {
-                          route(3);
                           setVersion("v1");
                         }}
                       >
@@ -827,13 +885,24 @@ export function CaseShell({
                       <button
                         className="text-link"
                         onClick={() => {
-                          route(3);
                           setVersion("v2");
                         }}
                       >
                         v2 修复版
                       </button>
                     </div>
+                    {todo ? (
+                      <TodoDemo key={version} fixed={version === "v2"} bug />
+                    ) : (
+                      <PreviewPane
+                        html={homepageVersions[version]}
+                        width={width}
+                        onWidthChange={setWidth}
+                        version={version}
+                        onVersionChange={setVersion}
+                        positionRef={previewPosition}
+                      />
+                    )}
                     <p className="notice">
                       这是验证脚本在一次性目录中生成的真实 Git
                       记录，不是你的本机状态；你的提交哈希会不同。
@@ -917,13 +986,15 @@ export function CaseShell({
                             在一个没有 my-homepage 的目录中，将 bundle
                             放到当前目录，执行下列命令。已有项目请继续自行提交，不要覆盖。
                           </p>
-                          <pre>
-                            git clone homepage-history.bundle my-homepage{"\n"}
-                            cd my-homepage{"\n"}git log --oneline
-                          </pre>
+                          <CommandBlock
+                            text={
+                              "git clone homepage-history.bundle my-homepage\ncd my-homepage\ngit log --oneline"
+                            }
+                          />
                         </details>
                       )}
                     </div>
+                    <LessonRecap todo={todo} />
                   </>
                 )}
               </div>
@@ -970,7 +1041,7 @@ export function CaseShell({
           <p>
             只在新目录执行。需要 Node.js 24、Git 和网络；不会覆盖你已有项目。
           </p>
-          <Prompt text={todoCommands.prepare} />
+          <CommandBlock text={todoCommands.prepare} />
           <p>核对 HEAD：{todoBaseline}。用 VS Code 打开 todo-app-p2s。</p>
           <TerminalView
             folder="todo-app-p2s"
@@ -981,8 +1052,8 @@ export function CaseShell({
           <p>
             下载补丁放入根目录，仅在未实现备注的基线上执行。检查失败时不要强行应用。
           </p>
-          <Prompt text={todoCommands.patch} />
-          <Prompt text={todoCommands.verify} />
+          <CommandBlock text={todoCommands.patch} />
+          <CommandBlock text={todoCommands.verify} />
         </details>
       )}
       <div className="step-footer">

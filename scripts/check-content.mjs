@@ -1,6 +1,7 @@
 import { readFile, readdir } from "node:fs/promises";
 import assert from "node:assert/strict";
 import path from "node:path";
+import ts from "typescript";
 
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -16,11 +17,46 @@ for (const file of await walk("src")) {
   if (!/\.(tsx?|astro|mdx)$/.test(file)) continue;
   const text = await readFile(file, "utf8");
   assert(
-    !/python3?\s+-m\s+http\.server|lin-portfolio|my-first-site|动态\s*\d|轻松上手|一键交付/.test(
+    !/python3?\s+-m\s+http\.server|lin-portfolio|my-first-site|动态|轻松|一键交付/.test(
       text,
     ),
     `旧文案/命令：${file}`,
   );
+  if (/\.tsx?$/.test(file)) {
+    const ast = ts.createSourceFile(
+      file,
+      text,
+      ts.ScriptTarget.Latest,
+      true,
+      file.endsWith("tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+    );
+    const visit = (node) => {
+      if (ts.isStringLiteralLike(node) || ts.isJsxText(node)) {
+        assert(
+          !/\bPrompt\b/.test(node.text),
+          `面向读者请使用“提示词”：${file}`,
+        );
+      }
+      ts.forEachChild(node, visit);
+    };
+    visit(ast);
+  }
+}
+const base = await readFile("src/styles/base.css", "utf8");
+assert(
+  base.split("\n").length < 200,
+  "基础样式只保留重置和排版，不能重新堆积场景样式",
+);
+const tokens = await readFile("src/styles/tokens.css", "utf8");
+for (const token of [
+  "display",
+  "title",
+  "heading",
+  "body",
+  "small",
+  "caption",
+]) {
+  assert(tokens.includes(`--text-${token}:`), `缺少字号令牌 ${token}`);
 }
 const data = await readFile("src/data/homepage.ts", "utf8");
 for (const version of ["v1", "v2"]) {

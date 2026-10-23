@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Check,
   Copy as CopyIcon,
@@ -48,18 +48,42 @@ export function Copy({
     </button>
   );
 }
-export function Prompt({ text }: { text: string }) {
+export function Prompt({
+  text,
+  destination = "发给 Agent",
+  command = false,
+}: {
+  text: string;
+  destination?: string;
+  command?: boolean;
+}) {
   return (
-    <div className="prompt-block">
+    <div className={`prompt-block${command ? " command-block" : ""}`}>
       <div className="block-label">
-        <span>发给 Agent</span>
+        <span>{destination}</span>
         <Copy text={text} />
       </div>
       <pre>{text}</pre>
     </div>
   );
 }
+export function CommandBlock({
+  text,
+  destination = "输入终端 · 不是发给 Agent",
+}: {
+  text: string;
+  destination?: string;
+}) {
+  return <Prompt text={text} destination={destination} command />;
+}
 export function StatusTrack({ values }: { values: boolean[] }) {
+  const [explanation, setExplanation] = useState(-1);
+  const descriptions = [
+    "只证明收到了回复，不代表文件已创建。",
+    "文件已写入项目目录，不只是在对话里出现。",
+    "浏览器能访问本地服务，不代表结果符合需求。",
+    "已逐项查看示例检查依据；不代表已检查你的本机项目。",
+  ];
   const icons = [MessageSquare, FileCheck, Play, ShieldCheck];
   return (
     <div className="status-track" aria-label="示例项目状态">
@@ -71,14 +95,17 @@ export function StatusTrack({ values }: { values: boolean[] }) {
               key={s}
               data-on={values[i]}
               className={`state-${i}`}
-              title={
-                [
-                  "只证明收到了回复",
-                  "文件已写入项目目录",
-                  "浏览器能访问本地服务",
-                  "已按需求逐项检查",
-                ][i]
-              }
+              title={descriptions[i]}
+              role="button"
+              tabIndex={0}
+              aria-expanded={explanation === i}
+              onClick={() => setExplanation(explanation === i ? -1 : i)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setExplanation(explanation === i ? -1 : i);
+                }
+              }}
             >
               <Icon size={15} />
               {s}
@@ -87,6 +114,11 @@ export function StatusTrack({ values }: { values: boolean[] }) {
         },
       )}
       <small>示例</small>
+      {explanation >= 0 && (
+        <p className="state-explanation" role="status">
+          {descriptions[explanation]}
+        </p>
+      )}
     </div>
   );
 }
@@ -128,13 +160,15 @@ export function Brief({
   todo = false,
   row = -1,
   answers,
+  tone = "neutral",
 }: {
   todo?: boolean;
   row?: number;
   answers?: string[];
+  tone?: "neutral" | "conflict" | "match";
 }) {
   return (
-    <div className="brief-document">
+    <div className={`brief-document brief-${tone}`}>
       <h3>{todo ? "任务备注需求单" : "个人主页需求单"}</h3>
       {(answers || (todo ? todoBrief : homepageBrief)).map((text, i) => (
         <div
@@ -153,13 +187,21 @@ export function Brief({
 export function BriefDrawer({
   todo = false,
   row = -1,
+  open,
+  onOpenChange,
+  tone = "neutral",
 }: {
   todo?: boolean;
   row?: number;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  tone?: "neutral" | "conflict" | "match";
 }) {
   return (
     <Sheet
       title="回看需求单"
+      open={open}
+      onOpenChange={onOpenChange}
       description="后续演示使用这份示例需求单；你可以对照它检查计划与结果。"
       trigger={
         <button className="button secondary">
@@ -168,7 +210,14 @@ export function BriefDrawer({
         </button>
       }
     >
-      <Brief todo={todo} row={row} />
+      {tone !== "neutral" && (
+        <p className="notice">
+          {tone === "conflict"
+            ? "当前示例存在冲突或未通过这一条；不是你的本机检查结果。"
+            : "当前示例的计划或修复与这一条对应；仍需你自行验证本机结果。"}
+        </p>
+      )}
+      <Brief todo={todo} row={row} tone={tone} />
     </Sheet>
   );
 }
@@ -187,6 +236,24 @@ export function TerminalView({
   children?: ReactNode;
   folder?: string;
 }) {
+  const [revealing, setRevealing] = useState(false);
+  const [lineCount, setLineCount] = useState(1);
+  const outputLines = output.split("\n");
+  useEffect(() => {
+    if (!revealing || !executed) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setRevealing(false);
+      return;
+    }
+    const timer = window.setInterval(
+      () => setLineCount((count) => count + 1),
+      140,
+    );
+    return () => window.clearInterval(timer);
+  }, [revealing, executed]);
+  useEffect(() => {
+    if (lineCount >= outputLines.length) setRevealing(false);
+  }, [lineCount, outputLines.length]);
   return (
     <div className="terminal-view">
       <div className="block-label">
@@ -202,15 +269,38 @@ export function TerminalView({
         {command}
       </pre>
       {!executed && onRun && (
-        <button className="terminal-run" onClick={onRun}>
+        <button
+          className="terminal-run"
+          onClick={() => {
+            setLineCount(1);
+            setRevealing(outputLines.length > 1);
+            onRun();
+          }}
+        >
           <Play size={14} />
           演示执行
         </button>
       )}
       {executed && (
         <div className="terminal-output" role="status">
-          <pre>{output}</pre>
-          {children}
+          <pre>
+            {outputLines
+              .slice(0, revealing ? lineCount : undefined)
+              .map((line, index) => (
+                <span
+                  className={
+                    /https?:\/\/|my-homepage/.test(line)
+                      ? "terminal-emphasis"
+                      : undefined
+                  }
+                  key={index}
+                >
+                  {line}
+                  {index < outputLines.length - 1 ? "\n" : ""}
+                </span>
+              ))}
+          </pre>
+          {!revealing && children}
         </div>
       )}
       <small>预设命令输出 · 不操作你的终端</small>
@@ -238,7 +328,8 @@ export function FileTree({
       </div>
       {files.map((f) => (
         <button
-          key={f.name}
+          key={`${f.name}:${f.status ?? ""}`}
+          data-file-status={f.status || "clean"}
           aria-pressed={active === f.name}
           onClick={() => onSelect(f.name)}
         >
@@ -258,10 +349,24 @@ export function FileTree({
 export function CodeView({
   html,
   title = "index.html",
+  source,
+  lines = [],
 }: {
   html: string;
   title?: string;
+  source?: string;
+  lines?: number[];
 }) {
+  const code = useRef<HTMLDivElement>(null);
+  const lineKey = lines.join(",");
+  useEffect(() => {
+    const nodes = code.current?.querySelectorAll<HTMLElement>(".line");
+    nodes?.forEach((el, i) =>
+      el.classList.toggle("is-code-focused", lines.includes(i + 1)),
+    );
+    if (lines.length)
+      nodes?.[lines[0] - 1]?.scrollIntoView({ block: "nearest" });
+  }, [html, lineKey]);
   return (
     <div className="code-view">
       <div className="block-label">
@@ -269,10 +374,11 @@ export function CodeView({
           <FileCode size={15} />
           {title}
         </span>
-        <span>已保存</span>
+        {source ? <Copy text={source} label="复制代码" /> : <span>已保存</span>}
       </div>
       <div
         className="highlighted-code"
+        ref={code}
         dangerouslySetInnerHTML={{ __html: html }}
       />
     </div>

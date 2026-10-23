@@ -1,34 +1,65 @@
 import { useState } from "react";
 import { Accordion, AccordionItem } from "../ui/accordion";
-import { Prompt } from "../workbench/Primitives";
-import { homepageBrief, makePrompt } from "../../data/requirement";
+import { Copy, Prompt } from "../workbench/Primitives";
+import { blankBrief, promptPairs, questionExamples } from "../../data/guide";
 export function GuideTools() {
   const [mode, setMode] = useState(0),
     [reset, setReset] = useState(false);
   return (
     <div className="guide-tools">
-      <div className="segmented">
-        <button aria-pressed={mode === 0} onClick={() => setMode(0)}>
-          需求怎么说
-        </button>
-        <button aria-pressed={mode === 1} onClick={() => setMode(1)}>
-          反馈怎么说
-        </button>
+      <h2>把五个问题写到自己的项目里</h2>
+      <div className="question-examples">
+        {questionExamples.map(([label, bad, good]) => (
+          <div key={label}>
+            <h3>{label}</h3>
+            <p className="muted">不够明确：{bad}</p>
+            <p>更可执行：{good}</p>
+          </div>
+        ))}
+      </div>
+      <div className="paper">
+        <h3>空白需求单</h3>
+        <p>
+          先写决定，再把需求单交给
+          Agent。需求单记录“要做什么”，提示词说明“这一次请你做什么”。
+        </p>
+        <div className="inline-actions">
+          <Copy text={blankBrief} label="复制空白需求单" />
+          <a
+            className="text-link"
+            download="我的需求单.md"
+            href={`data:text/markdown;charset=utf-8,${encodeURIComponent(blankBrief)}`}
+          >
+            下载空白模板
+          </a>
+        </div>
+        <details>
+          <summary>展开 Markdown 模板</summary>
+          <pre>{blankBrief}</pre>
+        </details>
+        <h3>验收标准的三个自查问题</h3>
+        <ol>
+          <li>条件清楚吗？例如视口宽度、现有任务或输入内容。</li>
+          <li>别人能重复这个操作吗？例如打开页面、保存后刷新或切换完成。</li>
+          <li>结果能观察、能判断吗？用“无横向滚动”代替“手机上好看”。</li>
+        </ol>
+      </div>
+      <h2>五种常见协作任务，怎么说更明确</h2>
+      <div className="flow-choices" aria-label="提示词对照">
+        {promptPairs.map((pair, i) => (
+          <button
+            key={pair.label}
+            aria-pressed={mode === i}
+            onClick={() => setMode(i)}
+          >
+            {pair.label}
+          </button>
+        ))}
       </div>
       <div className="paper" style={{ marginTop: 16 }}>
-        <p className="muted">
-          {mode === 0
-            ? "不够明确：帮我做一个好看的个人网站。"
-            : "不够明确：手机上不好看，改一下。"}
-        </p>
+        <p className="muted">不够明确：{promptPairs[mode].bad}</p>
         <h3 style={{ marginTop: 24 }}>把决定和现象写具体</h3>
-        <Prompt
-          text={
-            mode === 0
-              ? makePrompt(homepageBrief)
-              : "在 375px 宽度下出现横向滚动，项目卡片右侧被截断。请只修改 CSS，让手机单列显示，不要改内容和电脑端效果。"
-          }
-        />
+        <Prompt text={promptPairs[mode].good} />
       </div>
       <Accordion type="single" collapsible>
         <AccordionItem value="1" title="我完全不会写代码，可以开始吗？">

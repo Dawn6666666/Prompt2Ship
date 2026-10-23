@@ -24,6 +24,33 @@
   --p-font:
     "Inter Variable", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --p-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --text-display: clamp(32px, 5vw, 48px);
+  --text-title: 24px;
+  --text-heading: 18px;
+  --text-body: 16px;
+  --text-small: 14px;
+  --text-caption: 12px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+  --state-reply-bg: color-mix(in srgb, var(--state-reply) 8%, transparent);
+  --state-saved-bg: color-mix(in srgb, var(--state-saved) 8%, transparent);
+  --state-running-bg: color-mix(in srgb, var(--state-running) 8%, transparent);
+  --state-verified-bg: color-mix(
+    in srgb,
+    var(--state-verified) 8%,
+    transparent
+  );
+  --state-problem: var(--p-red);
+  --state-problem-bg: var(--p-red-soft);
+  --state-planned: var(--p-orange);
+  --state-planned-bg: var(--p-orange-soft);
   --radius-sm: 6px;
   --radius-lg: 12px;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);

@@ -6,9 +6,15 @@ const assets = await caseAssets();
 ---
 
 <Layout title="工作台联动检查" workspace noindex>
-  <p class="container">
+  <p class="page-width">
     内部检查页：依次切换五步，核对文件、终端、预览、Diff、需求单与自查状态。使用
     ?step=3 直达运行场景。
   </p>
+  <nav class="page-width inline-actions" aria-label="检查场景">
+    <a href="/dev/workbench/">案例一组件</a>
+    <a href="/case/todo/?step=1">案例二只读地图</a>
+    <a href="/case/todo/?step=4">案例二故障链路</a>
+    <a href="/case/todo/?step=5">真实验收依据</a>
+  </nav>
   <CaseShell assets={assets} client:load />
 </Layout>

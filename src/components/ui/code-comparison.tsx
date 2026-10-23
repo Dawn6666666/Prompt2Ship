@@ -1,6 +1,7 @@
 // Adapted from Magic UI CodeComparison (MIT). Diff and Shiki run at build time.
 import { useEffect, useRef, useState } from "react";
 import { Columns2, FileCode2, List } from "lucide-react";
+import { Copy } from "../workbench/Primitives";
 export function CodeComparison({
   before,
   after,
@@ -10,6 +11,9 @@ export function CodeComparison({
   deletions,
   focus,
   focusLabel,
+  beforeSource,
+  afterSource,
+  compact = false,
 }: {
   before: string;
   after: string;
@@ -19,8 +23,12 @@ export function CodeComparison({
   deletions?: number;
   focus?: { before: readonly number[]; after: readonly number[] };
   focusLabel?: string;
+  beforeSource?: string;
+  afterSource?: string;
+  compact?: boolean;
 }) {
   const [split, setSplit] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const container = root.current;
@@ -45,7 +53,10 @@ export function CodeComparison({
     });
   }, [focus, split, before, after, unified]);
   return (
-    <div className="code-comparison" ref={root}>
+    <div
+      className={`code-comparison${compact && !expanded ? " code-compact" : ""}`}
+      ref={root}
+    >
       <div className="file-heading">
         <FileCode2 size={14} />
         <span>{filename}</span>
@@ -56,6 +67,12 @@ export function CodeComparison({
           </span>
         )}
         <div className="code-mode">
+          {beforeSource !== undefined && (
+            <Copy text={beforeSource} label="复制修改前片段" />
+          )}
+          {afterSource !== undefined && (
+            <Copy text={afterSource} label="复制修改后片段" />
+          )}
           <button
             type="button"
             onClick={() => setSplit(false)}
@@ -74,10 +91,24 @@ export function CodeComparison({
           </button>
         </div>
       </div>
+      {compact && (
+        <p className="code-context-note">
+          只看与备注有关的局部改动；未展示的原代码保持不变。片段不是完整文件，完整可应用内容见交付补丁。
+        </p>
+      )}
       {focusLabel && (
         <p className="code-focus-label" role="status">
           已定位：{focusLabel} · 切换视图保留关注项
         </p>
+      )}
+      {compact && (
+        <button
+          className="text-link code-expand"
+          aria-expanded={expanded}
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? "收起局部代码" : "展开完整局部改动"}
+        </button>
       )}
       {!split && unified ? (
         <div

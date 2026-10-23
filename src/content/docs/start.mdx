@@ -3,6 +3,9 @@ title: 开始之前，把工具连起来
 description: 安装编辑器、运行工具和编程 Agent，再完成开工检查。
 ---
 
+import { LearningProgress } from "../../components/site/LearningProgress";
+import { PreparationSystem } from "../../components/lessons/ReadinessCheck";
+
 这份指南面向刚开始 Vibe Coding 的你：把想法说清楚，让 AI 帮你写代码，再亲自运行、检查和修改。
 
 **AI 不是替你按下“完成”按钮的人。你来决定做什么，也由你确认做得对不对。**
@@ -19,6 +22,10 @@ description: 安装编辑器、运行工具和编程 Agent，再完成开工检�
 Agent 可以在集成终端里运行，也可以有自己的扩展面板。**不是每个 Agent 都需要安装 VS Code 插件。**
 
 ## 按顺序准备
+
+<PreparationSystem client:load />
+
+<LearningProgress client:load />
 
 1. [安装并认识 VS Code](/start/editor/)：找到文件区、编辑区和集成终端。
 2. [准备运行与版本工具](/start/tools/)：安装 Node.js 和 Git，并检查输出。

@@ -50,7 +50,7 @@ npm run preview
 - `lib/scene-state.ts`：集中状态；跳转小步累积应用 patch。自查记录与示例状态独立。
 - `lib/case-assets.ts`、`highlight.ts`：构建时 Shiki 与真实 Diff，不把高亮引擎发送到浏览器。
 - `public/examples/homepage-v1.html`、`homepage-v2.html`：预览、代码与下载共同的真实素材源。
-- `styles/tokens.css`、`base.css`、`workbench.css`、`reading.css`：令牌、站点、场景、Starlight 适配。
+- `styles/tokens.css`、`base.css`、`reading.css`：令牌、基础排版、Starlight 适配；站点与场景样式分别在 `components/site/site.css` 和 `components/workbench/workbench.css`，由公共样式入口引入。
 
 ## 真实验证记录
 

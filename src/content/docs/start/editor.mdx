@@ -3,7 +3,8 @@ title: 安装并认识 VS Code
 description: 只需要找到文件区、编辑区和集成终端。
 ---
 
-import { ReadinessCheck } from "../../../components/lessons/ReadinessCheck";
+import { EditorMap } from "../../../components/lessons/EditorMap";
+import { DoneCheck } from "../../../components/workbench/Primitives";
 
 VS Code 是编辑器：文件在哪里、代码改了什么、命令在哪输入，都可以在同一个窗口里看。
 
@@ -16,18 +17,49 @@ VS Code 是编辑器：文件在哪里、代码改了什么、命令在哪输入
 
 不要从不明下载站安装。暂时不用装一大批插件。
 
-## 只认识三个区域
+## 认识三个区域和 Agent 入口
 
 - **文件区**：左侧资源管理器，显示当前项目里的文件。
 - **编辑区**：点击文件后，在中间查看和编辑，`Ctrl+S`（Mac `⌘S`）保存。
 - **集成终端**：菜单“终端 → 新建终端”，用来输入命令。先看提示符的路径，确认当前目录。
 
-点击三个区域看各自的职责。这里是界面地图，不是远程 VS Code。
+Agent 可以在集成终端或自己的扩展面板中使用。点击区域看职责；这里是界面地图，不是远程 VS Code。此时不用创建项目，后面的开工检查会带你操作。
 
-<ReadinessCheck initialStep={2} client:load />
+<EditorMap client:load />
+<DoneCheck
+  client:load
+  page="preparation"
+  id="editor"
+  criteria="本机 VS Code 已启动，能找到文件区、编辑区、终端和 Agent 入口。"
+  result="点击区域只展示职责，不检测本机安装。"
+/>
 
-## code 命令找不到？
+## 遇到问题
 
-可以先用 VS Code 的“文件 → 打开文件夹”，不影响后续学习。Mac 可从命令面板搜索 **Shell Command: Install 'code' command in PATH**。Windows 可检查安装时是否添加到 PATH，再重开终端。
+<details>
+  <summary>code 命令找不到</summary>
+  可以先用 VS Code 的“文件 → 打开文件夹”，不影响后续学习。Mac 可从命令面板搜索
+  **Shell Command: Install 'code' command in PATH**。Windows
+  可检查安装时是否添加到 PATH，再重开终端。
+</details>
+
+<details>
+  <summary>打开了软件，却看不到项目文件</summary>
+  启动编辑器不等于打开了项目。使用“File（文件）→ Open
+  Folder（打开文件夹）”，不要只打开一个 HTML
+  文件。下一节会带你创建并打开统一目录。
+</details>
+
+<details>
+  <summary>找不到终端，或误把输出窗口当成终端</summary>
+  输出窗口主要展示日志，不能代替命令行。使用“Terminal（终端）→ New
+  Terminal（新建终端）”，看到路径和输入光标后再输入命令。
+</details>
+
+<details>
+  <summary>中文说明和英文菜单对不上</summary>
+  界面语言不影响功能。记住
+  File（文件）、Explorer（资源管理器）、Terminal（终端）；也可从命令面板搜索操作名称，不必安装额外工作台插件。
+</details>
 
 下一步：[准备运行与版本工具](/start/tools/)。

@@ -1,5 +1,5 @@
 ---
-title: AI Coding 工作台的最小可用验证
+title: 开工检查
 description: 从空目录开始，观察目录、仓库、工具与 Agent 各自的完成依据。
 ---
 
@@ -11,7 +11,30 @@ import { ReadinessCheck } from "../../../components/lessons/ReadinessCheck";
 
 <ReadinessCheck client:load />
 
-## 提交时提示缺少身份？
+## 遇到问题
+
+<details>
+  <summary>终端路径不是 my-homepage</summary>
+  终端可能仍在用户目录，或继承了另一个项目的路径。先用 VS Code
+  打开正确文件夹，再新建终端，执行 pwd（PowerShell 用
+  Get-Location）确认最后一段是 my-homepage。
+</details>
+
+<details>
+  <summary>Agent 在别的目录运行</summary>
+  切换编辑器目录不会自动移动已经运行的
+  Agent。退出旧会话，在正确目录的新终端里重新启动，再发送只读检查请求；确认前不要授权修改。
+</details>
+
+<details>
+  <summary>Node 或 Git 命令仍不可用</summary>
+  这属于安装与 PATH
+  问题，不是网页代码问题。回到[运行与版本工具](/start/tools/)检查版本，重新打开
+  VS Code 后再试。
+</details>
+
+<details>
+<summary>提交时提示缺少身份</summary>
 
 Git 第一次提交可能需要名字和邮箱。在当前项目里配置，不加 `--global` 就只影响本项目。公开仓库请使用你愿意公开的邮箱，或平台提供的隐私邮箱。
 
@@ -19,6 +42,8 @@ Git 第一次提交可能需要名字和邮箱。在当前项目里配置，不�
 git config user.name "你的名字"
 git config user.email "你的邮箱"
 ```
+
+</details>
 
 仓库初始化不等于有了版本。案例中会先提交 v1，再通过 Diff 看修改，最后提交 v2。
 

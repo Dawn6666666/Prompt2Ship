@@ -22,6 +22,8 @@
 | [09-copywriting.md](./09-copywriting.md) | 文案规范与术语表 | 内容 |
 | [10-roadmap.md](./10-roadmap.md) | 实施阶段、技术重构、验收标准 | 开发 |
 | [11-implementation.md](./11-implementation.md) | 已实现内容、实际验证与待补项目 | 开发 / 验收 |
+| [12-follow-up-completion.md](./12-follow-up-completion.md) | 复核缺口的补全、实现调整与本轮验证 | 开发 / 验收 |
+| [13-real-world-validation.md](./13-real-world-validation.md) | 待执行的学生试用协议、记录模板与真实截图清单 | 教学 / 验收 |
 
 ## 六个核心决定
 

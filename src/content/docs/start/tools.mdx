@@ -17,11 +17,23 @@ import { ToolSetup } from "../../../components/lessons/ToolSetup";
 
 ## 常见问题
 
-**提示“不是内部或外部命令”或 command not found**：先关闭并重新打开终端；刚安装时也可以重开 VS Code。仍失败时检查安装路径是否加入 PATH。
+<details>
+  <summary>提示“不是内部或外部命令”或 command not found</summary>
+  当前终端找不到程序。先关闭并重新打开终端；刚安装时也可以重开 VS
+  Code。仍失败时检查安装路径是否加入 PATH。
+</details>
 
-**PowerShell 提示 npm.ps1 无法运行**：在 VS Code 终端的下拉菜单切换到“命令提示符”再试；不用为了本教程修改全局安全策略。
+<details>
+  <summary>PowerShell 提示 npm.ps1 无法运行</summary>
+  这是脚本执行策略限制，不是项目代码出错。在 VS Code
+  终端的下拉菜单切换到“命令提示符”再试；不用为了本教程修改全局安全策略。
+</details>
 
-**npm 下载失败**：检查网络与错误信息。不要遇到报错就给所有命令加 sudo，或复制来历不明的“一键修复”。
+<details>
+  <summary>npm 下载失败</summary>
+  下载依赖需要网络。检查网络与具体错误信息；不要遇到报错就给所有命令加
+  sudo，或复制来历不明的“一键修复”。
+</details>
 
 ## 两个案例怎样运行
 

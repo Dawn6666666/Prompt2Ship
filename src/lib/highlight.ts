@@ -24,6 +24,8 @@ export function changedLines(before: string, after: string) {
   return { removed, added };
 }
 export type HighlightPair = {
+  beforeSource: string;
+  afterSource: string;
   before: string;
   after: string;
   unified: string;
@@ -95,6 +97,8 @@ export async function highlightPair(
     }),
   ]);
   return {
+    beforeSource: before,
+    afterSource: after,
     before: left,
     after: right,
     unified,
