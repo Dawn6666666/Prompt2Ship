@@ -1,9 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile, mkdtemp } from "node:fs/promises";
+import { readFile, mkdtemp, mkdir } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 
 test("downloaded history contains exactly v1 and v2, and only styles change", async () => {
+  await mkdir("/tmp/opencode", { recursive: true });
   const work = await mkdtemp("/tmp/opencode/p2s-history-test-");
   const bundle = new URL(
     "../public/examples/homepage-history.bundle",
