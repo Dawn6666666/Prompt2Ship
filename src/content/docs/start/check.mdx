@@ -1,50 +1,29 @@
 ---
 title: 开工检查
-description: 从空目录开始，观察目录、仓库、工具与 Agent 各自的完成依据。
+description: 在空目录里验证目录、工作区、终端路径、Git 与 Agent 的协同状态。
 ---
 
-import { ReadinessCheck } from "../../../components/lessons/ReadinessCheck";
+import { ReadinessCheck } from "../../../components/prep/readiness/ReadinessCheck";
 
-这里不再重装工具，只确认它们能一起工作。**请在自己的电脑上逐项执行，再手动勾选“我已完成”。** 播放示例不会自动记为你的完成记录。
-
-统一项目目录：`my-homepage`。后续案例一直用它，不在中途换名字。
+后续案例统一使用 `my-homepage` 目录。五项检查全部完成后，这套工具就能支撑一次完整的开发流程。
 
 <ReadinessCheck client:load />
 
-## 遇到问题
+五项检查按顺序执行。前一项没有通过时，先修复再进入下一项。
+
+## 常见问题
 
 <details>
-  <summary>终端路径不是 my-homepage</summary>
-  终端可能仍在用户目录，或继承了另一个项目的路径。先用 VS Code
-  打开正确文件夹，再新建终端，执行 pwd（PowerShell 用
-  Get-Location）确认最后一段是 my-homepage。
+  <summary>终端路径不以 my-homepage 结尾</summary>
+  终端会沿用打开时的目录。确认 VS Code 已载入 my-homepage，关闭当前终端标签页，再新建终端。
 </details>
 
 <details>
-  <summary>Agent 在别的目录运行</summary>
-  切换编辑器目录不会自动移动已经运行的
-  Agent。退出旧会话，在正确目录的新终端里重新启动，再发送只读检查请求；确认前不要授权修改。
+  <summary>Agent 在错误的目录下启动</summary>
+  切换工作区不会结束已经运行的进程。输入 exit 退出 Agent，核对路径后重新启动。
 </details>
 
 <details>
-  <summary>Node 或 Git 命令仍不可用</summary>
-  这属于安装与 PATH
-  问题，不是网页代码问题。回到[运行与版本工具](/start/tools/)检查版本，重新打开
-  VS Code 后再试。
+  <summary>首次提交提示缺少提交者身份</summary>
+  在终端执行 git config --global user.name 与 git config --global user.email，写入提交时使用的名字和邮箱。
 </details>
-
-<details>
-<summary>提交时提示缺少身份</summary>
-
-Git 第一次提交可能需要名字和邮箱。在当前项目里配置，不加 `--global` 就只影响本项目。公开仓库请使用你愿意公开的邮箱，或平台提供的隐私邮箱。
-
-```sh
-git config user.name "你的名字"
-git config user.email "你的邮箱"
-```
-
-</details>
-
-仓库初始化不等于有了版本。案例中会先提交 v1，再通过 Diff 看修改，最后提交 v2。
-
-完成后进入[案例一：个人主页](/case/homepage/)。先想清楚，再让 Agent 写。

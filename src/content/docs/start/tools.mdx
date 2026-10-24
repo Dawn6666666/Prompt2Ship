@@ -1,44 +1,49 @@
 ---
 title: 准备运行与版本工具
-description: 安装 Node.js、npm 和 Git，检查它们能否在终端运行。
+description: 安装 Node.js 与 Git，配置提交身份，并在终端核对版本输出。
 ---
 
-import { ToolSetup } from "../../../components/lessons/ToolSetup";
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import { ToolSetup } from "../../../components/prep/tools/ToolSetup";
 
-**Node.js** 运行本地工具，**npm** 安装依赖（随 Node 一起安装），**Git** 留下代码版本。这三样不是 Agent，也不是 VS Code 插件。
+Node.js 运行本地服务，npm 随它一起安装依赖，Git 保存每一次代码变化。三者都装好，网页才能在浏览器里打开并留下可回看的版本。
 
-## 安装并检查
+<CardGrid>
+  <LinkCard
+    title="下载 Node.js 24 LTS"
+    description="长期支持版本，按系统选择安装包。"
+    href="https://nodejs.org/en/download"
+    target="_blank"
+  />
+  <LinkCard
+    title="下载 Git"
+    description="Windows 使用安装程序；macOS 与 Linux 可用系统包管理器。"
+    href="https://git-scm.com/downloads"
+    target="_blank"
+  />
+</CardGrid>
 
-案例在 **Node.js 24 LTS** 上验证。选择系统后去官方入口安装，再在 VS Code 集成终端逐条运行检查命令。
+## 安装、配置与验证
+
+选择系统后，安装说明与命令会同步切换。
 
 <ToolSetup client:load />
 
-小版本号不用和示例相同。每条命令都能输出版本号，才说明对应工具可用。
+三行输出依次来自 Node.js、npm 与 Git。Node.js 为 24.x、Git 为 2.x 即可继续。
 
 ## 常见问题
 
 <details>
-  <summary>提示“不是内部或外部命令”或 command not found</summary>
-  当前终端找不到程序。先关闭并重新打开终端；刚安装时也可以重开 VS
-  Code。仍失败时检查安装路径是否加入 PATH。
+  <summary>终端提示找不到命令</summary>
+  关闭全部 VS Code 窗口，重新打开后再试。仍然失败时，检查安装目录是否已加入 PATH。
 </details>
 
 <details>
-  <summary>PowerShell 提示 npm.ps1 无法运行</summary>
-  这是脚本执行策略限制，不是项目代码出错。在 VS Code
-  终端的下拉菜单切换到“命令提示符”再试；不用为了本教程修改全局安全策略。
+  <summary>Windows PowerShell 提示脚本运行受限</summary>
+  本地执行策略阻止了脚本。在终端面板的下拉菜单中把默认终端切换为命令提示符，或改用 PowerShell 7。
 </details>
 
 <details>
-  <summary>npm 下载失败</summary>
-  下载依赖需要网络。检查网络与具体错误信息；不要遇到报错就给所有命令加
-  sudo，或复制来历不明的“一键修复”。
+  <summary>下载依赖或安装包时超时</summary>
+  检查网络与代理设置，按控制台给出的错误码处理。不要用管理员权限运行来源不明的脚本。
 </details>
-
-## 两个案例怎样运行
-
-案例一只有一个 `index.html`，在 `my-homepage` 里运行 `npx serve@14.2.4 .`。首次需要联网，提示安装时输入 `y`。打开终端实际显示的 Local 地址；默认 3000，被占用时可能另选端口。
-
-案例二是已有的前后端项目，使用它自己的启动命令，需要两个终端。具体步骤放在案例二，不必现在记住。
-
-下一步：[安装并连接 Agent](/start/agent/)。

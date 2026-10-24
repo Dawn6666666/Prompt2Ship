@@ -1,7 +1,7 @@
 export function LessonRecap({ todo = false }: { todo?: boolean }) {
   return (
     <div className="lesson-recap paper">
-      <h3>带走的不是一段代码，而是一套检查方法</h3>
+      <h3>带走一套可以重复使用的检查方法</h3>
       <ol>
         <li>想清楚：用五问写需求，用可观察的结果定义完成。</li>
         <li>定计划：先看文件范围和冲突，再授权修改。</li>

@@ -1,77 +1,58 @@
 ---
-title: 安装并连接一个编程 Agent
-description: 以 OpenCode V2 为主线，确认登录、模型与只读响应。
+title: 安装并连接 Agent
+description: 安装命令行 Agent，完成授权与模型选择，再发出第一次只读请求。
 ---
 
-import { ToolSetup } from "../../../components/lessons/ToolSetup";
-import { DoneCheck } from "../../../components/workbench/Primitives";
+import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+import { ToolSetup } from "../../../components/prep/tools/ToolSetup";
+import { agentLinks } from "../../../data/setup";
 
-编程 Agent 不只是回答问题，还能在你授权后读写项目文件、运行命令。第一次使用时，**先检查它打开的是哪个目录，先给只读任务，再允许修改。**
-
-## 推荐主线：OpenCode V2
-
-选它作为本教程主线，是为了统一命令和演示步骤，而不是保证某个模型免费或在所有网络下可用。你已经连通其他 Agent 时，无须为教程重复更换工具。
-
-本页安装与连接步骤按 [OpenCode V2 官方文档](https://opencode.ai/v2/docs/)核对，日期 **2026-10-20**。工具会更新；界面或安装步骤不一致时，以官方文档为准。
+Agent 在你授权后读取项目、给出计划并修改代码。首次配置先完成一次只读测试，确认它看到的是当前目录。
 
 <ToolSetup agent client:load />
 
-安装工具、连接提供商、选择模型是三件不同的事。能打开工具界面，不代表模型已经可用。
+## Agent 的权限边界
 
-**API Key 是提供商发给你的访问凭证，像一把可能产生费用的钥匙。** 只从所选提供商的官方控制台获取，按工具的连接流程填写；支持账号登录的提供商可按官方说明登录，不必额外申请 Key。不要把密钥发给 Agent 当提示词。
+<CardGrid>
+  <Card title="会做">
+    读取当前工作区，按你的指令修改文件，运行你允许的命令。
+  </Card>
+  <Card title="仍需你确认">
+    需求是否完整、改动是否越界、结果是否符合验收条件。
+  </Card>
+</CardGrid>
 
-## 怎样确认连接可用
+## 其他可选工具
 
-示意顺序：**提供商已登录 → 已选一个有权限的模型 → 收到一次只读回复**。前两项成功仍可能因为额度或网络无法对话，必须实际发一条消息确认。请在 Agent 交互界面发送，不是在系统终端执行：
+<CardGrid>
+  {agentLinks.map((link) => (
+    <LinkCard
+      title={link.title}
+      description={link.description}
+      href={link.href}
+      target="_blank"
+    />
+  ))}
+</CardGrid>
 
-```text
-你好，请用一句话介绍你能帮我做什么。先不要创建或修改任何文件。
-```
-
-示例回复：“我可以读取项目、协助制定计划，并在你授权后修改代码；本次没有修改文件。”这是响应示例，不代表你的账号已连接。后面的开工检查会进一步确认它读到了正确目录。
-
-## 连接后，先别创建网页
-
-本页先完成安装、连接和模型选择，不要求已经存在项目目录。下一页会创建 `my-homepage`、在 VS Code 打开，再在该目录启动 Agent，执行一次只读请求。
-
-连接成功不等于文件已创建，更不等于网页能运行。终端型 Agent 启动后会接管当前终端的输入；要执行其他 Shell 命令，请在 VS Code 另开终端。
-
-<DoneCheck
-  client:load
-  page="preparation"
-  id="agent"
-  criteria="已在本机安装 Agent、连接提供商并选择可用模型，确认计费。"
-  result="页面只提供操作示例，不代替账号登录或连通检查。"
-/>
-
-不要把 API Key 写进源文件、需求单或 Git。发截图前检查是否包含密钥。遇到命令授权提示时，先读路径和作用，不要习惯性全部放行。
-
-## 遇到问题
+## 常见问题
 
 <details>
-  <summary>打开了 Agent，但没有可用模型</summary>
-  工具安装成功不代表账号已授权。回到 /connect 检查所选提供商，再用 /models
-  选择该账号实际有权限的模型。
+  <summary>进入交互界面后提示没有可用模型</summary>
+  先执行 /connect 完成授权，再用 /models 选择该账号可用的模型。
 </details>
 
 <details>
   <summary>提示额度不足或没有访问权限</summary>
-  账号订阅与 API
-  额度可能分开计费。到提供商官方控制台确认权限和用量，不要不断重试收费请求，也不要假定教程中的模型免费。
+  到服务商控制台确认余额、计费状态与模型调用权限。
 </details>
 
 <details>
-  <summary>提示认证失败或 Key 无效</summary>
-  凭证可能复制不全、已撤销或填给了错误提供商。仅在官方连接界面重新设置；若密钥泄露，先到提供商撤销并更换，不要把它贴到求助消息。
+  <summary>提示认证失败或凭证无效</summary>
+  API Key 是提供商发给你的访问凭证。检查复制时是否带入空格；凭证失效后重新生成，并在 /connect 中重新填入。
 </details>
 
 <details>
-  <summary>一直等待、网络错误或请求超时</summary>
-  先检查所选服务是否可访问及其状态说明。保留去除凭证后的错误信息排查，不要下载陌生“修复插件”，也不要为排错关闭所有安全设置。
+  <summary>网络连接超时或请求无响应</summary>
+  检查本地代理设置，确认能够稳定访问服务商的 API 地址。
 </details>
-
-## 已经在用其他工具？
-
-可以继续用 [Claude Code](https://code.claude.com/docs/en/overview) 或 [Codex](https://developers.openai.com/codex/cli/)。后面的需求单与验收方法不依赖特定品牌；安装、登录和付费条件请看各自官方文档。
-
-下一步：[开工检查](/start/check/)。

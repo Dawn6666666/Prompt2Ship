@@ -121,7 +121,7 @@ export function RequirementBuilder({
   if (phase === 2)
     return (
       <div className="comparison-lesson">
-        <h2>不是把提示词写长，而是把决定想清楚。</h2>
+        <h2>把决定想清楚，比把提示词写长更有用。</h2>
         <div className="comparison-head">
           <span>一句模糊要求</span>
           <span>一份需求单</span>
