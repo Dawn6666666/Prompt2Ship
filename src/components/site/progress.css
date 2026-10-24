@@ -1,0 +1,174 @@
+/* Preparation checklist shared by the overview page and the header. */
+.progress-compact {
+  color: var(--p-muted);
+  font-size: var(--text-caption);
+  white-space: nowrap;
+}
+.preparation-progress {
+  margin: 24px 0;
+  padding: 20px;
+  background: var(--p-soft);
+  border: 1px solid var(--p-line);
+  border-radius: var(--radius-lg);
+}
+.prep-overview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--p-line);
+}
+.prep-overview-header b {
+  font-size: var(--text-small);
+  color: var(--p-ink);
+}
+.prep-overview-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--text-caption);
+  color: var(--p-muted);
+}
+.prep-overview-badge {
+  padding: 4px 10px;
+  background: var(--p-panel);
+  border: 1px solid var(--p-line);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-caption);
+  color: var(--p-ink);
+  white-space: nowrap;
+}
+.prep-overview-badge b {
+  color: var(--p-accent);
+}
+.prep-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.prep-card {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  background: var(--p-panel);
+  border: 1px solid var(--p-line);
+  border-radius: var(--radius-sm);
+  color: inherit;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+.prep-card:hover {
+  border-color: var(--p-accent);
+  background: var(--p-bg);
+}
+.prep-card.is-finished {
+  border-color: var(--p-green);
+}
+.prep-card-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.prep-card-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  background: var(--p-soft);
+  color: var(--p-muted);
+  font-size: var(--text-caption);
+  flex-shrink: 0;
+}
+.prep-card-title {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--p-ink);
+}
+.prep-card-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  font-size: var(--text-caption);
+  color: var(--p-muted);
+  white-space: nowrap;
+}
+.prep-card-outcome {
+  padding-left: 8px;
+  border-left: 2px solid var(--p-accent);
+  font-size: var(--text-caption);
+  line-height: 1.6;
+  color: var(--p-ink);
+}
+.prep-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: var(--text-caption);
+}
+.prep-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-caption);
+}
+.prep-status-pill.done {
+  color: var(--p-green);
+  background: var(--p-green-soft);
+}
+.prep-status-pill.todo {
+  color: var(--p-muted);
+  background: var(--p-soft);
+}
+.prep-card-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--p-accent);
+}
+.case-progress-summary {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--p-line);
+  font-size: var(--text-small);
+}
+.case-progress-summary p {
+  margin-bottom: 4px;
+  color: var(--p-muted);
+  font-size: var(--text-caption);
+}
+.case-progress-summary a {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+}
+.case-progress-summary b {
+  color: var(--p-muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.resume-learning {
+  display: grid;
+  gap: 8px;
+}
+.resume-learning small {
+  max-width: 300px;
+  font-size: var(--text-caption);
+  color: var(--p-muted);
+}
+@media (max-width: 640px) {
+  .prep-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
