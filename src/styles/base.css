@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import "../components/site/site.css";
+@import "../components/site/progress.css";
+@import "../components/ui/window/window.css";
+@import "../components/prep/prep.css";
 /* Global reset and typography only. Feature rules live beside their components. */
 * {
   box-sizing: border-box;

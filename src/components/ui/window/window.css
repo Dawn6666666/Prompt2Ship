@@ -1,0 +1,308 @@
+/* Expressive Code aligned window frames for terminals, commands and prompts. */
+.window-frame {
+  margin: 16px 0;
+  border: 1px solid var(--p-win-line);
+  border-radius: var(--radius-sm);
+  background: var(--p-win-bg);
+  color: var(--p-win-ink);
+  box-shadow: var(--p-win-shadow);
+  overflow: hidden;
+  font-size: var(--text-small);
+}
+.window-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  min-height: 38px;
+  padding: 7px 12px;
+  background: var(--p-win-bar);
+  border-bottom: 1px solid var(--p-win-line);
+}
+.window-bar-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.win-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+}
+.win-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  display: inline-block;
+}
+.win-dot-red {
+  background: #ff5f57;
+}
+.win-dot-yellow {
+  background: #febc2e;
+}
+.win-dot-green {
+  background: #28c840;
+}
+.window-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  font: 500 var(--text-caption) / 1.5 var(--p-mono);
+  color: var(--p-win-muted);
+  overflow-wrap: anywhere;
+}
+.window-title-icon {
+  display: inline-flex;
+  color: var(--p-win-prompt);
+}
+.window-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.window-body {
+  min-width: 0;
+}
+/* Expressive Code owns code typography; Starlight's inline chip must not leak in. */
+.window-frame :is(code, pre),
+.editor-map :is(code, pre) {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.window-note {
+  margin: 0;
+  padding: 7px 14px;
+  border-top: 1px solid var(--p-win-line);
+  background: color-mix(in srgb, var(--p-win-ink) 3%, var(--p-win-bar));
+  color: var(--p-win-muted);
+  font-size: var(--text-caption);
+  line-height: 1.6;
+}
+
+/* Prompt window: a document header, not a terminal. */
+.window-frame-prompt {
+  background: var(--p-soft);
+  border-color: var(--p-line);
+  border-left: 3px solid var(--state-reply);
+  box-shadow: none;
+  color: var(--p-ink);
+}
+.window-frame-prompt .window-bar {
+  background: transparent;
+  border-bottom-color: var(--p-line);
+}
+.window-frame-prompt .window-title {
+  font-family: var(--p-font);
+  color: var(--p-muted);
+}
+.window-frame-prompt .window-title-icon {
+  color: var(--state-reply);
+}
+.window-frame-prompt pre {
+  margin: 0;
+  padding: 14px 16px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: var(--text-small) / 1.8 var(--p-font);
+  color: var(--p-ink);
+}
+.window-frame-prompt .copy-button {
+  color: var(--p-muted);
+}
+.window-frame-prompt .copy-button:hover {
+  color: var(--p-ink);
+}
+
+/* Command window: the same geometry as a terminal, with monospace text. */
+.window-frame-terminal .window-title,
+.window-frame-terminal .terminal-script,
+.window-frame-terminal .terminal-output pre {
+  font-family: var(--p-mono);
+}
+.window-frame-terminal pre {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: var(--text-small) / 1.8 var(--p-mono);
+  color: var(--p-win-ink);
+}
+.command-block pre {
+  padding: 14px 16px;
+}
+.copy-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-caption);
+  color: var(--p-win-muted);
+  white-space: nowrap;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+.copy-button:hover {
+  color: var(--p-win-ink);
+  background: color-mix(in srgb, var(--p-win-ink) 6%, transparent);
+}
+
+/* Editor scene window: page-tonal chrome instead of a terminal surface. */
+.window-frame-editor {
+  background: var(--p-panel);
+  border-color: var(--p-line);
+  color: var(--p-ink);
+  box-shadow: var(--shadow);
+}
+.window-frame-editor .window-bar {
+  background: var(--p-soft);
+  border-bottom-color: var(--p-line);
+}
+.window-frame-editor .window-title {
+  font-family: var(--p-font);
+  color: var(--p-muted);
+}
+.window-frame-editor .window-title-icon {
+  color: var(--p-accent);
+}
+
+/* Terminal body */
+.terminal-screen {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px 16px;
+}
+.terminal-script {
+  display: grid;
+  grid-template-columns: max-content max-content minmax(0, 1fr);
+  column-gap: 8px;
+  row-gap: 2px;
+  margin: 0;
+  font-size: var(--text-small);
+  line-height: 1.7;
+}
+.terminal-path {
+  color: var(--p-win-prompt);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.terminal-sigil {
+  color: var(--p-win-muted);
+  user-select: none;
+}
+.terminal-script code {
+  color: var(--p-win-ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.terminal-run {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  align-self: start;
+  justify-self: start;
+  min-height: 32px;
+  padding: 4px 12px;
+  border: 1px solid var(--p-win-line);
+  border-radius: var(--radius-pill);
+  background: var(--p-win-chip);
+  color: var(--p-win-ink);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  transition:
+    transform 0.12s ease,
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+.terminal-run:hover:not(:disabled) {
+  border-color: var(--p-accent);
+  color: var(--p-accent);
+  background: color-mix(in srgb, var(--p-accent) 8%, var(--p-win-bar));
+}
+.terminal-run:active:not(:disabled) {
+  transform: translateY(1px) scale(0.985);
+}
+.terminal-run:disabled {
+  cursor: progress;
+  opacity: 1;
+  color: var(--p-win-muted);
+}
+.terminal-run .spin {
+  animation: terminal-spin 0.9s linear infinite;
+}
+.terminal-output {
+  border-top: 1px dashed var(--p-win-line);
+  padding-top: 10px;
+}
+.terminal-output pre {
+  margin: 0;
+  color: var(--p-win-ink);
+}
+.terminal-emphasis {
+  color: var(--p-win-ok);
+  font-weight: 600;
+}
+.terminal-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 5px 12px;
+  background: var(--p-win-chip);
+  border: 1px solid var(--p-win-line);
+  border-radius: var(--radius-pill);
+  color: var(--p-win-ink);
+  font-size: var(--text-caption);
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+.terminal-link:hover {
+  border-color: var(--p-accent);
+  color: var(--p-accent);
+}
+@keyframes terminal-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .terminal-run .spin {
+    animation: none;
+  }
+}
+
+/* Expressive Code style inline copy confirmation. */
+.window-actions .copy-button span[role="status"] {
+  color: inherit;
+}
+@media (max-width: 640px) {
+  .window-bar {
+    padding: 7px 10px;
+  }
+  .window-title {
+    font-size: var(--text-caption);
+  }
+  .terminal-screen {
+    padding: 12px;
+  }
+  .terminal-run {
+    width: 100%;
+  }
+}

@@ -1,3 +1,13 @@
+.page {
+  max-width: 1440px;
+  margin-inline: auto;
+}
+/* Starlight pins the desktop sidebar to the viewport; follow the centered page. */
+@media (min-width: 1441px) {
+  .sidebar-pane {
+    left: calc((100vw - 1440px) / 2);
+  }
+}
 :root {
   --sl-font: var(--p-font);
   --sl-font-mono: var(--p-mono);
@@ -13,7 +23,7 @@
   --sl-text-h1: 2rem;
   --sl-text-h2: 1.5rem;
   --sl-text-h3: 1.125rem;
-  --sl-content-width: 52rem;
+  --sl-content-width: 42.5rem;
   --sl-nav-height: 76px;
 }
 .header {
@@ -22,7 +32,8 @@
 }
 .header .site-header {
   width: 100%;
-  max-width: none;
+  max-width: 1440px;
+  margin-inline: auto;
 }
 .docs-search {
   position: fixed;
@@ -30,9 +41,7 @@
   right: 32px;
   z-index: 60;
 }
-.header .header-tools {
-  padding-right: 52px;
-}
+
 .docs-search button[data-open-modal] {
   width: 40px;
   min-width: 40px;
@@ -45,12 +54,20 @@
   display: none;
 }
 .sl-markdown-content
-  :is(.ready-scene, .done-check, .terminal-view, .prompt-block, .guide-tools)
-  :is(h2, h3, p, pre, button, label, span, div) {
+  :is(
+    .window-frame,
+    .editor-map,
+    .readiness-workbench-root,
+    .setup-root,
+    .prep-system-container,
+    .done-check,
+    .guide-tools
+  )
+  :is(h2, h3, h4, p, pre, button, label, span, div) {
   margin-top: 0;
 }
-.sl-markdown-content .ready-scene {
-  margin: 24px 0;
+.sl-markdown-content .segmented button {
+  margin: 0 !important;
 }
 .sl-markdown-content :is(button, .button, .text-link) {
   text-decoration: none;
@@ -59,6 +76,54 @@
   margin: 24px 0;
 }
 .sl-markdown-content .terminal-view pre {
+  margin: 0;
+}
+.sl-markdown-content .window-note {
+  margin: 0;
+}
+.sl-markdown-content .sl-link-card {
+  padding: 14px 16px;
+  background: var(--p-panel);
+  border-color: var(--p-line);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+.sl-markdown-content .sl-link-card:hover {
+  background: var(--p-soft);
+  border-color: var(--p-accent);
+}
+.sl-markdown-content .sl-link-card .title {
+  color: var(--p-ink);
+  font-size: var(--text-small);
+}
+.sl-markdown-content .sl-link-card .description {
+  color: var(--p-muted);
+  font-size: var(--text-caption);
+}
+.sl-markdown-content .card-grid > .card {
+  gap: 6px;
+  padding: 14px 16px;
+  background: var(--p-panel);
+  border-color: var(--p-line);
+  border-radius: var(--radius-sm);
+}
+.sl-markdown-content .card-grid > .card .title {
+  gap: 8px;
+  color: var(--p-ink);
+  font-size: var(--text-small);
+}
+.sl-markdown-content .card-grid > .card .body {
+  color: var(--p-muted);
+  font-size: var(--text-caption);
+  line-height: 1.7;
+}
+.sl-markdown-content .setup-root .ready-scene {
+  margin: 0 0 4px;
+}
+.sl-markdown-content .readiness-workbench-root .ready-scene {
   margin: 0;
 }
 .sl-markdown-content .done-check p {
@@ -86,15 +151,40 @@
 .sl-markdown-content .terminal-output pre {
   white-space: pre-wrap;
 }
-.sl-markdown-content .terminal-view small {
-  color: #b7c1d2;
+.sl-markdown-content .window-actions .copy-button {
+  color: var(--p-win-muted);
 }
 .right-sidebar {
   font-size: 12px;
 }
 .sidebar a[aria-current="page"],
-.sidebar a[aria-current="page"] span {
-  color: var(--p-bg);
+.sidebar a[aria-current="page"] * {
+  color: var(--p-bg) !important;
+}
+.pagination-links {
+  gap: 14px;
+  margin-top: 36px;
+}
+.pagination-links a {
+  padding: 10px 14px;
+  border: 1px solid var(--p-line);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--p-muted);
+  background: var(--p-panel);
+  transition: all 0.15s ease;
+}
+.pagination-links a:hover {
+  border-color: var(--p-accent);
+  color: var(--p-ink);
+}
+.pagination-links .link-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--p-ink);
+  margin-top: 2px;
+  line-height: 1.4;
 }
 @media (max-width: 799px) {
   :root {

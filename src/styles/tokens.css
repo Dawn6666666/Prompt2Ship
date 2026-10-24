@@ -52,8 +52,19 @@
   --state-planned: var(--p-orange);
   --state-planned-bg: var(--p-orange-soft);
   --radius-sm: 6px;
+  --radius-pill: 9999px;
   --radius-lg: 12px;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
+  /* Terminal and code windows follow Expressive Code's frame proportions. */
+  --p-win-bg: #f6f8fa;
+  --p-win-bar: #fff;
+  --p-win-line: #e1e4e8;
+  --p-win-ink: #1b1f24;
+  --p-win-muted: #57606a;
+  --p-win-prompt: #0550ae;
+  --p-win-ok: #0a6b3d;
+  --p-win-chip: #eef1f4;
+  --p-win-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 20px rgb(0 0 0 / 0.05);
 }
 :root.dark,
 :root[data-theme="dark"] {
@@ -76,4 +87,13 @@
   --state-saved: #86bbfa;
   --state-running: #79d9b1;
   --state-verified: #a1e7c7;
+  --p-win-bg: #1b1f24;
+  --p-win-bar: #22272e;
+  --p-win-line: #30363d;
+  --p-win-ink: #e6edf3;
+  --p-win-muted: #9aa4af;
+  --p-win-prompt: #79c0ff;
+  --p-win-ok: #7ee787;
+  --p-win-chip: #262c36;
+  --p-win-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 24px rgb(0 0 0 / 0.3);
 }
