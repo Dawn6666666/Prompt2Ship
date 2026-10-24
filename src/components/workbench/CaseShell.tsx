@@ -8,6 +8,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
+import { ArrowIcon } from "../ui/Arrow";
 import { Sheet } from "../ui/sheet";
 import { CodeComparison } from "../ui/code-comparison";
 import { RequirementBuilder } from "../lessons/RequirementBuilder";
@@ -328,7 +329,7 @@ export function CaseShell({
               <b>关联需求 · {spec[briefRow].label}</b>
               <p>{spec[briefRow].answer}</p>
               <button className="text-link" onClick={() => showBrief(briefRow)}>
-                定位这条需求 ↗
+                定位这条需求 <ArrowIcon up />
               </button>
               {step === 3 && (
                 <small>
@@ -429,7 +430,8 @@ export function CaseShell({
                                   className="text-link"
                                   onClick={() => showBrief(1)}
                                 >
-                                  创建 index.html：介绍、两个项目、邮箱。 ↗
+                                  创建 index.html：介绍、两个项目、邮箱。{" "}
+                                  <ArrowIcon up />
                                   对应必须有
                                 </button>
                               </li>
@@ -443,7 +445,7 @@ export function CaseShell({
                                   className="text-link"
                                   onClick={() => showBrief(2)}
                                 >
-                                  核对不用框架、单文件的边界 ↗
+                                  核对不用框架、单文件的边界 <ArrowIcon up />
                                 </button>
                               </li>
                               <li>头像和项目链接先用占位。</li>
@@ -632,7 +634,7 @@ export function CaseShell({
                               {todo
                                 ? "http://localhost:5173"
                                 : "http://localhost:3000"}{" "}
-                              → 打开示例预览
+                              <ArrowIcon /> 打开示例预览
                             </button>
                           </TerminalView>
                           <p className="notice">
@@ -752,7 +754,7 @@ export function CaseShell({
                                   className="text-link"
                                   onClick={() => setFocus(selector)}
                                 >
-                                  {label} → 定位代码与效果
+                                  {label} <ArrowIcon /> 定位代码与效果
                                 </button>
                               ))}
                             </div>

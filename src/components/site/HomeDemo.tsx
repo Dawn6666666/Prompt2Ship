@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { PreviewPane } from "../workbench/PreviewPane";
+import { ArrowIcon } from "../ui/Arrow";
 import { homepageVersions } from "../../data/homepage";
 export function HomeDemo() {
   const [step, setStep] = useState(0),
@@ -31,7 +32,7 @@ export function HomeDemo() {
           }
         </p>
         <a className="text-link" href="/case/homepage/">
-          从想清楚需求开始 →
+          从想清楚需求开始 <ArrowIcon />
         </a>
       </div>
       <PreviewPane

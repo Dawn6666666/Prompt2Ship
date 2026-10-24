@@ -34,6 +34,29 @@
   align-items: center;
   gap: 8px;
 }
+.arrow-icon {
+  flex-shrink: 0;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+a:hover .arrow-icon,
+button:hover .arrow-icon {
+  transform: translateX(2px);
+}
+a:hover .arrow-icon-up,
+button:hover .arrow-icon-up {
+  transform: translate(2px, -2px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .arrow-icon {
+    transition: none;
+  }
+  a:hover .arrow-icon,
+  button:hover .arrow-icon,
+  a:hover .arrow-icon-up,
+  button:hover .arrow-icon-up {
+    transform: none;
+  }
+}
 .icon-button {
   display: inline-flex;
   align-items: center;
@@ -75,15 +98,18 @@
   white-space: nowrap;
 }
 .brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
   background: var(--p-ink);
   color: var(--p-bg);
   width: 30px;
   height: 30px;
   border-radius: var(--radius-sm);
   margin-right: 10px;
-  font: 500 16px/30px var(--p-mono);
-  text-align: center;
-  letter-spacing: -2px;
+  font: 500 16px/1 var(--p-mono);
+  letter-spacing: -1px;
 }
 .brand-dot {
   color: var(--p-accent);
@@ -97,65 +123,10 @@
   align-items: center;
   gap: 24px;
 }
-.progress-compact {
-  color: var(--p-muted);
-  font-size: 12px;
-  white-space: nowrap;
-}
-.case-progress-summary {
-  border-top: 1px solid var(--p-line);
-  padding-top: 12px;
-  font-size: 14px;
-}
-.case-progress-summary a {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 0;
-}
-.case-progress-summary b {
-  color: var(--p-muted);
-  font-weight: 500;
-}
-.resume-learning {
-  display: grid;
-  gap: 8px;
-}
-.resume-learning small {
-  max-width: 300px;
-  color: var(--p-muted);
-  font-size: 12px;
-}
-.preparation-progress {
-  margin: 24px 0;
-  padding: 20px;
-  background: var(--p-soft);
-  border-radius: var(--radius-lg);
-}
-.preparation-progress > p {
-  font-size: 14px;
-  margin-bottom: 12px;
-}
-.preparation-progress ol {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-}
-.preparation-progress li a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  font-size: 14px;
-}
-.preparation-progress li small {
-  margin-left: auto;
-  font-size: 12px;
-  color: var(--p-muted);
-}
-.preparation-progress li[data-done="true"] > a > span {
-  color: var(--p-green);
+@media (max-width: 1100px) {
+  .desktop-nav > .progress-compact {
+    display: none;
+  }
 }
 .question-examples {
   display: grid;
@@ -206,6 +177,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  padding-right: 52px;
 }
 .source-link {
   display: flex;

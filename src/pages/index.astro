@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Arrow from "../components/ui/Arrow.astro";
 import { HomeDemo } from "../components/site/HomeDemo";
 import { LearningProgress } from "../components/site/LearningProgress";
 ---
@@ -19,7 +20,7 @@ import { LearningProgress } from "../components/site/LearningProgress";
       <div class="hero-actions">
         <LearningProgress mode="resume" client:load />
         <a class="text-link" href="/case/homepage/">
-          工具已就绪，进入案例一 →
+          工具已就绪，进入案例一 <Arrow />
         </a>
       </div>
     </section>
@@ -32,19 +33,19 @@ import { LearningProgress } from "../components/site/LearningProgress";
           <span>准备 · 约 20–40 分钟</span>
           <h3>把工具连起来</h3>
           <p>安装 VS Code、运行工具和一个 Agent，再确认它们能一起工作。</p>
-          <b>开始准备 ↗</b>
+          <b>开始准备 <Arrow /></b>
         </a>
         <a class="route-card" href="/case/homepage/">
           <span>案例一 · 约 40–60 分钟</span>
           <h3>从零做一个个人主页</h3>
           <p>重点练习需求分析。用一个 HTML 文件，看懂从想法到交付。</p>
-          <b>进入案例一 ↗</b>
+          <b>进入案例一 <Arrow /></b>
         </a>
         <a class="route-card" href="/case/todo/">
           <span>案例二 · 约 60–90 分钟</span>
           <h3>在已有项目里加功能</h3>
           <p>先读懂项目，再给 Todo 增加备注。学会控制改动范围。</p>
-          <b>进入案例二 ↗</b>
+          <b>进入案例二 <Arrow /></b>
         </a>
       </div>
     </section>
@@ -60,7 +61,7 @@ import { LearningProgress } from "../components/site/LearningProgress";
           而是五个说清楚的决定：给谁看、必须有、这次不做、怎样算做完、还不确定什么。
         </p>
         <a class="text-link" href="/case/homepage/?step=1">
-          试试需求拆解器 →
+          试试需求拆解器 <Arrow />
         </a>
       </div>
       <div class="paper">

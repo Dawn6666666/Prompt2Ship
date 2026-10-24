@@ -48,8 +48,8 @@ export default defineConfig({
         {
           label: "开始做项目",
           items: [
-            { label: "案例一：个人主页 ↗", link: "/case/homepage/" },
-            { label: "案例二：Todo 备注 ↗", link: "/case/todo/" },
+            { label: "案例一：个人主页", link: "/case/homepage/" },
+            { label: "案例二：Todo 备注", link: "/case/todo/" },
             { label: "方法速查", slug: "guide" },
           ],
         },

@@ -4,6 +4,7 @@ import { homepageVersions } from "../../data/homepage";
 import evidence from "../../data/todo-evidence.json";
 import { CodeStructure } from "./CodeStructure";
 import { FileTree } from "./Primitives";
+import { ArrowIcon } from "../ui/Arrow";
 import { PreviewPane, type PreviewPosition } from "./PreviewPane";
 export function VerificationPanel({
   todo,
@@ -45,7 +46,13 @@ export function VerificationPanel({
               <small>来自需求单：{requirementSpec(todo)[item.row].label}</small>
             </button>
             <span className="check-result">
-              {selected === item.id ? "正在查看依据" : "查看示例依据 →"}
+              {selected === item.id ? (
+                "正在查看依据"
+              ) : (
+                <>
+                  查看示例依据 <ArrowIcon />
+                </>
+              )}
             </span>
             <label className="choice">
               <input

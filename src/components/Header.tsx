@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Menu, Moon, Sun } from "lucide-react";
+import { ArrowIcon } from "./ui/Arrow";
 import { Sheet } from "./ui/sheet";
 import { LearningProgress } from "./site/LearningProgress";
 const links = [
@@ -48,7 +49,8 @@ export function Header({
     <Root className="site-header">
       <a className="brand" href="/" title="返回首页">
         <span className="brand-mark" aria-hidden="true">
-          p↗
+          p
+          <ArrowIcon up size={12} />
         </span>
         <span>Prompt2Ship</span>
         <span className="brand-dot" aria-hidden="true">
